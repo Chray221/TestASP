@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="IRepository\" />
+    <None Remove="IService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IRepository\" />
+    <Folder Include="IService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestASP.Data\TestASP.Data.csproj" />
+    <ProjectReference Include="..\TestASP.Common\TestASP.Common.csproj" />
+  </ItemGroup>
+</Project>

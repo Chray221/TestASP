@@ -1,4 +1,4 @@
-﻿namespace TestASP.API;
+﻿namespace TestASP.Data;
 
 public class WeatherForecast
 {

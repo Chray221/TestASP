@@ -11,6 +11,51 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.14">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.14">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.14" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TestASP.Data\TestASP.Data.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\TestASP.Domain\TestASP.Domain.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\TestASP.Core\TestASP.Core.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\TestASP.Common\TestASP.Common.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Extensions\" />
+    <None Remove="Models\" />
+    <None Remove="Controllers\" />
+    <None Remove="Models\Request\" />
+    <None Remove="Helpers\" />
+    <None Remove="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Models\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Models\Request\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
 </Project>

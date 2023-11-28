@@ -11,8 +11,11 @@ namespace TestASP.Domain.Repository
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseData
     {
         internal TestDbContext _dbContext;
-        internal DbSet<T> _entity;
+        internal IQueryable<T> _entity;
         internal ILogger<BaseRepository<T>> _logger;
+
+        private bool IsNoTracking;
+
         public BaseRepository(TestDbContext dbContext , ILogger<BaseRepository<T>> logger)
         {
             _dbContext = dbContext;
@@ -120,6 +123,30 @@ namespace TestASP.Domain.Repository
                 }
             }
             return default;
+        }
+
+        public BaseRepository<T> AsNoTracking()
+        {
+            IsNoTracking = true;
+            _entity = _entity.AsNoTracking();
+            return this;
+        }
+
+        public BaseRepository<T> AsTracking()
+        {
+            _entity = _entity.AsTracking();
+            IsNoTracking = false;
+            return this;
+        }
+
+        internal IQueryable<T> GetEntity()
+        {
+            if(IsNoTracking)
+            {
+                //_entity = _entity.AsTracking();
+                return _entity.AsNoTracking();
+            }
+            return _entity.AsTracking();
         }
 
 

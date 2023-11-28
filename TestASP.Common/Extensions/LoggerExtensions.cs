@@ -40,7 +40,7 @@ namespace TestASP.Common.Extensions
         {
 
 #if DEBUG
-            _logger.Log(LogLevel.Debug,
+            _logger.Log(LogLevel.Warning,
                         "{DateTime} [{Title}]: "+ format,
                         DateTime.Now.ToString("HH:mm:ss tt"),
                         Title,

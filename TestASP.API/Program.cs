@@ -6,18 +6,31 @@ using TestASP.Domain.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// add Serilog logging config
+//var logger = new LoggerConfiguration()
+//    .WriteTo.Console()
+//    .WriteTo.File("Logs/NzWalks_Log.txt", rollingInterval: RollingInterval.Minute)
+//    .MinimumLevel.Warning()
+//    .CreateLogger();
+
+//builder.Logging.ClearProviders();
+//builder.Logging.AddSerilog(logger);
+
 // Add services to the container.
 builder.Services.AddSingleton(builder.Configuration);
 
 builder.Services.RegisterAPIRepository()
                 .RegisterRepositories()
                 .RegisterServices();
-
-builder.Services.AddControllers( option =>
+builder.Services.AddAutoMapper(typeof(MappingConfig));
+builder.Services.AddControllers(option =>
 {
+    //option.ReturnHttpNotAcceptable = true;
     option.Filters.Add<ControllerExceptionFilter>();
-    option.Filters.Add<UserAuthAsyncFilter>();    
-});
+    option.Filters.Add<UserAuthAsyncFilter>();
+})
+    // to add Accept: application/xml
+    .AddXmlDataContractSerializerFormatters();
 
 // NOTE: add default versioning
 builder.Services.AddApiVersioning(cfg =>

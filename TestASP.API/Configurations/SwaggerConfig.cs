@@ -73,8 +73,8 @@ namespace TestASP.Configurations
                         .SelectMany(attr => attr.Versions);
 
                     return methodVersions.Any()                                
-                                ? methodVersions.Any(v => $"v{v}" == docName)
-                                : controllerVersions.Any(v => $"v{v}" == docName) ||
+                                ? methodVersions.Any(v => $"v{v}" == docName || $"v{v.MajorVersion}" == docName)
+                                : controllerVersions.Any(v => $"v{v}" == docName || $"v{v.MajorVersion}" == docName) ||
                             (!controllerVersions.Any() && !methodVersions.Any() && docName == "v1");
                 });
 

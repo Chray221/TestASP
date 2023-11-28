@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Debug;
 using Microsoft.Extensions.Options;
 using TestASP.Data;
+using TestASP.Data.Social;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TestASP.Domain.Contexts
@@ -14,7 +17,21 @@ namespace TestASP.Domain.Contexts
 
         //dbsets
         #region Tables
+        // TEST
         public DbSet<DataTypeTable> DataTypeTables { get; set; }
+
+        // USERS
+        public DbSet<User> User { get; set; }
+        public DbSet<ImageFile> Image { get; set; }
+
+        //SOCIALS
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<PostComment> PostComments { get; set; }
+        public DbSet<PostCommentReply> PostCommentReplies { get; set; }
+        public DbSet<PostLike> PostLikes { get; set; }
+        public DbSet<PostShare> PostShares { get; set; }
+        public DbSet<PostImage> PostImages { get; set; }
 
         #endregion
 
@@ -35,6 +52,11 @@ namespace TestASP.Domain.Contexts
             //}
         }
 
+        public static readonly LoggerFactory DbCommandDebugLoggerFactory
+          = new LoggerFactory(new[] {
+              new DebugLoggerProvider()
+          });
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //optionsBuilder.UseSqlServer(_configuration.GetConnectionString("TESTDB"),
@@ -46,6 +68,9 @@ namespace TestASP.Domain.Contexts
 #if DEBUG
             optionsBuilder.EnableDetailedErrors();
             optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder
+                .UseLoggerFactory(DbCommandDebugLoggerFactory) // to set the logger for DB query
+                .EnableSensitiveDataLogging(); // enable logging
 #endif
             base.OnConfiguring(optionsBuilder);
 

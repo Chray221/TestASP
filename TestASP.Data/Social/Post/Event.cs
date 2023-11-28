@@ -21,7 +21,7 @@ namespace TestASP.Data.Social
             DateStarted = DateTime.Now;
         }
 
-        public Event(string title, string content, string image, Guid authorId, DateTime dateStarted, DateTime? dateEnded = null) : base(title, content, image, authorId)
+        public Event(string title, string content, string image, int authorId, DateTime dateStarted, DateTime? dateEnded = null) : base(title, content, image, authorId)
         {
             DateStarted = dateStarted;
             DateEnded = dateEnded;

@@ -43,6 +43,7 @@ namespace TestASP.API.Extensions
     public class ResultBase
     {
         public int StatusCode { get; }
+        public ResultBase() { }
 
         public ResultBase(int statusCode)
         {
@@ -100,6 +101,7 @@ namespace TestASP.API.Extensions
     {
 		public string Message { get; }
 
+        public SuccessResult() { }
         public SuccessResult(string message): base(StatusCodes.Status200OK)
 		{
             Message = message;
@@ -110,6 +112,7 @@ namespace TestASP.API.Extensions
     {
         public T Error { get; }
 
+        public ErrorResult() { }
         public ErrorResult(T error, int statusCode) : base(statusCode)
         {
             Error = error;
@@ -118,6 +121,7 @@ namespace TestASP.API.Extensions
 
     public class ErrorResult : ErrorResult<string>
     {
+        public ErrorResult() { }
         public ErrorResult(string message, int statusCode) : base(message, statusCode)
         {
         }
@@ -126,6 +130,8 @@ namespace TestASP.API.Extensions
     public class DataResult<T> : SuccessResult
     {
         public T Data { get; set; }
+
+        public DataResult() { }
         public DataResult(T data, string message) : base(message)
         {
             Data = data;
@@ -134,6 +140,7 @@ namespace TestASP.API.Extensions
 
     public class ModelErrorResult : ErrorResult<ImmutableDictionary<string, string[]>>
     {
+        public ModelErrorResult() { }
         public ModelErrorResult(ModelError error) : base(error.ToDictionary().ToImmutableDictionary(), StatusCodes.Status400BadRequest)
         {
 
@@ -147,6 +154,8 @@ namespace TestASP.API.Extensions
 
     public class ModelError : Dictionary<string, List<string>>
     {
+        //public ModelError():base() { }
+
         public void Add(string field, string message)
         {
             if (ContainsKey(field))

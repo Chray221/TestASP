@@ -46,49 +46,42 @@ namespace TestASP.API.Controllers
             [FromBody] SignInUserRequestDto user,
             [FromServices] IJwtSerivceManager jwtSerivceManager)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                if (user != null)
                 {
-                    if (user != null)
+                    Data.User userFound = await _userRepository.GetAsync(user.Username);
+                    if(userFound == null)
                     {
-                        Data.User userFound = await _userRepository.GetAsync(user.Username);
-                        if(userFound == null)
-                        {
-                            //return BadRequest(MessageExtension.ShowCustomMessage("Sign In Error", "User is not registered", statusCode: HttpStatusCode.BadRequest));
-                            return MessageHelper.BadRequest("User is not registered");
-                        }
-
-                        if (SaltHasher.VerifyHash(user.Password, userFound.Password))
-                        {
-                            Models.UserDto userDto = new Models.UserDto(userFound, this.GetRootUrl());
-                            if (jwtSerivceManager.IsEnabled)
-                            {
-                                //userDto.Token = await jwtSerivceManager.CreateToken(user);
-                                userDto.Token = jwtSerivceManager.CreateToken(userDto.ToData());
-                                if (string.IsNullOrEmpty(userDto.Token))
-                                {
-                                    //return StatusCode((int)HttpStatusCode.InternalServerError, MessageExtension.ShowCustomMessage("SignIn Error", "Something went wrong", "Okay", statusCode: HttpStatusCode.InternalServerError));
-                                    return MessageHelper.InternalServerError("Something went wrong in generating token");
-                                }
-                            }
-                            return Ok(userDto);
-                        }
-
-
-                        //return BadRequest(MessageExtension.ShowCustomMessage("SignIn Error", "Username or password mismatched", "Okay", statusCode: HttpStatusCode.BadRequest));
-                        return MessageHelper.BadRequest("Username or password mismatched");
+                        //return BadRequest(MessageExtension.ShowCustomMessage("Sign In Error", "User is not registered", statusCode: HttpStatusCode.BadRequest));
+                        return MessageHelper.BadRequest("User is not registered");
                     }
-                    return NotFound();
+
+                    if (SaltHasher.VerifyHash(user.Password, userFound.Password))
+                    {
+                        Models.UserDto userDto = new Models.UserDto(userFound, this.GetRootUrl());
+                        if (jwtSerivceManager.IsEnabled)
+                        {
+                            //userDto.Token = await jwtSerivceManager.CreateToken(user);
+                            userDto.Token = jwtSerivceManager.CreateToken(userDto.ToData());
+                            if (string.IsNullOrEmpty(userDto.Token))
+                            {
+                                //return StatusCode((int)HttpStatusCode.InternalServerError, MessageExtension.ShowCustomMessage("SignIn Error", "Something went wrong", "Okay", statusCode: HttpStatusCode.InternalServerError));
+                                return MessageHelper.InternalServerError("Something went wrong in generating token");
+                            }
+                        }
+                        return Ok(userDto);
+                    }
+
+
+                    //return BadRequest(MessageExtension.ShowCustomMessage("SignIn Error", "Username or password mismatched", "Okay", statusCode: HttpStatusCode.BadRequest));
+                    return MessageHelper.BadRequest("Username or password mismatched");
                 }
-                else
-                {
-                    return BadRequest(ModelState);
-                }
+                return MessageHelper.NotFound("User not found");
             }
-            catch (Exception ex)
+            else
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
         }
 
@@ -103,7 +96,7 @@ namespace TestASP.API.Controllers
             return RegisterUser(user, jwtSerivceManager);
         }
 
-        [HttpPut("sign_up")]
+        [HttpPut("sign_up/form")]
         [Consumes("multipart/form-data")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(Models.UserDto))]
         public Task<IActionResult> SignUpForm(
@@ -117,11 +110,14 @@ namespace TestASP.API.Controllers
         {
             if (user != null)
             {
-                if (await _userRepository.IsUserNameExistAsync(user.Username))
-                {
-                    //return BadRequest(MessageExtension.ShowCustomMessage("Sign Up Error!", "Username already taken.", statusCode: HttpStatusCode.BadRequest));
-                    ModelState.AddModelError(nameof(user.Username), "Username already taken.");
-                }
+                //if (await _userRepository.IsUserNameExistAsync(user.Username))
+                //{
+                //    //return BadRequest(MessageExtension.ShowCustomMessage("Sign Up Error!", "Username already taken.", statusCode: HttpStatusCode.BadRequest));
+                //    ModelState.AddModelError(nameof(user.Username), "Username already taken.");
+                //}
+                await ModelState.AddRuleForAsync(user, u => u.Username,
+                        async (u) => await _userRepository.IsUserNameExistAsync(user.Username),
+                        "Username already taken.");
             }
             if (ModelState.IsValid)
             {
@@ -138,17 +134,18 @@ namespace TestASP.API.Controllers
                     Data.User newUser = new Data.User(user.Username, user.FirstName, user.LastName, SaltHasher.ComputeHash(user.Password), user.Email);
                     if (user.Image != null)
                     {
-                        IFormFile imageFile = user.Image;
-                        ImageFile newImage = ImageHelper.CreateUserImageFile(newUser.Id);
-                        if (imageFile != null &&
-                                await _imageFileRepository.InsertAsync(newImage))
-                        {
-                            if (await ImageHelper.SaveUserImageAsync(imageFile, newImage.Url, newImage.ThumbUrl))
-                            {
-                                newUser.ImageFileId = newImage.Id;
-                                newUser.ImageFile = newImage;
-                            }
-                        }
+                        //IFormFile imageFile = user.Image;
+                        //ImageFile newImage = ImageHelper.CreateUserImageFile(newUser.Id);
+                        //if (imageFile != null &&
+                        //        await _imageFileRepository.InsertAsync(newImage))
+                        //{
+                        //    if (await ImageHelper.SaveUserImageAsync(imageFile, newImage.Url, newImage.ThumbUrl))
+                        //    {
+                        //        newUser.ImageFileId = newImage.Id;
+                        //        newUser.ImageFile = newImage;
+                        //    }
+                        //}
+                        newUser.ImageFile = ImageHelper.CreateUserImageFile(newUser.Id);
                     }
 
                     if (await _userRepository.InsertAsync(newUser))
@@ -168,11 +165,11 @@ namespace TestASP.API.Controllers
                     }
                     else
                     {
-                        return StatusCode((int)HttpStatusCode.InternalServerError);
+                        return MessageHelper.InternalServerError("Something went wrong in saving new user");
                     }
                 }
 
-                return BadRequest();
+                return BadRequest("User data not found.");
             }
             else
             {

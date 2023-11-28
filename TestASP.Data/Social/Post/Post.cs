@@ -11,7 +11,7 @@ namespace TestASP.Data.Social
 	{
 		public string Title { get; set; }
 		public string Content { get; set; }
-		public Guid AuthorId { get; set; }
+		public int AuthorId { get; set; }
         public string Image { get; set; }
 
         public int CommentsCount { get; set; }
@@ -33,14 +33,14 @@ namespace TestASP.Data.Social
             Image = "";
             Title = "";
             Content = "";
-            AuthorId = Guid.Empty;
+            //AuthorId = Guid.Empty;
             LikesCount = 0;
             SharesCount = 0;
             CommentsCount = 0;
             Author = null;
         }
 
-        public Post(string title, string content, string image, Guid authorId) : base()
+        public Post(string title, string content, string image, int authorId) : base()
         {
             Title = title;
             Content = content;
@@ -85,7 +85,8 @@ namespace TestASP.Data.Social
             return new Post(title: "How To Manage Your Time & Get More Done",
             content: "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
             image: RandomizerHelper.GetRandomImage(),
-            Guid.NewGuid())
+            //Guid.NewGuid())
+            RandomizerHelper.GetRandomInt())
             {
                 Author = authorMock,
                 LikesCount = RandomizerHelper.GetRandomInt(),

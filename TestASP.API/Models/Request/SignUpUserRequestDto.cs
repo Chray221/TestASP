@@ -23,7 +23,7 @@ namespace TestASP.API.Models
         public IFormFile? Image { get; set; }
         [EmailAddress]
         public string Email { get; set; }
-        [EqualToValidation(nameof(Password))]
+        [EqualToValidation(nameof(Password), ErrorMessage = "Password mismatched")]
         public string ConfirmPassword { get; set; }
 
         public SignUpUserRequestDto()

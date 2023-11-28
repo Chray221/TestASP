@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TestASP.API.Extensions;
@@ -19,18 +20,21 @@ namespace TestASP.API.Controllers
     {
         private IUserRepository _userRepository;
         private IImageFileRepository _imageFileRepository;
+        private IMapper _mapper;
 
         private TestDbContext _dbContext;
         public AuthenticationController(
             TestDbContext dbContext,
             IWebHostEnvironment environment,
             IUserRepository userRepository,
-            IImageFileRepository imageFileRepository)
+            IImageFileRepository imageFileRepository,
+            IMapper mapper)
             :base(environment)
         {
             _dbContext = dbContext;
             _userRepository = userRepository;
             _imageFileRepository = imageFileRepository;
+            _mapper = mapper;
         }
 
         // POST api/authentication/sign_in
@@ -57,9 +61,10 @@ namespace TestASP.API.Controllers
                         return MessageHelper.BadRequest("User is not registered");
                     }
 
-                    if (SaltHasher.VerifyHash(user.Password, userFound.Password))
+                    //if (SaltHasher.VerifyHash(user.Password, userFound.Password))
+                    if(userFound.VerifyPassword(user.Password, userFound.Password))
                     {
-                        Models.UserDto userDto = new Models.UserDto(userFound, this.GetRootUrl());
+                        UserDto userDto = new UserDto(userFound, this.GetRootUrl());
                         if (jwtSerivceManager.IsEnabled)
                         {
                             //userDto.Token = await jwtSerivceManager.CreateToken(user);
@@ -110,13 +115,8 @@ namespace TestASP.API.Controllers
         {
             if (user != null)
             {
-                //if (await _userRepository.IsUserNameExistAsync(user.Username))
-                //{
-                //    //return BadRequest(MessageExtension.ShowCustomMessage("Sign Up Error!", "Username already taken.", statusCode: HttpStatusCode.BadRequest));
-                //    ModelState.AddModelError(nameof(user.Username), "Username already taken.");
-                //}
                 await ModelState.AddRuleForAsync(user, u => u.Username,
-                        async (u) => await _userRepository.IsUserNameExistAsync(user.Username),
+                        async (u) => !await _userRepository.IsUserNameExistAsync(user.Username),
                         "Username already taken.");
             }
             if (ModelState.IsValid)
@@ -131,7 +131,10 @@ namespace TestASP.API.Controllers
                     //    }
                     //}
 
-                    Data.User newUser = new Data.User(user.Username, user.FirstName, user.LastName, SaltHasher.ComputeHash(user.Password), user.Email);
+                    //Data.User newUser = new Data.User(user.Username, user.FirstName, user.LastName, SaltHasher.ComputeHash(user.Password), user.Email);
+                    User newUser = _mapper.Map<User>(user);
+                    //newUser.Password = SaltHasher.ComputeHash(user.Password);
+                    newUser.Password = newUser.HashPassword(user.Password);
                     if (user.Image != null)
                     {
                         //IFormFile imageFile = user.Image;

@@ -10,7 +10,13 @@ namespace TestASP.API.Configurations
 		public MappingConfig()
 		{
 			CreateMap<User, UserDto>().ReverseMap();
-		}
+            //CreateMap<User, SignInUserRequestDto>().ReverseMap();
+            //CreateMap<User, SignUpUserRequestDto>().ReverseMap();
+            CreateMap<SignInUserRequestDto, User>();
+            CreateMap<SignUpUserRequestDto, User>();
+
+            CreateMap<DataTypeTable, DataTypeDto>().ReverseMap();
+        }
 	}
 }
 

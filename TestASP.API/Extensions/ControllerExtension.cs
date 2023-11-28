@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TestASP.API.Configurations.Attributes;
 using TestASP.Data;
 
 namespace TestASP.API.Extensions;
@@ -27,7 +28,7 @@ public static class ControllerExtension
     {
         if(!condition(field.Compile().Invoke(data)))
         {
-            modelState.AddModelError("Sample", messageError);
+            modelState.AddModelError(field.GetProperty(), messageError);
         }
         return modelState;
     }
@@ -41,7 +42,7 @@ public static class ControllerExtension
     {
         if (!await condition(field.Compile().Invoke(data)))
         {
-            modelState.AddModelError("Sample", messageError);
+            modelState.AddModelError(field.GetProperty(), messageError);
         }
         return modelState;
     }

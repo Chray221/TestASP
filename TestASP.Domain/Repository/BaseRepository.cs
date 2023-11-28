@@ -32,7 +32,7 @@ namespace TestASP.Domain.Repository
                 throw new NullReferenceException($"Parammeter \"{typeof(T).Name}Id\" is empty in DeleteAsync");
             }
 
-            T deletedUser = await _dbContext.FindAsync<T>(id);
+            T? deletedUser = await _dbContext.FindAsync<T>(id);
             if (deletedUser != null)
             {
                 deletedUser.IsDeleted = true;
@@ -43,7 +43,7 @@ namespace TestASP.Domain.Repository
             
         }
 
-        virtual public async Task<T> GetAsync(int id)
+        virtual public async Task<T?> GetAsync(int id)
         {
             //if (id == Guid.Empty)
             if (id == default)

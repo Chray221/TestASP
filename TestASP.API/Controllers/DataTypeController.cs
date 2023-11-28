@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
+using TestASP.API.Extensions;
+using TestASP.API.Models;
 using TestASP.Data;
 using TestASP.Domain.Contexts;
 
@@ -14,20 +17,24 @@ namespace TestASP.API.Controllers
     {
         private readonly TestDbContext _context;
 
-        public DataTypeController(TestDbContext context)
+        public IMapper _mapper { get; }
+
+        public DataTypeController(TestDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/DataType
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DataTypeTable>>> GetDataTypeTables()
+        public async Task<IActionResult> GetDataTypeTables()
         {
           if (_context.DataTypeTables == null)
           {
               return NotFound();
           }
-            return await _context.DataTypeTables.ToListAsync();
+            var list = await _context.DataTypeTables.ToListAsync();
+            return MessageHelper.Ok(_mapper.Map<List<DataTypeDto>>(list), "Success");
         }
 
         // GET: api/DataType/5

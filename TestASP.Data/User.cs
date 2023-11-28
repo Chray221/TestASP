@@ -30,10 +30,6 @@ namespace TestASP.Data
 
         public string Email { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public bool IsDeleted { get; set; }
 
         [ForeignKey("ImageFileId")]
         public virtual ImageFile? ImageFile { get; set; }

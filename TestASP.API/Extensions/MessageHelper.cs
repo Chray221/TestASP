@@ -138,6 +138,16 @@ namespace TestASP.API.Extensions
         }
     }
 
+    public class CustomMessageResult : ResultBase
+    {
+        public CustomMessage CustomMessage { get; set; }
+
+        public CustomMessageResult(CustomMessage customMessage)
+        {
+            CustomMessage = customMessage;
+        }
+    }
+
     public class ModelErrorResult : ErrorResult<ImmutableDictionary<string, string[]>>
     {
         public ModelErrorResult() { }
@@ -195,6 +205,24 @@ namespace TestASP.API.Extensions
                        .ToDictionary(err => err.Key, err => err.Value);
         }
 
+    }
+
+    public class CustomMessage
+    {
+        public CustomMessage(string title, string message, string okayButton, string cancelButton, int statusCode)
+        {
+            Title = title;
+            Message = message;
+            OkayButton = okayButton;
+            CancelButton = cancelButton;
+            StatusCode = statusCode;
+        }
+
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string OkayButton { get; set; }
+        public string CancelButton { get; set; }
+        public int StatusCode { get; set; }
     }
 }
 

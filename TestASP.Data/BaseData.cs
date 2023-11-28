@@ -8,10 +8,16 @@ public abstract class BaseData
     [Key]
     public int Id { get; set; }
     public string CreatedBy { get; set; } = string.Empty;
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime CreatedAt { get; set; }
     public string? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
+    public BaseData()
+    {
+        CreatedAt = DateTime.Now;
+        UpdatedAt = DateTime.Now;
+    }
 }
 
 

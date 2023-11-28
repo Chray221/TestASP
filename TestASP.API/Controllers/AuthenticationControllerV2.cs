@@ -108,16 +108,17 @@ namespace TestASP.API.Controllers
             [FromForm] SignUpUserRequestDto user,
             [FromServices] IJwtSerivceManager jwtSerivceManager)
         {
-            return RegisterUser(user, jwtSerivceManager);
+            return RegisterUser(user, jwtSerivceManager, true);
         }
 
-        private async Task<IActionResult> RegisterUser( SignUpUserRequestDto user, IJwtSerivceManager jwtSerivceManager)
+        private async Task<IActionResult> RegisterUser( SignUpUserRequestDto user, IJwtSerivceManager jwtSerivceManager, bool isFromForm = false)
         {
             if (user != null)
             {
                 await ModelState.AddRuleForAsync(user, u => u.Username,
                         async (u) => !await _userRepository.IsUserNameExistAsync(user.Username),
                         "Username already taken.");
+                ModelState.AddRuleFor(user, u => u.Image, img => isFromForm ? img != null : true, "Image is required");
             }
             if (ModelState.IsValid)
             {

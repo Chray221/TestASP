@@ -21,7 +21,8 @@ builder.Services.AddSingleton(builder.Configuration);
 
 builder.Services.RegisterAPIRepository()
                 .RegisterRepositories()
-                .RegisterServices();
+                .RegisterServices()
+                .RegisterAuthentication(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddControllers(option =>
 {

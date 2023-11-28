@@ -31,7 +31,7 @@ namespace TestASP.Data
         public string Email { get; set; }
 
 
-        [ForeignKey("ImageFileId")]
+        [ForeignKey(nameof(ImageFileId))]
         public virtual ImageFile? ImageFile { get; set; }
 
         [NotMapped]

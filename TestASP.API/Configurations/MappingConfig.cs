@@ -10,6 +10,7 @@ namespace TestASP.API.Configurations
 		public MappingConfig()
 		{
 			CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, PublicProfile>().ReverseMap();
             //CreateMap<User, SignInUserRequestDto>().ReverseMap();
             //CreateMap<User, SignUpUserRequestDto>().ReverseMap();
             CreateMap<SignInUserRequestDto, User>();

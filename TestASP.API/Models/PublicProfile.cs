@@ -6,13 +6,15 @@ namespace TestASP.API.Models
 {
     public class PublicProfile : BaseDto
     {
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Image { get; set; } = string.Empty;
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Image { get; set; }
 
         public PublicProfile() { }
-        public PublicProfile(Data.User user, string rootUrl)
+        public PublicProfile(User user, string? rootUrl)
         {
+            rootUrl = Setting.Current.BaseUserImagePath;
+            //Id = Guid.Parse(user.Id);
             Id = user.Id;
             FirstName = user.FirstName;
             LastName = user.LastName;
@@ -22,9 +24,11 @@ namespace TestASP.API.Models
             {
                 Image = "Image/Logo.png";
             }
-            if (!string.IsNullOrEmpty(Image) && !Image.Contains(rootUrl))
+            if (!string.IsNullOrEmpty(Image) && !Image.Contains(rootUrl) &&
+                !Image.StartsWith("http") && !Image.StartsWith("https"))
             {
-                Image = Path.Combine(rootUrl, Image);
+                // Image = Path.Combine(rootUrl, Image);
+                Image = Setting.Current.GetUserFileUrl(Image);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using TestASP.API.Models;
+using TestASP.Model;
 
 namespace TestASP.API.Controllers
 {

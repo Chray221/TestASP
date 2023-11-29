@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TestASP.API.Extensions;
 using TestASP.API.Helpers;
-using TestASP.API.Models;
+using TestASP.Model;
 using TestASP.Core.IRepository;
 using TestASP.Data;
 

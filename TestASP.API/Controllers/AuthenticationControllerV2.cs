@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TestASP.API.Extensions;
 using TestASP.API.Helpers;
-using TestASP.API.Models;
+using TestASP.Model;
 using TestASP.Common.Helpers;
 using TestASP.Core.IRepository;
 using TestASP.Core.IService;
@@ -44,7 +44,7 @@ namespace TestASP.API.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost("sign_in")]
-        [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(Models.UserDto))]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(UserDto))]
         [SwaggerOperation(Summary = "Sign in user using username and password json")]
         public async Task<IActionResult> SignIn(
             [FromBody] SignInUserRequestDto user,
@@ -93,7 +93,7 @@ namespace TestASP.API.Controllers
         //POST api/authentication/sign_up
         [HttpPut("sign_up")]
         [Consumes("application/json")]
-        [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(Models.UserDto))]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(UserDto))]
         public Task<IActionResult> SignUp(
             [FromBody]SignUpUserRequestDto user,
             [FromServices] IJwtSerivceManager jwtSerivceManager)
@@ -103,7 +103,7 @@ namespace TestASP.API.Controllers
 
         [HttpPut("sign_up/form")]
         [Consumes("multipart/form-data")]
-        [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(Models.UserDto))]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(UserDto))]
         public Task<IActionResult> SignUpForm(
             [FromForm] SignUpUserRequestDto user,
             [FromServices] IJwtSerivceManager jwtSerivceManager)
@@ -154,7 +154,7 @@ namespace TestASP.API.Controllers
 
                     if (await _userRepository.InsertAsync(newUser))
                     {
-                        Models.UserDto userDto = new Models.UserDto(newUser, this.GetRootUrl());
+                        UserDto userDto = new UserDto(newUser, this.GetRootUrl());
                         if (jwtSerivceManager.IsEnabled)
                         {
                             //userDto.Token = await jwtSerivceManager.CreateToken(user);

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using TestASP.API.Configurations;
 using TestASP.API.Configurations.Filters;
+using TestASP.Model;
 using TestASP.Configurations;
 using TestASP.Domain.Configurations;
+using TestASP.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSingleton(builder.Configuration);
+
+Setting.Current.Init(builder.Environment, builder.Configuration);
 
 builder.Services.RegisterAPIRepository()
                 .RegisterRepositories()

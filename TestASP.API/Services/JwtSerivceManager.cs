@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
-using TestASP.API.Models;
+using TestASP.Model;
 using TestASP.Core.IService;
 using TestASP.Data;
 
@@ -32,7 +32,7 @@ namespace TestASP.API.Services
         }
 
         public bool IsEnabled => _configuration.GetValue<bool>("JWT:IsEnabled");
-        public string CreateToken(Models.UserDto user)
+        public string CreateToken(UserDto user)
         {
             if(user != null)
             {
@@ -47,10 +47,10 @@ namespace TestASP.API.Services
 
         public string CreateToken(Data.User user)
         {
-            return CreateToken(new Models.UserDto(user));
+            return CreateToken(new UserDto(user));
         }
 
-        public ClaimsPrincipal CreateClaimsPrincipal(Models.UserDto user)
+        public ClaimsPrincipal CreateClaimsPrincipal(UserDto user)
         {
             var claimsIdentity = new ClaimsIdentity(
                 CreateClaims(user.Username),
@@ -60,7 +60,7 @@ namespace TestASP.API.Services
 
         public ClaimsPrincipal CreateClaimsPrincipal(Data.User user)
         {
-            return CreateClaimsPrincipal(new Models.UserDto(user));
+            return CreateClaimsPrincipal(new UserDto(user));
         }
 
         #region signin

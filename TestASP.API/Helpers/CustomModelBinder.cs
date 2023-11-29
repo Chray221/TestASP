@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
-using TestASP.API.Models;
+using TestASP.Model;
 
 namespace TestASP.API.Helpers
 {

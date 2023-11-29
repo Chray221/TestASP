@@ -16,9 +16,10 @@
 //using TestAPI.ApiControllers;
 //using TestAPI.Data;
 using Microsoft.AspNetCore.Components.Forms;
-using TestASP.API.Models;
+using TestASP.Model;
 using TestASP.Data;
 using TestASP.Common.Extensions;
+using TestASP.API.Models;
 
 namespace TestASP.API.Services
 {

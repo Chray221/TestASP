@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using TestASP.API.Extensions;
-using TestASP.API.Models;
+using TestASP.Model;
 using TestASP.Data;
 using TestASP.Domain.Contexts;
 

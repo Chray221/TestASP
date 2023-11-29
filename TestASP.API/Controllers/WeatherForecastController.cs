@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using TestASP.API.Models;
+using TestASP.Model;
 using TestASP.Data;
 using TestASP.Data.Enums;
 using TestASP.Domain.Contexts;

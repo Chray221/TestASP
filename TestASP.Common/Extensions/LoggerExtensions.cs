@@ -22,7 +22,7 @@ namespace TestASP.Common.Extensions
         public static void LogMessage(this ILogger _logger, string msg, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
 #if DEBUG
-            _logger.Log(LogLevel.Debug,
+            _logger.Log(LogLevel.Information,
                         "{DateTime} [{Title}]-[{MemberName}]: {LogMessage}",
                         DateTime.Now.ToString("HH:mm:ss tt"),
                         Title,

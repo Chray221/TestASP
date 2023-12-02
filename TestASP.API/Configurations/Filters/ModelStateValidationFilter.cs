@@ -4,6 +4,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TestASP.API.Extensions;
 using TestASP.Common.Extensions;
+using TestASP.API.Helpers;
 
 namespace TestASP.API.Configurations.Filters
 {
@@ -18,10 +19,20 @@ namespace TestASP.API.Configurations.Filters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            _logger.LogMessage($"[{context.Controller.GetType().Name}]: API: {context.HttpContext.Request.Path} : ModelState IsValid: {context.ModelState.IsValid}");
-            if (context.ModelState.IsValid == false)
+            _logger.LogMessage($"[{context.Controller.GetType().Name}]: API Ended: {context.HttpContext.Request.Path} : ModelState IsValid: {context.ModelState.IsValid}");
+            if (!context.ModelState.IsValid)
             {
-                context.Result = new ObjectResult(context.ModelState)
+                //context.Result = new ObjectResult(context.ModelState)
+                //{
+                //    StatusCode = StatusCodes.Status400BadRequest
+                //};
+                //context.Result = MessageHelper.BadRequest();
+
+                context.Result = new ObjectResult(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Errors = context.ModelState
+                })
                 {
                     StatusCode = StatusCodes.Status400BadRequest
                 };
@@ -30,7 +41,7 @@ namespace TestASP.API.Configurations.Filters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            _logger.LogMessage($"[{context.Controller.GetType().Name}]: API: {context.HttpContext.Request.Path} : ModelState IsValid: {context.ModelState.IsValid}");
+            _logger.LogMessage($"[{context.Controller.GetType().Name}]: API Starting: {context.HttpContext.Request.Path} : ModelState IsValid: {context.ModelState.IsValid}");
             //if (context.ModelState.IsValid == false)
             //{
             //    context.Result = new ObjectResult(context.ModelState)

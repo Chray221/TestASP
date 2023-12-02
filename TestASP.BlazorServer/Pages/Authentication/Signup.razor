@@ -1,0 +1,81 @@
+﻿@page "/authentication/signup"
+
+@using TestASP.BlazorServer.Models;
+
+@inject IAuthService _authService
+@inject NavigationManager _navigationManager
+@inject ToastService _toastService
+
+<ValidateForm Model="@SignUp" OnValidSubmit="OnSubmitClick" ValidateAllProperties="true">
+    <div class="container-fluid row mx-auto col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+        <BootstrapBlazorDataAnnotationsValidator />
+        @*<BootstrapInput type="file" TValue="IBrowserFile" Value="@SignUp.Image" />*@
+        <label class="co-4 mx-auto" for="image">
+            <img src="@imgUrl" class="rounded rounded-circle bg-gray align-self-center" style="height: 85px; width: 85px; aspect-ratio: 1;" alt="" />
+            <InputFile id="image" class="invisible position-absolute" OnChange="PickImage" accept="image/*" hidden />
+        </label>
+        <div class="px-0 mb-2">
+            <BootstrapInput @bind-Value="@SignUp.Username" />
+        </div>
+        <div class="px-0 mb-2">
+            <BootstrapInput @bind-Value="@SignUp.FirstName" />
+        </div>
+        <div class="px-0 mb-2">
+            <BootstrapInput @bind-Value="@SignUp.MiddleName" />
+        </div>
+        <div class="px-0 mb-2">
+            <BootstrapInput @bind-Value="@SignUp.LastName" />
+        </div>
+        <div class="px-0 mb-2">
+            <BootstrapInput type="email" @bind-Value="@SignUp.Email" />
+        </div>
+        <div class="px-0 mb-2 position-relative">
+            <BootstrapInput @bind-Value="@SignUp.Password"
+                            ShowLabel="@IsPasswordShow"
+                            style="@(IsPasswordShow ? "" : "visibility: hidden; position: absolute;")" />
+            <BootstrapPassword @bind-Value="@SignUp.Password"
+                               ShowLabel="@(!IsPasswordShow)"
+                               style="@(IsPasswordShow ? "visibility: hidden; position: absolute;" : "")" />
+            <BootstrapInputGroupIcon Icon="@(IsPasswordShow ? "fas fa-eye-slash" : "fas fa-eye")" @onclick="OnShowHidePassword"
+                                     class="btn"
+                                     style="position: absolute; right: 0px; bottom: 0px;" />
+        </div>
+        <div class="px-0 mb-2 position-relative">
+            <BootstrapInput @bind-Value="@SignUp.ConfirmPassword"
+                            ShowLabel="@IsPasswordShow"
+                            style="@(IsPasswordShow ? "" : "visibility: hidden; position: absolute;")" />
+            <BootstrapPassword @bind-Value="@SignUp.ConfirmPassword"
+                               ShowLabel="@(!IsPasswordShow)"
+                               style="@(IsPasswordShow ? "visibility: hidden; position: absolute;" : "")" />
+            <BootstrapInputGroupIcon Icon="@(IsPasswordShow ? "fas fa-eye-slash" : "fas fa-eye")" @onclick="OnShowHidePassword"
+                                     class="btn"
+                                     style="position: absolute; right: 0px; bottom: 0px;" />
+        </div>
+        <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit" IsAsync="true">Register</Button>
+    </div>
+</ValidateForm>
+
+@code {
+
+    public UserSignupRequest SignUp { get; set; } = new UserSignupRequest();
+
+    string imgUrl { get; set; } = "";
+
+    async void PickImage(InputFileChangeEventArgs e)
+    {
+        SignUp.Image = e.File;
+        var buffers = new byte[SignUp.Image.Size];
+        await SignUp.Image.OpenReadStream().ReadAsync(buffers);
+        string imageType = SignUp.Image.ContentType;
+        imgUrl = $"data:{imageType};base64,{Convert.ToBase64String(buffers)}";
+        StateHasChanged();
+    }
+    public bool IsPasswordShow { get; set; }
+
+    public void OnShowHidePassword() => IsPasswordShow = !IsPasswordShow;
+
+    public async Task OnSubmitClick(EditContext context)
+    {
+    }
+}
+

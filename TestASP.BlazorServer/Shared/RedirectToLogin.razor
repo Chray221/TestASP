@@ -1,0 +1,27 @@
+﻿@*@inject NavigationManager NavigationManager;*@
+
+<h1>Unauthorized Access</h1>
+
+
+@code   {
+    [Parameter] public string RedirectTo { get; set; } = "/login";
+
+    [Inject] NavigationManager NavigationManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(50);
+        NavigationManager.NavigateTo(RedirectTo, true);
+        await base.OnInitializedAsync();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        //if (firstRender)
+        //{
+        //    NavigationManager.NavigateTo("/login", true);
+        //}
+    }
+
+}

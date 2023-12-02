@@ -1,0 +1,72 @@
+﻿@page "/authentication/login"
+
+@using TestASP.Model;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Web;
+
+@attribute [AutoValidateAntiforgeryToken]
+
+@inject IAuthService _authService
+@inject NavigationManager _navigationManager
+@inject ToastService _toastService
+
+<ValidateForm Model="@SignIn" OnValidSubmit="OnSubmitClick" ValidateAllProperties="true">
+    <div class="container-fluid row mx-auto col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+        <BootstrapBlazorDataAnnotationsValidator />
+        <div class="px-0 mb-2">
+            <BootstrapInput class="mb-2" ShowLabel="true" DisplayText="Username" @bind-Value="@SignIn.Username" />
+        </div>
+        <div class="px-0 mb-2 position-relative">
+            <BootstrapInput @bind-Value="@SignIn.Password"
+                            ShowLabel="@IsPasswordShow"
+                            style="@(IsPasswordShow ? "" : "visibility: hidden; position: absolute;")" />
+            <BootstrapPassword @bind-Value="@SignIn.Password"
+                               ShowLabel="@(!IsPasswordShow)"
+                               style="@(IsPasswordShow ? "visibility: hidden; position: absolute;" : "")" />
+            <BootstrapInputGroupIcon Icon="@(IsPasswordShow ? "fas fa-eye-slash" : "fas fa-eye")" @onclick="OnShowHidePassword"
+                                     class="btn"
+                                     style="position: absolute; right: 0px; bottom: 0px;" />
+        </div>
+        <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit" IsAsync="true">Login</Button>
+    </div>
+</ValidateForm>
+
+@code {
+
+    public SignInUserRequestDto SignIn { get; set; } = new SignInUserRequestDto();
+    private bool IsPasswordShow { get; set; }
+
+    public void OnShowHidePassword()
+    {
+        IsPasswordShow = !IsPasswordShow;
+    }
+
+    public async Task OnSubmitClick(EditContext context)
+    {
+        var result = await _authService.LoginAsync(SignIn);
+        if (result != null)
+        {
+            if (result.IsSuccess)
+            {
+                await _toastService.Success("Login Success!", result.Message);
+                _navigationManager.NavigateTo($"/authentication/loginSession?token={HttpUtility.UrlEncode(result.Data.Token)}", true, true);
+            }
+            else if (result.StatusCode == StatusCodes.Status400BadRequest &&
+                     result.Errors != null && result.Errors.Any())
+            {
+                ValidationMessageStore messageStore = new ValidationMessageStore(context);
+                foreach (var fieldError in result.Errors)
+                {
+                    var field = context.Field(fieldError.Key);
+                    messageStore.Add(field, fieldError.Value);
+                }
+                context.NotifyValidationStateChanged();
+            }
+            else
+            {
+                await _toastService.Error("Login Error!", result.Error);
+            }
+        }
+    }
+}
+

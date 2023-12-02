@@ -33,6 +33,7 @@ builder.Services.AddControllers(option =>
 {
     //option.ReturnHttpNotAcceptable = true;
     option.Filters.Add<ControllerExceptionFilter>();
+    option.Filters.Add<ModelStateValidationFilter>();
     option.Filters.Add<UserAuthAsyncFilter>();
 })
     // to add Accept: application/xml
@@ -53,6 +54,8 @@ builder.Services.AddDatabaseConfig();
 builder.Services.AddIdentityService();
 
 var app = builder.Build();
+
+app.UseTestMiddleware();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

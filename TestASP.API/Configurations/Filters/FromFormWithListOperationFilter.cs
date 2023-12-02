@@ -54,8 +54,8 @@ namespace TestASP.Configurations.Filters
             if (parameters.Count == @params.Count)
                 return;
 
-            if (context.ApiDescription.RelativePath == "FromForm/List" /*|| context.ApiDescription.RelativePath == "FromForm/List/Item"*/)
-            {
+            //if (context.ApiDescription.RelativePath == "FromForm/List" /*|| context.ApiDescription.RelativePath == "FromForm/List/Item"*/)
+            //{
                 if (@params.FirstOrDefault(p => p is ControllerParameterDescriptor paramDesc &&
                 paramDesc.ParameterInfo.CustomAttributes.Any(pAtt => pAtt.AttributeType == typeof(FromFormAttribute))) is ControllerParameterDescriptor paramDesc)
                 {
@@ -69,7 +69,7 @@ namespace TestASP.Configurations.Filters
                     operation.RequestBody.Content.Clear();
                     operation.RequestBody.Content.Add("multipart/form-data", paramFormData);
                 }
-            }
+            //}
         }
 
         private OpenApiSchema GetParamApiSchema(ControllerParameterDescriptor paramDesc)

@@ -1,48 +1,13 @@
 ﻿using System;
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 
-namespace TestASP.API.Extensions
+namespace TestASP.Model
 {
-    public static class MessageHelper
-    {
-        public static IActionResult Ok(string message)
-        {
-            return new OkObjectResult(ResultBase.Success(message));
-        }
-
-        public static IActionResult Ok<T>(T data, string message)
-        {
-            return new OkObjectResult(ResultBase.Success(data, message));
-        }
-
-        public static IActionResult BadRequest(string message)
-        {
-            return (ObjectResult)ResultBase.Error(message, StatusCodes.Status400BadRequest);
-        }
-
-        public static IActionResult BadRequest(ModelError error)
-        {
-            return (ObjectResult)ResultBase.Error(error);
-        }
-
-        public static IActionResult NotFound(string message)
-        {
-            return (ObjectResult)ResultBase.Error(message,StatusCodes.Status404NotFound);
-        }
-
-        public static IActionResult InternalServerError(string message)
-        {
-            return new ObjectResult(ResultBase.Error(message, StatusCodes.Status500InternalServerError))
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
-        }
-    }
-
     public class ResultBase
     {
-        public int StatusCode { get; }
+        public int StatusCode { get; set; }
         public ResultBase() { }
 
         public ResultBase(int statusCode)
@@ -62,20 +27,20 @@ namespace TestASP.API.Extensions
         public static ResultBase Error(ModelError error) =>
             new ModelErrorResult(error);
 
-        public static implicit operator ObjectResult(ResultBase err)
-        {
-            return new ObjectResult(err) { StatusCode = err.StatusCode };
-        }
+        //public static implicit operator ObjectResult(ResultBase err)
+        //{
+        //    return new ObjectResult(err) { StatusCode = err.StatusCode };
+        //}
 
-        public static explicit operator ResultBase(ObjectResult objectResult)
-        {
-            if(objectResult.Value is ErrorResult err)
-            {
-                return err;
-            }
+        //public static explicit operator ResultBase(ObjectResult objectResult)
+        //{
+        //    if (objectResult.Value is ErrorResult err)
+        //    {
+        //        return err;
+        //    }
 
-            return new ErrorResult("", objectResult.StatusCode ?? StatusCodes.Status400BadRequest);
-        }
+        //    return new ErrorResult("", objectResult.StatusCode ?? StatusCodes.Status400BadRequest);
+        //}
 
         //public static implicit operator IActionResult(ResultBase err)
         //{
@@ -97,16 +62,16 @@ namespace TestASP.API.Extensions
         //}
     }
 
-	public class SuccessResult : ResultBase
+    public class SuccessResult : ResultBase
     {
-		public string Message { get; }
+        public string Message { get; } = string.Empty;
 
         public SuccessResult() { }
-        public SuccessResult(string message): base(StatusCodes.Status200OK)
-		{
+        public SuccessResult(string message) : base(StatusCodes.Status200OK)
+        {
             Message = message;
         }
-	}
+    }
 
     public class ErrorResult<T> : ResultBase
     {
@@ -148,17 +113,19 @@ namespace TestASP.API.Extensions
         }
     }
 
-    public class ModelErrorResult : ErrorResult<ImmutableDictionary<string, string[]>>
+    public class ModelErrorResult : ResultBase
     {
-        public ModelErrorResult() { }
-        public ModelErrorResult(ModelError error) : base(error.ToDictionary().ToImmutableDictionary(), StatusCodes.Status400BadRequest)
-        {
+        public ImmutableDictionary<string, string[]> Errors { get; }
 
+        public ModelErrorResult() { }
+        public ModelErrorResult(ModelError error) : base(StatusCodes.Status400BadRequest)
+        {
+            Errors = error.ToDictionary().ToImmutableDictionary();
         }
 
-        public ModelErrorResult(Dictionary<string, string[]> error) : base(error.ToImmutableDictionary(), StatusCodes.Status400BadRequest)
+        public ModelErrorResult(Dictionary<string, string[]> error) : base(StatusCodes.Status400BadRequest)
         {
-
+            Errors = error.ToImmutableDictionary();
         }
     }
 
@@ -205,24 +172,6 @@ namespace TestASP.API.Extensions
                        .ToDictionary(err => err.Key, err => err.Value);
         }
 
-    }
-
-    public class CustomMessage
-    {
-        public CustomMessage(string title, string message, string okayButton, string cancelButton, int statusCode)
-        {
-            Title = title;
-            Message = message;
-            OkayButton = okayButton;
-            CancelButton = cancelButton;
-            StatusCode = statusCode;
-        }
-
-        public string Title { get; set; }
-        public string Message { get; set; }
-        public string OkayButton { get; set; }
-        public string CancelButton { get; set; }
-        public int StatusCode { get; set; }
     }
 }
 

@@ -75,7 +75,7 @@ namespace TestASP.API.Controllers
                                 return MessageHelper.InternalServerError("Something went wrong in generating token");
                             }
                         }
-                        return Ok(userDto);
+                        return MessageHelper.Ok(userDto,"Successfuly login!.");
                     }
 
 
@@ -101,6 +101,7 @@ namespace TestASP.API.Controllers
             return RegisterUser(user, jwtSerivceManager);
         }
 
+        [HttpPut("sign_up")]
         [HttpPut("sign_up/form")]
         [Consumes("multipart/form-data")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(UserDto))]

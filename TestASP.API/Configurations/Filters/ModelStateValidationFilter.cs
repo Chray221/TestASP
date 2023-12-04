@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using TestASP.API.Extensions;
 using TestASP.Common.Extensions;
 using TestASP.API.Helpers;
+using TestASP.Model;
 
 namespace TestASP.API.Configurations.Filters
 {
@@ -22,20 +23,32 @@ namespace TestASP.API.Configurations.Filters
             _logger.LogMessage($"[{context.Controller.GetType().Name}]: API Ended: {context.HttpContext.Request.Path} : ModelState IsValid: {context.ModelState.IsValid}");
             if (!context.ModelState.IsValid)
             {
-                //context.Result = new ObjectResult(context.ModelState)
-                //{
-                //    StatusCode = StatusCodes.Status400BadRequest
-                //};
-                //context.Result = MessageHelper.BadRequest();
-
-                context.Result = new ObjectResult(new
+                context.Result = new BadRequestObjectResult(MessageHelper.BadRequest(context.ModelState));
+            }
+            else
+            {
+                if(context.Result is OkObjectResult okResult)
                 {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                    Errors = context.ModelState
-                })
+                    if(okResult.Value is string valueStr)
+                    {
+                        context.Result = MessageHelper.Ok(valueStr);
+                    }
+                    else
+                    {
+                        context.Result = MessageHelper.Ok(okResult.Value, "Success");
+                    }
+                }
+                if(context.Result is ObjectResult objectResult && objectResult.Value is not ResultBase)
                 {
-                    StatusCode = StatusCodes.Status400BadRequest
-                };
+                    if (objectResult.Value is string valueStr)
+                    {
+                        context.Result = MessageHelper.Error(valueStr, objectResult.StatusCode ?? StatusCodes.Status500InternalServerError);
+                    }
+                    else if (objectResult.StatusCode == StatusCodes.Status200OK)
+                    {
+                        context.Result = MessageHelper.Ok(objectResult.Value, "Success");
+                    }
+                }
             }
         }
 

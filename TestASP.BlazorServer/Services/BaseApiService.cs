@@ -1,16 +1,11 @@
-﻿using System.ComponentModel;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Linq;
 using TestASP.BlazorServer.Models;
 using TestASP.Common.Extensions;
-using TestASP.Common.Helpers;
-using TestASP.Model;
 
 namespace TestASP.BlazorServer.Services
 {
@@ -34,7 +29,7 @@ namespace TestASP.BlazorServer.Services
             where TResponse: class
         {
             _logger.LogMessage($"API Request-[{apiRequest.Method}]: {ApiRootUrl}/{apiRequest.Url}");
-            var client = _httpClient.CreateClient("MagicAPI");
+            var client = _httpClient.CreateClient("TestASP.API");
             HttpRequestMessage request = new HttpRequestMessage();
             request.Headers.Add("Accept", "application/json");
             string url = apiRequest.Url;
@@ -48,9 +43,7 @@ namespace TestASP.BlazorServer.Services
             {
                 if (apiRequest.IsMultipart)
                 {
-                    MultipartContent multipart = new MultipartContent();
-                    object? item;
-                    string propertyName = "";
+                    MultipartFormDataContent multipart = new MultipartFormDataContent();   
                     foreach(var property in apiRequest.Data.GetType().GetProperties())
                     {
                         AddContent(multipart, apiRequest.Data, property);
@@ -71,6 +64,7 @@ namespace TestASP.BlazorServer.Services
                         //    multipart.Add(CreateStringContent(propertyName, item.ToString() ?? ""));
                         //}
                     }
+                    request.Content = multipart;
                 }
                 else
                 {
@@ -88,7 +82,7 @@ namespace TestASP.BlazorServer.Services
 
                 ApiResult<TResponse> dataResponse = JsonConvert.DeserializeObject<ApiResult<TResponse>>(responseContent);
 
-                _logger.LogMessage($"API Response-[{apiRequest.Method}]: {apiRequest.Url} : {responseContent}");
+                _logger.LogMessage($"API Response-[{apiRequest.Method}:{response.StatusCode}]: {apiRequest.Url} : {responseContent}");
                 return dataResponse;
             }
             catch (Exception e)
@@ -136,8 +130,8 @@ namespace TestASP.BlazorServer.Services
             else if (item is IBrowserFile browserFile)
             {
                 multipart.Add(CreateStreamContent(browserFile.OpenReadStream(),
-                                                  propertyName,
-                                                  item.ToString() ?? ""));
+                                                  browserFile.Name,
+                                                  propertyName));
             }
             if (item != null)
             {
@@ -148,7 +142,7 @@ namespace TestASP.BlazorServer.Services
         private string? GetPropertyValue<T>(T data, PropertyInfo property)
         {
             Type propType = property.GetType();
-            if (propType.IsValueType)
+            if (propType.IsValueType || propType.Name == nameof(System.String))
             {
                 return property.GetValue(data)?.ToString();
             }
@@ -156,8 +150,6 @@ namespace TestASP.BlazorServer.Services
             {
                 switch (propType.Name)
                 {
-                    case nameof(System.String):
-                        return property.GetValue(data)?.ToString();
                     default:
                         if (propType.IsEnum)
                         {
@@ -165,7 +157,7 @@ namespace TestASP.BlazorServer.Services
                         }
                         else if (Nullable.GetUnderlyingType(propType) is Type valueType)
                         {
-                            return GetPropertyApiSchema(valueType);
+                            //return GetPropertyApiSchema(valueType);
                         }
                         return null;
                 }
@@ -181,8 +173,9 @@ namespace TestASP.BlazorServer.Services
         /// <param name="fieldPathName">  <br> e.g "Name" </br> or <br> "Address.City" </br> </param>
         /// <param name="value"> e.g "Sample"</param>
         /// <returns></returns>
-        public static StringContent CreateStringContent(string fieldPathName, string value, bool isSecure = false)
+        private StringContent CreateStringContent(string fieldPathName, string value, bool isSecure = false)
         {
+            _logger.LogMessage($"MULTIPART ITEM: {{{fieldPathName}, {value}}}");
             var dataContent = new StringContent(value, Encoding.UTF8, isSecure ? "text/plain" : "application/json");
             dataContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
@@ -201,8 +194,9 @@ namespace TestASP.BlazorServer.Services
         /// <param name="filepath"></param>
         /// <param name="fieldPathName">  <br> e.g "Name" </br> or <br> "Address.City" </br> </param>
         /// <returns></returns>
-        public static StreamContent CreateStreamContent(Stream imageStream, string filepath, string fieldPathName)
+        private StreamContent CreateStreamContent(Stream imageStream, string filepath, string fieldPathName)
         {
+            _logger.LogMessage($"MULTIPART ITEM: {{{fieldPathName}, binary}}");
             if (imageStream != null)
             {
                 var pictureContent = new StreamContent(imageStream);

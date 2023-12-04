@@ -1,16 +1,13 @@
 ﻿@page "/authentication/signup"
 
 @using TestASP.BlazorServer.Models;
+@using System.Web;
 
-@inject IAuthService _authService
-@inject NavigationManager _navigationManager
-@inject ToastService _toastService
-
-<ValidateForm Model="@SignUp" OnValidSubmit="OnSubmitClick" ValidateAllProperties="true">
+<ValidateForm @ref="ValidateForm" Model="@SignUp" OnValidSubmit="OnSubmitClick" ValidateAllProperties="true" >
     <div class="container-fluid row mx-auto col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
         <BootstrapBlazorDataAnnotationsValidator />
         @*<BootstrapInput type="file" TValue="IBrowserFile" Value="@SignUp.Image" />*@
-        <label class="co-4 mx-auto" for="image">
+        <label class="col-4 mx-auto" for="image">
             <img src="@imgUrl" class="rounded rounded-circle bg-gray align-self-center" style="height: 85px; width: 85px; aspect-ratio: 1;" alt="" />
             <InputFile id="image" class="invisible position-absolute" OnChange="PickImage" accept="image/*" hidden />
         </label>
@@ -55,11 +52,18 @@
     </div>
 </ValidateForm>
 
+
+
+@inject IAuthService _authService
+@inject NavigationManager _navigationManager
+@inject ToastService _toastService
+
 @code {
 
     public UserSignupRequest SignUp { get; set; } = new UserSignupRequest();
 
     string imgUrl { get; set; } = "";
+    ValidateForm ValidateForm;
 
     async void PickImage(InputFileChangeEventArgs e)
     {
@@ -76,6 +80,34 @@
 
     public async Task OnSubmitClick(EditContext context)
     {
+        var signupResult = await _authService.SignupAsync(SignUp);
+        if (signupResult == null)
+        {
+            await _toastService.Error("Signup Error.", "Something went wrong in requesting api");
+            return;
+        }
+        if (!signupResult.IsSuccess)
+        {
+            if(!string.IsNullOrEmpty(signupResult.Error))
+            {
+                await _toastService.Error("Signup Error.", signupResult.Error);
+                return;
+            }
+            if (signupResult.Errors != null && signupResult.Errors.Count != 0)
+            {
+                foreach (var fieldError in signupResult.Errors)
+                {
+                    foreach (var fieldErrorMessages in fieldError.Value)
+                    {
+                        ValidateForm.SetError(fieldError.Key,fieldErrorMessages);
+                    }
+                }
+            }
+            await _toastService.Error("Signup Error.", "Field errors.");
+            return;
+        }
+        await _toastService.Success("Login Success!", signupResult.Message);
+        _navigationManager.NavigateTo($"/authentication/loginSession?token={HttpUtility.UrlEncode(signupResult.Data.Token)}", true, true);
     }
 }
 

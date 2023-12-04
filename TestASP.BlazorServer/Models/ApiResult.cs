@@ -11,7 +11,10 @@ namespace TestASP.BlazorServer.Models
 		{
 			get
 			{
-				return StatusCode == StatusCodes.Status200OK && (string.IsNullOrEmpty(Error) || Errors == null || !Errors.Any());
+				return StatusCode == StatusCodes.Status200OK &&
+					   (string.IsNullOrEmpty(Error) ||
+					   Errors == null || !Errors.Any()) &&
+					   (Data != null || !string.IsNullOrEmpty(Message));
 			}
 		}
 		public string Message { get; set; }

@@ -27,6 +27,9 @@ namespace TestASP.Model
         public static ResultBase Error(ModelError error) =>
             new ModelErrorResult(error);
 
+        public static ResultBase Error(Dictionary<string, string[]> error) =>
+            new ModelErrorResult(error);
+
         //public static implicit operator ObjectResult(ResultBase err)
         //{
         //    return new ObjectResult(err) { StatusCode = err.StatusCode };

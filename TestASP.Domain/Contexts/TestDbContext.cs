@@ -1,17 +1,14 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
-using Microsoft.Extensions.Options;
 using TestASP.Data;
 using TestASP.Data.Social;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TestASP.Domain.Contexts
 {
-	public class TestDbContext : IdentityDbContext<ApplicationUser>
+    public class TestDbContext : IdentityDbContext<ApplicationUser>
     //public class TestDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {
 
@@ -61,10 +58,10 @@ namespace TestASP.Domain.Contexts
         {
             //optionsBuilder.UseSqlServer(_configuration.GetConnectionString("TESTDB"),
             //sqlOption => sqlOption.EnableRetryOnFailure(3));
+            //options.UseSqlServer(connection, b => b.MigrationsAssembly("TestASP.API"))
             optionsBuilder.UseSqlite(
                 _configuration.GetConnectionString("TESTDB_LITE"),
                 b => b.MigrationsAssembly("TestASP.API"));
-            //options.UseSqlServer(connection, b => b.MigrationsAssembly("TestASP.API"))
 #if DEBUG
             optionsBuilder.EnableDetailedErrors();
             optionsBuilder.EnableSensitiveDataLogging();

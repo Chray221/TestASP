@@ -91,7 +91,7 @@ namespace TestASP.API.Controllers
         }
 
         //POST api/authentication/sign_up
-        [HttpPut("sign_up")]
+        [HttpPost("sign_up")]
         [Consumes("application/json")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(UserDto))]
         public Task<IActionResult> SignUp(
@@ -101,8 +101,8 @@ namespace TestASP.API.Controllers
             return RegisterUser(user, jwtSerivceManager);
         }
 
-        [HttpPut("sign_up")]
-        [HttpPut("sign_up/form")]
+        [HttpPost("sign_up")]
+        [HttpPost("sign_up/form")]
         [Consumes("multipart/form-data")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, Type = typeof(UserDto))]
         public Task<IActionResult> SignUpForm(
@@ -121,65 +121,67 @@ namespace TestASP.API.Controllers
                         "Username already taken.");
                 ModelState.AddRuleFor(user, u => u.Image, img => isFromForm ? img != null : true, "Image is required");
             }
-            if (ModelState.IsValid)
-            {
-                if (user != null)
-                {
-                    //if (jwtSerivceManager.IsEnabled)
-                    //{
-                    //    if (!await jwtSerivceManager.SaveIndentity(user))
-                    //    {
-                    //        return StatusCode((int)HttpStatusCode.InternalServerError, MessageExtension.ShowCustomMessage("Sign Up Error!", "Something went wrong!", statusCode: HttpStatusCode.InternalServerError));
-                    //    }
-                    //}
-
-                    //Data.User newUser = new Data.User(user.Username, user.FirstName, user.LastName, SaltHasher.ComputeHash(user.Password), user.Email);
-                    User newUser = _mapper.Map<User>(user);
-                    //newUser.Password = SaltHasher.ComputeHash(user.Password);
-                    newUser.Password = newUser.HashPassword(user.Password);
-                    if (user.Image != null)
-                    {
-                        //IFormFile imageFile = user.Image;
-                        //ImageFile newImage = ImageHelper.CreateUserImageFile(newUser.Id);
-                        //if (imageFile != null &&
-                        //        await _imageFileRepository.InsertAsync(newImage))
-                        //{
-                        //    if (await ImageHelper.SaveUserImageAsync(imageFile, newImage.Url, newImage.ThumbUrl))
-                        //    {
-                        //        newUser.ImageFileId = newImage.Id;
-                        //        newUser.ImageFile = newImage;
-                        //    }
-                        //}
-                        newUser.ImageFile = ImageHelper.CreateUserImageFile(newUser.Id);
-                    }
-
-                    if (await _userRepository.InsertAsync(newUser))
-                    {
-                        UserDto userDto = new UserDto(newUser, this.GetRootUrl());
-                        if (jwtSerivceManager.IsEnabled)
-                        {
-                            //userDto.Token = await jwtSerivceManager.CreateToken(user);
-                            userDto.Token = jwtSerivceManager.CreateToken(newUser);
-                            if (string.IsNullOrEmpty(userDto.Token))
-                            {
-                                //return StatusCode((int)HttpStatusCode.InternalServerError, MessageExtension.ShowCustomMessage("Sign In Error", "Something went wrong", "Okay", statusCode: HttpStatusCode.InternalServerError));
-                                return MessageHelper.InternalServerError("Something went wrong in generating token");
-                            }
-                        }
-                        return Ok(userDto);
-                    }
-                    else
-                    {
-                        return MessageHelper.InternalServerError("Something went wrong in saving new user");
-                    }
-                }
-
-                return BadRequest("User data not found.");
-            }
-            else
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            //if (jwtSerivceManager.IsEnabled)
+            //{
+            //    if (!await jwtSerivceManager.SaveIndentity(user))
+            //    {
+            //        return StatusCode((int)HttpStatusCode.InternalServerError, MessageExtension.ShowCustomMessage("Sign Up Error!", "Something went wrong!", statusCode: HttpStatusCode.InternalServerError));
+            //    }
+            //}
+
+            //Data.User newUser = new Data.User(user.Username, user.FirstName, user.LastName, SaltHasher.ComputeHash(user.Password), user.Email);
+            User newUser = _mapper.Map<User>(user);
+            //newUser.Password = SaltHasher.ComputeHash(user.Password);
+            newUser.Password = newUser.HashPassword(user.Password);
+            // save user
+            if (!await _userRepository.InsertAsync(newUser))
+            {
+                return MessageHelper.InternalServerError("Something went wrong in saving new user");
+            }
+
+            // append image if existing
+            if (user.Image != null)
+            {
+                IFormFile imageFile = user.Image;
+                ImageFile newImage = ImageHelper.CreateUserImageFile(newUser.Id);
+                if(imageFile == null || !await ImageHelper.SaveUserImageAsync(imageFile, newImage.Url, newImage.ThumbUrl))
+                {
+                    return MessageHelper.InternalServerError("Something went wrong in saving user image file");
+                }
+
+                if (!await _imageFileRepository.InsertAsync(newImage))
+                {
+                    return MessageHelper.InternalServerError("Something went wrong in saving user image");
+                }
+                newUser.ImageFileId = newImage.Id;
+                newUser.ImageFile = newImage;
+                //newUser.ImageFile = ImageHelper.CreateUserImageFile(newUser.Id);
+
+                // append update user image
+                if (!await _userRepository.UpdateAsync(newUser))
+                {
+                    return MessageHelper.InternalServerError("Something went wrong in saving new user");
+                }
+            }
+
+
+            UserDto userDto = new UserDto(newUser, this.GetRootUrl());
+            if (jwtSerivceManager.IsEnabled)
+            {
+                userDto.Token = jwtSerivceManager.CreateToken(newUser);
+                if (string.IsNullOrEmpty(userDto.Token))
+                {
+                    //return StatusCode((int)HttpStatusCode.InternalServerError, MessageExtension.ShowCustomMessage("Sign In Error", "Something went wrong", "Okay", statusCode: HttpStatusCode.InternalServerError));
+                    return MessageHelper.InternalServerError("Something went wrong in generating token");
+                }
+            }
+            return MessageHelper.Ok(userDto,"Successfully signed up.");
+            
+            
         }
 
     }

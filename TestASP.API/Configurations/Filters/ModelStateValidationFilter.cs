@@ -23,11 +23,11 @@ namespace TestASP.API.Configurations.Filters
             _logger.LogMessage($"[{context.Controller.GetType().Name}]: API Ended: {context.HttpContext.Request.Path} : ModelState IsValid: {context.ModelState.IsValid}");
             if (!context.ModelState.IsValid)
             {
-                context.Result = new BadRequestObjectResult(MessageHelper.BadRequest(context.ModelState));
+                context.Result = MessageHelper.BadRequest(context.ModelState);
             }
             else
             {
-                if(context.Result is OkObjectResult okResult)
+                if(context.Result is OkObjectResult okResult && okResult.Value is not ResultBase)
                 {
                     if(okResult.Value is string valueStr)
                     {

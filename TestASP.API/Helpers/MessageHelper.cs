@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Immutable;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TestASP.API.Configurations.Filters;
 using TestASP.Model;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using ModelError = TestASP.Model.ModelError;
 
 namespace TestASP.API.Helpers
 {
     public static class MessageHelper
     {
+        public static IActionResult Error(string message, int statusCode)
+        {
+            return new OkObjectResult(ResultBase.Error(message, statusCode));
+        }
+
         public static IActionResult Ok(string message)
         {
             return new OkObjectResult(ResultBase.Success(message));
@@ -25,6 +32,13 @@ namespace TestASP.API.Helpers
         public static IActionResult BadRequest(ModelError error)
         {
             return ToObjectResult(ResultBase.Error(error));
+        }
+
+        public static IActionResult BadRequest(ModelStateDictionary error)
+        {
+            return ToObjectResult(ResultBase.Error(error.Where(ms => ms.Value?.Errors != null && ms.Value.Errors.Any())
+                                               .ToDictionary(ms => ms.Key, ms => ms.Value!.Errors.Select(err => err.ErrorMessage)
+                                                                                                 .ToArray())));
         }
 
         public static IActionResult NotFound(string message)

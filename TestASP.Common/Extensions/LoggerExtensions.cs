@@ -55,7 +55,7 @@ namespace TestASP.Common.Extensions
 
         public static void LogException(this ILogger logger, Exception exception)
         {
-            logger.LogInformation("[{DateTime}] MESSAGE: {Message} \nSTACKTRACE: {StackTrace}",
+            logger.LogWarning("[{DateTime}] MESSAGE: {Message} \nSTACKTRACE: {StackTrace}",
                                   DateTime.Now.ToString("HH:mm:ss tt"),
                                   exception.Message,
                                   exception.StackTrace);

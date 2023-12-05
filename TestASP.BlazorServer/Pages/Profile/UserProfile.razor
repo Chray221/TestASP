@@ -1,0 +1,98 @@
+﻿@page  "/User/{IdOrUsername}"
+
+@using TestASP.Model;
+
+@inject IUserService _userService
+
+@inherits AuthorizedPage
+
+@if (!IsLoaded)
+{
+    <h1>Loading...</h1>
+}
+else if (User == null)
+{
+    <h1>User not found!!!</h1>
+}
+else
+{
+    <div class="container">
+       <Row ItemsPerRow="ItemsPerRow.One">
+           <Stack IsRow="false" AlignItems="StackAlignItems.Baseline">
+               <StackItem AlignSelf="StackAlignItems.Baseline">
+                   <Avatar Url="@User.Image" IsCircle="true" Size="Size.ExtraExtraLarge" />
+               </StackItem>
+               <StackItem>
+                   <label>Name: @User.FirstName @User.LastName</label>
+               </StackItem>
+               <StackItem>
+                   <label>Email: @User.Email</label>
+               </StackItem>
+           </Stack>
+       </Row>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string IdOrUsername { get; set; }
+
+    public UserDto? User { get; set; }
+
+    public bool IsLoaded { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            await GetLoggedInUser();
+            if (!string.IsNullOrEmpty(IdOrUsername))
+            {
+                if (IsLoggedIn)
+                {
+                    bool isUserLoggedInuser = false;
+                    if (IdOrUsername?.ToLower().Equals("me") ?? true)
+                    {
+                        isUserLoggedInuser = true;
+                    }
+                    else if (int.TryParse(IdOrUsername, out int userId))
+                    {
+                        isUserLoggedInuser = LoggedInUser?.Id == userId;
+                    }
+                    else
+                    {
+                        isUserLoggedInuser = LoggedInUser?.Username.ToLower().Equals(IdOrUsername.ToLower()) ?? false;
+                    }
+                    if (isUserLoggedInuser)
+                    {
+                        User = LoggedInUser;
+                    }
+                }
+                if (User == null)
+                {
+                    var getUserResult = await _userService.GetAsync(IdOrUsername);
+                    if (getUserResult == null)
+                    {
+                        return;
+                    }
+                    if (!getUserResult.IsSuccess)
+                    {
+
+                    }
+                }
+            }
+
+            IsLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+    }
+
+
+}
+

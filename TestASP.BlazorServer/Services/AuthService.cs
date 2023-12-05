@@ -14,12 +14,12 @@ namespace TestASP.BlazorServer.Services
 
         public Task<ApiResult<UserDto>> LoginAsync(SignInUserRequestDto singin)
         {
-            return SendAsync<SignInUserRequestDto, UserDto>(ApiRequest.PostRequest(ApiEndpoints.LoginAuth, singin));
+            return SendAsync<SignInUserRequestDto, UserDto>(ApiRequest.PostRequest(ApiEndpoints.LoginAuthUrl, singin));
         }
 
         public Task<ApiResult<UserDto>> SignupAsync(UserSignupRequest signup)
         {
-            return SendAsync<UserSignupRequest, UserDto>(ApiRequest.PostRequest(ApiEndpoints.SignupAuth, signup, true));
+            return SendAsync<UserSignupRequest, UserDto>(ApiRequest.PostRequest(ApiEndpoints.SignupAuthUrl, signup, true));
         }
     }
 }

@@ -3,12 +3,14 @@
 @using TestASP.Model;
 @using Microsoft.AspNetCore.Mvc;
 @using System.Web;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 @attribute [AutoValidateAntiforgeryToken]
 
 @inject IAuthService _authService
 @inject NavigationManager _navigationManager
 @inject ToastService _toastService
+@inject ProtectedLocalStorage _localStorage
 
 <ValidateForm Model="@SignIn" OnValidSubmit="OnSubmitClick" ValidateAllProperties="true">
     <div class="container-fluid row mx-auto col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
@@ -49,6 +51,7 @@
             if (result.IsSuccess)
             {
                 await _toastService.Success("Login Success!", result.Message);
+                await _localStorage.SetAsync("JWTToken", result.Data.Token);
                 _navigationManager.NavigateTo($"/authentication/loginSession?token={HttpUtility.UrlEncode(result.Data.Token)}", true, true);
             }
             else if (result.StatusCode == StatusCodes.Status400BadRequest &&

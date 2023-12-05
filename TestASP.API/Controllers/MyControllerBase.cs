@@ -8,7 +8,7 @@ namespace TestASP.API.Controllers
     public class MyControllerBase : ControllerBase
     {
 
-        public string RootPath { get { return HostSetting.HostEnvironment.ContentRootPath ?? HostSetting.HostEnvironment.WebRootPath; } }
+        public string RootPath { get { return HostSetting.HostEnvironment?.ContentRootPath ?? HostSetting.HostEnvironment?.WebRootPath; } }
         public string RootUrl = "";
 
         public MyControllerBase(IWebHostEnvironment environment)

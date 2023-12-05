@@ -1,8 +1,3 @@
-/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.csproj.AssemblyReference.cache
-/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.GeneratedMSBuildEditorConfig.editorconfig
-/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.AssemblyInfoInputs.cache
-/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.AssemblyInfo.cs
-/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.csproj.CoreCompileInputs.cache
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/bin/Debug/net7.0/TestASP.Core.deps.json
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/bin/Debug/net7.0/TestASP.Core.dll
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/bin/Debug/net7.0/TestASP.Core.pdb
@@ -10,6 +5,11 @@
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/bin/Debug/net7.0/TestASP.Data.dll
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/bin/Debug/net7.0/TestASP.Data.pdb
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/bin/Debug/net7.0/TestASP.Common.pdb
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.csproj.AssemblyReference.cache
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.GeneratedMSBuildEditorConfig.editorconfig
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.AssemblyInfoInputs.cache
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.AssemblyInfo.cs
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.csproj.CoreCompileInputs.cache
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.csproj.CopyComplete
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/TestASP.Core.dll
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Core/obj/Debug/net7.0/refint/TestASP.Core.dll

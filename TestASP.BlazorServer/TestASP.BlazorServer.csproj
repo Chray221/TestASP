@@ -23,6 +23,7 @@
     <None Remove="Configurations\" />
     <None Remove="Models\" />
     <None Remove="Extensions\" />
+    <None Remove="Pages\Profile\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\Authentication\" />
@@ -31,10 +32,17 @@
     <Folder Include="Configurations\" />
     <Folder Include="Models\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Pages\Profile\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BootstrapBlazor" Version="8.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Pages\BaseAuthorizedPage.razor.cs">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Compile>
   </ItemGroup>
 </Project>

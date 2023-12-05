@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TestASP.BlazorServer.Models;
@@ -11,17 +12,40 @@ namespace TestASP.BlazorServer.Services
 {
     public class BaseApiService
     {
-        public IHttpClientFactory _httpClient { get; set; }
-        public ILogger _logger { get; }
-        public ConfigurationManager _configuration { get; }
-        public string ApiRootUrl { get; }
+        public readonly IHttpClientFactory _httpClient;
+        public readonly ILogger _logger;
+        public readonly ConfigurationManager _configuration;
+        public readonly string ApiRootUrl;
+        public readonly ProtectedLocalStorage _localStorage;
 
-        public BaseApiService(IHttpClientFactory httpClient, ILogger logger, ConfigurationManager configuration)
+        public BaseApiService(
+            IHttpClientFactory httpClient,
+            ILogger logger,
+            ConfigurationManager configuration)
         {
             _httpClient = httpClient;
             _logger = logger;
             _configuration = configuration;
-            ApiRootUrl = configuration["Urls:ApiRootUrl"];
+            ApiRootUrl = configuration["Urls:ApiRootUrl"]!;
+        }
+
+        public BaseApiService(
+            IHttpClientFactory httpClient,
+            ILogger logger,
+            ConfigurationManager configuration,
+            ProtectedLocalStorage localStorage)
+        {
+            _httpClient = httpClient;
+            _logger = logger;
+            _configuration = configuration;
+            ApiRootUrl = configuration["Urls:ApiRootUrl"]!;
+            _localStorage = localStorage;
+        }
+
+        public Task<ApiResult<TResponse>> SendAsync<TResponse>(ApiRequest<object> apiRequest)
+            where TResponse: class
+        {
+            return SendAsync<object, TResponse>(apiRequest);
         }
 
         public async Task<ApiResult<TResponse>> SendAsync<TRequest,TResponse>(ApiRequest<TRequest> apiRequest)
@@ -32,6 +56,16 @@ namespace TestASP.BlazorServer.Services
             var client = _httpClient.CreateClient("TestASP.API");
             HttpRequestMessage request = new HttpRequestMessage();
             request.Headers.Add("Accept", "application/json");
+
+            if (_localStorage != null)
+            {
+                var token = await _localStorage.GetAsync<string>("JWTToken");
+                if (token.Success)
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+                }
+            }
+
             string url = apiRequest.Url;
             if(!url.StartsWith(ApiRootUrl))
             {

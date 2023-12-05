@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestASP.API.Helpers;
+using TestASP.API.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,7 +32,8 @@ namespace TestASP.API.Controllers
         [HttpGet("{imageName}")]
         public ActionResult GetImage(string imageName)
         {
-            string filePath = this.GetImageString($"{imageName}");
+            //string filePath = this.GetImageString($"{imageName}");
+            string filePath = Setting.Current.GetFileUrl(imageName);
             if (!ImageHelper.IsImageExist(filePath))
             {
                 return NotFound();

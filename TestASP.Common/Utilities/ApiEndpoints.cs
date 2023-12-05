@@ -8,12 +8,16 @@ namespace TestASP.Common.Utilities
         public const string V1API = "v1/api";
 
         /// <summary> GET </summary>
-        public const string LoginAuth = V1API+"/Authentication/sign_in";
-        public const string SignupAuth = V1API + "/Authentication/sign_up";
-        public const string SignupFormAuth = V1API + "/Authentication/sign_up/form";
+        public const string LoginAuthUrl = V1API+"/Authentication/sign_in";
+        /// <summary> POST ContentType: application/json,multipart/form-data </summary>
+        public const string SignupAuthUrl = V1API + "/Authentication/sign_up";
+        /// <summary> POST ContentType: multipart/form-data </summary>
+        public const string SignupFormAuthUrl = V1API + "/Authentication/sign_up/form";
         /// <summary> GET </summary>
-        public const string WeatherForecast = V1API + "/WeatherForecast";
-        
+        public const string WeatherForecastUrl = V1API + "/WeatherForecast";
+    
+        /// <summary> GET </summary>
+        public const string UserUrl = V1API+"/User";
     }
 }
 

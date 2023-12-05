@@ -16,6 +16,11 @@ namespace TestASP.BlazorServer.Models
             return new ApiRequest<object>(HttpMethod.Get, url);
         }
 
+        public static ApiRequest<T> GetRequest<T>(string url) where T : class
+        {
+            return new ApiRequest<T>(HttpMethod.Get, url);
+        }
+
         public static ApiRequest<T> PostRequest<T>(string url, T data, bool isMultipart = false) where T : class
         {
             return new ApiRequest<T>(HttpMethod.Post, url, data, isMultipart);
@@ -29,6 +34,11 @@ namespace TestASP.BlazorServer.Models
         public static ApiRequest<object> DeleteRequest(string url)
         {
             return new ApiRequest<object>(HttpMethod.Delete, url);
+        }
+
+        public static ApiRequest<T> DeleteRequest<T>(string url) where T : class
+        {
+            return new ApiRequest<T>(HttpMethod.Delete, url);
         }
     }
 

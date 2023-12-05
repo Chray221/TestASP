@@ -22,9 +22,9 @@ namespace TestASP.BlazorServer.Services
         {
             if(date != null)
             {
-                return SendAsync<object, List<WeatherForecast>>(ApiRequest.GetRequest($"{ApiEndpoints.WeatherForecast}?startDate={date}"));
+                return SendAsync<object, List<WeatherForecast>>(ApiRequest.GetRequest($"{ApiEndpoints.WeatherForecastUrl}?startDate={date}"));
             }
-            return SendAsync<object,List < WeatherForecast >> (ApiRequest.GetRequest(ApiEndpoints.WeatherForecast));
+            return SendAsync<object,List < WeatherForecast >> (ApiRequest.GetRequest(ApiEndpoints.WeatherForecastUrl));
         }
     }
 }

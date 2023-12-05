@@ -27,7 +27,12 @@
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="authentication/logout">
+                    <NavLink class="nav-link" href="user/me">
+                        <span class="oi oi-account-logout" aria-hidden="true"></span> My Profile
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="authentication/logout" @onclick="@(() =>_localStorage.DeleteAsync("JWTToken"))">
                         <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
                     </NavLink>
                 </div>
@@ -41,13 +46,14 @@
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="authentication/signup">
                         @*<span class="fas fa-user-lock" aria-hidden="true"></span> Register*@
-                        <span class="fas fa-user-plus me-2" aria-hidden="true"></span> Register                     
+                        <span class="fas fa-user-plus me-2" aria-hidden="true"></span> Register
                     </NavLink>
                 </div>
             </NotAuthorized>
         </AuthorizeView>
     </nav>
 </div>
+@inject Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedLocalStorage _localStorage
 
 @code {
     private bool collapseNavMenu = true;

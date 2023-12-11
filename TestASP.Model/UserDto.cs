@@ -4,20 +4,24 @@ namespace TestASP.Model
 {
     public class UserDto : PublicProfile
     {
+        public string Nickname { get; set; }
         public string Username { get; set; }
         public string Token { get; set; }
         public string Email { get; set; }
+        public string? AddressStr { get; set; }
+        public string? BirthPlaceStr { get; set; }
+        public DateOnly? Birthdate { get; set; }
 
         public UserDto(){}
-        public UserDto(Data.User user, string rootUrl = "") : base(user,rootUrl)
+        public UserDto(User user, string rootUrl = "") : base(user,rootUrl)
         {
             Username = user.Username;
             Email = user.Email;
         }
 
-        public Data.User ToData()
+        public User ToData()
         {
-            return new Data.User()
+            return new User()
             {
                 FirstName = FirstName,
                 LastName = LastName,

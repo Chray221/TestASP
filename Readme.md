@@ -45,4 +45,64 @@
         }
         ```
 
+# Others
 
+## EF Code First Migrations
+- Using Terminal
+    - create migration
+        ```bash
+        dotnet ef migrations add MigrationTitle --project ProjectName 
+        ```
+    -- remove migration
+        ```bash
+        dotnet ef migrations remove
+        ```
+    - apply migration
+        ```base
+        dotnet ef database update
+        ```
+
+- Using Package Manager Host
+    - create migration
+        ```bash
+        #if only one dbcontext
+        Add-Migration MigrationTitle
+
+        #if multiple dbcontext
+        Add-Migration MigrationTitle --Context YourDBContextClassName
+
+        #to remove migration
+        Remove-Migration
+        ```
+    - remove migration
+        ```bash
+        #if only one dbcontext
+        Remove-Migration
+
+        #if multiple dbcontext
+        Remove-Migration --Context YourDBContextClassName        
+        ```
+    - apply migration
+        ```base
+        Update-Database
+
+        #if multiple dbcontext        
+        Update-Database --Context YourDBContextClassName
+
+        ```
+## Visual Studio Pending Running
+- show running
+    ```bash
+    ps
+    ```
+
+- kill running project
+    ```bash
+    kill -9 $(lsof -i:PORT -t) 2> /dev/null
+    e.g
+    #my local api
+    kill -9 $(lsof -i:7069 -t) 2> /dev/null
+    or
+    #my local blazor server
+    kill -9 $(lsof -i:7070 -t) 2> /dev/null
+    ```

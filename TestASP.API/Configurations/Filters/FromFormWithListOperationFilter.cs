@@ -183,6 +183,7 @@ namespace TestASP.Configurations.Filters
                 case nameof(System.Boolean): type = "boolean"; format = null; exampleValue = new OpenApiBoolean(RandomizerHelper.GetRandomBoolean()); break;
                 case nameof(System.String): type = "string"; format = null; exampleValue = new OpenApiString(GetDefaultValue(defaultAttribute, RandomizerHelper.GetRandomName())); break;
                 case nameof(System.DateTime): type = "string"; format = "date-time"; exampleValue = new OpenApiString(DateTime.Now.ToString("MM-dd-yyyy HH:mm:ss")); break;
+                case nameof(System.DateOnly): type = "string"; format = "date"; exampleValue = new OpenApiString(DateTime.Now.ToString("MM-dd-yyyy")); break;
                 case nameof(IFormFile): type = "string"; format = "binary"; break;
                 default:
                     if (propertyInfoType.IsEnum && _context.SchemaRepository.TryLookupByType(propertyInfoType, out OpenApiSchema referenceSchema))

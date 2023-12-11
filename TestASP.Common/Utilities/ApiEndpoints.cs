@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.RegularExpressions;
+
 namespace TestASP.Common.Utilities
 {
 	public class ApiEndpoints
@@ -18,6 +20,30 @@ namespace TestASP.Common.Utilities
     
         /// <summary> GET </summary>
         public const string UserUrl = V1API+"/User";
+
+        #region questionnaire
+        /// <summary> GET </summary>
+        public const string Questionnaire = V1API + "/Questionnaire";
+        /// <summary> POST </summary>
+        public const string SaveQuestionnaire = V1API + "/Questionnaire/{questionId}/Save";
+        #endregion
+
+        public static string FromFormat(string url, params object[] objects)
+        {
+            return string.Format(ReFormatFormmatedUrl(url), objects);
+        }
+
+        private static string ReFormatFormmatedUrl(string url)
+        {
+            string newUrl = "";
+            var urls = Regex.Split(url, @"(?:{\w+})");
+            for (int index = 0; index < urls.Length; index++)
+            {
+                string extension = index + 1 < urls.Length ?$"{{{index}}}" : "";
+                newUrl += $"{urls[index]}{extension}";
+            }
+            return newUrl;
+        }
     }
 }
 

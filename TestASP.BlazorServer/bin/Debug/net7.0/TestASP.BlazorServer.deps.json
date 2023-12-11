@@ -8,14 +8,40 @@
     ".NETCoreApp,Version=v7.0": {
       "TestASP.BlazorServer/1.0.0": {
         "dependencies": {
+          "AutoMapper": "12.0.1",
+          "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "BootstrapBlazor": "8.0.3",
           "BootstrapBlazor.FontAwesome": "8.0.0",
+          "Microsoft.AspNetCore.Components.DataAnnotations.Validation": "3.2.0-rc1.20223.4",
           "System.IdentityModel.Tokens.Jwt": "7.0.3",
           "TestASP.Common": "1.0.0",
           "TestASP.Model": "1.0.0"
         },
         "runtime": {
           "TestASP.BlazorServer.dll": {}
+        }
+      },
+      "AutoMapper/12.0.1": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0"
+        },
+        "runtime": {
+          "lib/netstandard2.1/AutoMapper.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.1.0"
+          }
+        }
+      },
+      "AutoMapper.Extensions.Microsoft.DependencyInjection/12.0.1": {
+        "dependencies": {
+          "AutoMapper": "12.0.1",
+          "Microsoft.Extensions.Options": "7.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.1.0"
+          }
         }
       },
       "BootstrapBlazor/8.0.3": {
@@ -116,6 +142,17 @@
         "dependencies": {
           "Microsoft.AspNetCore.Authorization": "7.0.0",
           "Microsoft.AspNetCore.Components": "7.0.0"
+        }
+      },
+      "Microsoft.AspNetCore.Components.DataAnnotations.Validation/3.2.0-rc1.20223.4": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Components.Forms": "7.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Microsoft.AspNetCore.Components.DataAnnotations.Validation.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.200.20.22304"
+          }
         }
       },
       "Microsoft.AspNetCore.Components.Forms/7.0.0": {
@@ -380,6 +417,7 @@
           "System.Text.Encodings.Web": "7.0.0"
         }
       },
+      "Microsoft.CSharp/4.7.0": {},
       "Microsoft.EntityFrameworkCore/7.0.14": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Abstractions": "7.0.14",
@@ -771,6 +809,20 @@
       "serviceable": false,
       "sha512": ""
     },
+    "AutoMapper/12.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hvV62vl6Hp/WfQ24yzo3Co9+OPl8wH8hApwVtgWpiAynVJkUcs7xvehnSftawL8Pe8FrPffBRM3hwzLQqWDNjA==",
+      "path": "automapper/12.0.1",
+      "hashPath": "automapper.12.0.1.nupkg.sha512"
+    },
+    "AutoMapper.Extensions.Microsoft.DependencyInjection/12.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+g/K+Vpe3gGMKGzjslMOdqNlkikScDjWfVvmWTayrDHaG/n2pPmFBMa+jKX1r/h6BDGFdkyRjAuhFE3ykW+r1g==",
+      "path": "automapper.extensions.microsoft.dependencyinjection/12.0.1",
+      "hashPath": "automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512"
+    },
     "BootstrapBlazor/8.0.3": {
       "type": "package",
       "serviceable": true,
@@ -847,6 +899,13 @@
       "sha512": "sha512-9YmIsHP+YRhTSsvHcuQkbk5LO322rj4vYgtBulp1UPfhak/cjnmnqAu6Lu7D4ayzAlEEC4KaR86PZjz8PKOWPA==",
       "path": "microsoft.aspnetcore.components.authorization/7.0.0",
       "hashPath": "microsoft.aspnetcore.components.authorization.7.0.0.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Components.DataAnnotations.Validation/3.2.0-rc1.20223.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VyZAAbuXuAVrh4Vii5Aq1N841iVhSjE4mTf/lVh+AgrKinaltE0IeEWPKv889j4ineX7i9BUiAqlGP7UpZwlnQ==",
+      "path": "microsoft.aspnetcore.components.dataannotations.validation/3.2.0-rc1.20223.4",
+      "hashPath": "microsoft.aspnetcore.components.dataannotations.validation.3.2.0-rc1.20223.4.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Components.Forms/7.0.0": {
       "type": "package",
@@ -1064,6 +1123,13 @@
       "sha512": "sha512-9ErxAAKaDzxXASB/b5uLEkLgUWv1QbeVxyJYEHQwMaxXOeFFVkQxiq8RyfVcifLU7NR0QY0p3acqx4ZpYfhHDg==",
       "path": "microsoft.aspnetcore.webutilities/2.2.0",
       "hashPath": "microsoft.aspnetcore.webutilities.2.2.0.nupkg.sha512"
+    },
+    "Microsoft.CSharp/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+      "path": "microsoft.csharp/4.7.0",
+      "hashPath": "microsoft.csharp.4.7.0.nupkg.sha512"
     },
     "Microsoft.EntityFrameworkCore/7.0.14": {
       "type": "package",

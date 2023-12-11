@@ -14,21 +14,18 @@ namespace TestASP.Data
     //public class User : IdentityUser, IBaseModel<UserDto>, IBaseModel
     {
         [Required]
-        public string Username { get; set; }
-        [JsonProperty(PropertyName = "first_name")]
+        public string? Username { get; set; }
         public string FirstName { get; set; }
-        [JsonProperty(PropertyName = "last_name")]
         public string LastName { get; set; }
-        [JsonProperty(PropertyName = "middle_name")]
-        public string MiddleName { get; set; }        
-        [Required]
+        public string MiddleName { get; set; }     
         public string Password { get; set; }
-        [AllowNull]
         public int? ImageFileId { get; set; }
-        [NotMapped]
-        public bool IsOnline { get; set; }
-
         public string Email { get; set; }
+
+        public string? Nickname { get; set; }
+        public string? AddressStr { get; set; }
+        public string? BirthPlaceStr { get; set; }
+        public DateOnly Birthdate { get; set; }
 
 
         [ForeignKey(nameof(ImageFileId))]
@@ -36,6 +33,9 @@ namespace TestASP.Data
 
         [NotMapped]
         public string Image { get { return ImageFile?.ThumbUrl; } }
+
+        [NotMapped]
+        public bool IsOnline { get; set; }
 
         //Guid IBaseModel<UserDto>.Id { get { return Guid.Parse(Id); } set { Id = value.ToString(); } }
 

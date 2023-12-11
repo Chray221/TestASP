@@ -57,3 +57,7 @@
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/obj/Debug/net7.0/TestASP.BlazorServer.pdb
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/obj/Debug/net7.0/TestASP.BlazorServer.genruntimeconfig.cache
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/obj/Debug/net7.0/ref/TestASP.BlazorServer.dll
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/bin/Debug/net7.0/AutoMapper.dll
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/bin/Debug/net7.0/AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/bin/Debug/net7.0/DataAnnotationsValidator.dll
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/bin/Debug/net7.0/Microsoft.AspNetCore.Components.DataAnnotations.Validation.dll

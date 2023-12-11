@@ -30,6 +30,21 @@
         <div class="px-0 mb-2">
             <BootstrapInput type="email" @bind-Value="@SignUp.Email" />
         </div>
+        <div class="px-0 mb-2">
+            <BootstrapInput DisplayText="Address"
+                            PlaceHolder="(Street, Barangay, City/Municipaluty, Province)"
+                            @bind-Value="@SignUp.AddressStr" />
+        </div>
+        <div class="px-0 mb-2">
+            <BootstrapInput DisplayText="Place of Birth"
+                            PlaceHolder="(Street, Barangay, City/Municipaluty, Province)"
+                            @bind-Value="@SignUp.BirthPlaceStr" />
+        </div>
+        <div class="px-0 mb-2">
+            <DateTimePicker DisplayText="Date of Birth"
+                            ViewMode="DatePickerViewMode.Date"
+                            @bind-Value="@SignUp.Birthdate"/>
+        </div>
         <div class="px-0 mb-2 position-relative">
             <BootstrapInput @bind-Value="@SignUp.Password"
                             ShowLabel="@IsPasswordShow"

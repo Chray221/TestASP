@@ -1,0 +1,68 @@
+﻿@page "/Questionnaire"
+
+@using TestASP.Model;
+@using TestASP.Model.Questionnaires;
+@using TestASP.Data.Enums;
+
+@inject IQuestionnaireService _questionnaireService
+@inject ToastService _toastService
+
+@if (Questionnaires != null)
+{
+    <Card>
+        <BodyTemplate>
+            <h5>Questionnaires</h5>
+            <Row ItemsPerRow="ItemsPerRow.Three" RowType="RowType.Normal">
+                @foreach (var questionnair in Questionnaires)
+                {
+                    <Card>
+                        <HeaderTemplate>
+                            Not Answered
+                        </HeaderTemplate>
+                        <BodyTemplate>
+                            <h5>@questionnair.Name</h5>
+                            <p class="card-text">@questionnair.Description</p>
+                            <a class="btn btn-primary" href="Questionnaire/@questionnair.Id/Answer">Answer</a>
+                        </BodyTemplate>
+                    </Card>
+                }
+            </Row>
+        </BodyTemplate>
+    </Card>
+}
+else if (IsLoading)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <h1>QuestionnaireNot Found</h1>
+}
+
+@code {
+
+    public List<QuestionnaireResponseDto> Questionnaires { get; set; }
+
+    public bool IsLoading { get; set; } = true;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            var getWithQuestionResult = await _questionnaireService.GetAsync();
+            if (!getWithQuestionResult.IsSuccess)
+            {
+                if (!string.IsNullOrEmpty(getWithQuestionResult.Error))
+                {
+                    await _toastService.Error("Retreiving Questionnaire Error", getWithQuestionResult.Error);
+                }
+                return;
+            }
+            Questionnaires = getWithQuestionResult.Data;
+        }
+        IsLoading = false;
+        StateHasChanged();
+    }
+}
+

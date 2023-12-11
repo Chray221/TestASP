@@ -1,11 +1,11 @@
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/bin/Debug/net7.0/TestASP.Common.deps.json
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/bin/Debug/net7.0/TestASP.Common.dll
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/bin/Debug/net7.0/TestASP.Common.pdb
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/obj/Debug/net7.0/TestASP.Common.csproj.AssemblyReference.cache
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/obj/Debug/net7.0/TestASP.Common.GeneratedMSBuildEditorConfig.editorconfig
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/obj/Debug/net7.0/TestASP.Common.AssemblyInfoInputs.cache
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/obj/Debug/net7.0/TestASP.Common.AssemblyInfo.cs
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/obj/Debug/net7.0/TestASP.Common.csproj.CoreCompileInputs.cache
-/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/bin/Debug/net7.0/TestASP.Common.deps.json
-/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/bin/Debug/net7.0/TestASP.Common.dll
-/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/bin/Debug/net7.0/TestASP.Common.pdb
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/obj/Debug/net7.0/TestASP.Common.dll
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/obj/Debug/net7.0/refint/TestASP.Common.dll
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.Common/obj/Debug/net7.0/TestASP.Common.pdb

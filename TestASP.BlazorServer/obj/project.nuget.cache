@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "T4bwkEy+hwT7hyjbUzCbUiCGuxg/57hqpFXh9y68rtREQzZjCdaTbgbLMGUEWI7AmDvyeQvkZDkdHt+KwtrM1w==",
+  "dgSpecHash": "68MeW7cJSZvY6Ie9OilK7mf0fI63iXXMvWqVR4ftnh/ckOr3h9/uZjU6szjCGmNzHrQJD8B6AiWT6jclDCV4CQ==",
   "success": true,
   "projectFilePath": "/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/TestASP.BlazorServer.csproj",
   "expectedPackageFiles": [
+    "/Users/macbookpro/.nuget/packages/automapper/12.0.1/automapper.12.0.1.nupkg.sha512",
+    "/Users/macbookpro/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/bootstrapblazor/8.0.3/bootstrapblazor.8.0.3.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/bootstrapblazor.fontawesome/8.0.0/bootstrapblazor.fontawesome.8.0.0.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore/2.2.0/microsoft.aspnetcore.2.2.0.nupkg.sha512",
@@ -15,6 +17,7 @@
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.components/7.0.0/microsoft.aspnetcore.components.7.0.0.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.components.analyzers/7.0.0/microsoft.aspnetcore.components.analyzers.7.0.0.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.components.authorization/7.0.0/microsoft.aspnetcore.components.authorization.7.0.0.nupkg.sha512",
+    "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.components.dataannotations.validation/3.2.0-rc1.20223.4/microsoft.aspnetcore.components.dataannotations.validation.3.2.0-rc1.20223.4.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.components.forms/7.0.0/microsoft.aspnetcore.components.forms.7.0.0.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.components.web/7.0.0/microsoft.aspnetcore.components.web.7.0.0.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.connections.abstractions/2.2.0/microsoft.aspnetcore.connections.abstractions.2.2.0.nupkg.sha512",
@@ -46,6 +49,7 @@
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.server.kestrel.transport.abstractions/2.2.0/microsoft.aspnetcore.server.kestrel.transport.abstractions.2.2.0.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.server.kestrel.transport.sockets/2.2.0/microsoft.aspnetcore.server.kestrel.transport.sockets.2.2.0.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.aspnetcore.webutilities/2.2.0/microsoft.aspnetcore.webutilities.2.2.0.nupkg.sha512",
+    "/Users/macbookpro/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.entityframeworkcore/7.0.14/microsoft.entityframeworkcore.7.0.14.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.entityframeworkcore.abstractions/7.0.14/microsoft.entityframeworkcore.abstractions.7.0.14.nupkg.sha512",
     "/Users/macbookpro/.nuget/packages/microsoft.entityframeworkcore.analyzers/7.0.14/microsoft.entityframeworkcore.analyzers.7.0.14.nupkg.sha512",

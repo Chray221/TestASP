@@ -54,6 +54,7 @@
     <None Remove="Helpers\" />
     <None Remove="Services\" />
     <None Remove="Configurations\Attributes\" />
+    <None Remove="Image\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
@@ -62,5 +63,6 @@
     <Folder Include="Helpers\" />
     <Folder Include="Services\" />
     <Folder Include="Configurations\Attributes\" />
+    <Folder Include="Image\" />
   </ItemGroup>
 </Project>

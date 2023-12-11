@@ -22,6 +22,10 @@ namespace TestASP.Model
         [EqualToValidation(nameof(Password), ErrorMessage = "Password mismatched")]
         public string ConfirmPassword { get; set; }
 
+        public string? AddressStr { get; set; }
+        public string? BirthPlaceStr { get; set; }
+        public DateOnly? Birthdate { get; set; }
+
         public SignUpUserRequestDto()
         {
         }

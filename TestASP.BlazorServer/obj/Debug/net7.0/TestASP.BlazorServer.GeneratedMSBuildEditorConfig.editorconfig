@@ -20,6 +20,18 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Components/FormCheck.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Gb3JtQ2hlY2sucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Components/QuestionAnswer.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9RdWVzdGlvbkFuc3dlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Components/RadioButton.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9SYWRpb0J1dHRvbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Pages/Authentication/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXV0aGVudGljYXRpb24vTG9naW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -42,6 +54,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Pages/Profile/UserProfile.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJvZmlsZS9Vc2VyUHJvZmlsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Pages/QuestionnairePage/AnswerQuestionnaire.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUXVlc3Rpb25uYWlyZVBhZ2UvQW5zd2VyUXVlc3Rpb25uYWlyZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Pages/QuestionnairePage/QuestionnaireList.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUXVlc3Rpb25uYWlyZVBhZ2UvUXVlc3Rpb25uYWlyZUxpc3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Shared/RedirectToLogin.razor]

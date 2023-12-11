@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TestASP.BlazorServer.Models;
 using TestASP.Common.Extensions;
+using TestASP.Data.Enums;
 
 namespace TestASP.BlazorServer.Services
 {
@@ -123,7 +124,7 @@ namespace TestASP.BlazorServer.Services
             {
                 //var exceptionResponse = JsonConvert.DeserializeObject<T>(responseContent);
                 _logger.LogException(e);
-                return ApiResult<TResponse>.InternalServerError();
+                return ApiResult.InternalServerError<TResponse>();
             }
             //var APIResponse = JsonConvert.DeserializeObject<T>(responseContent);
             //return ApiResult<TResponse>.InternalServerError();

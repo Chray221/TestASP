@@ -20,6 +20,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
+builder.Services.AddAutoMapper(typeof(MappingConfig));
+
+
 // Add this line of code
 builder.Services.AddBootstrapBlazor();
 

@@ -1,0 +1,113 @@
+﻿@using TestASP.Model;
+@using TestASP.BlazorServer.Models;
+@using TestASP.Model.Questionnaires;
+@using TestASP.Data.Enums;
+@using TestASP.Common.Extensions;
+@using AutoMapper;
+@using Microsoft.AspNetCore.Mvc;
+@using TestASP.BlazorServer.Components;
+@using System.ComponentModel.DataAnnotations;
+
+<Card>
+    <HeaderTemplate>
+        Question @(Question.Number.ToUpper()).
+    </HeaderTemplate>
+    <BodyTemplate>
+        <h5>@Question.Question</h5>
+        @switch (Question.AnswerTypeId)
+        {
+            case AnswerTypeEnum.Text:
+                @if (IsBootStrap)
+                {
+                    <BootstrapInput ShowLabel="false" @bind-Value="Question.Answer" />
+                }
+                else
+                {
+                    <InputText DisplayName="Answer" @bind-Value="Question.Answer" />
+                }
+                <ValidationMessage For=" () => Question.Answer" />
+                break;
+            case AnswerTypeEnum.Number:
+                @if (IsBootStrap)
+                {
+                    <BootstrapInput type="number" ShowLabel="false" @bind-Value="Question.Answer" />
+                }
+                else
+                {
+                    <InputText type="number" DisplayName="Answer" @bind-Value="Question.Answer" />
+                }
+                <ValidationMessage For=" () => Question.Answer" />
+                break;
+            case AnswerTypeEnum.Date:
+                @if (IsBootStrap)
+                {
+                    <DateTimePicker ShowLabel="false" @bind-Value="Question.AnswerDate" />
+                }
+                else
+                {
+                    <InputDate @bind-Value="Question.AnswerDate" />
+                }
+                <ValidationMessage For=" () => Question.AnswerDate" />
+                break;
+            case AnswerTypeEnum.Boolean:
+            case AnswerTypeEnum.BooleanWithSubQuestion:
+            case AnswerTypeEnum.MultipleChoice:
+                @if (IsBootStrap)
+                {
+                    <CheckboxList ShowLabel="false"
+                                  IsVertical="true"
+                                  @bind-Value="Question.AnswerCheckbox"
+                                  Items="@Question.GetChoices()"
+                                  ValidateRules="Question.InputRules"
+                                  OnSelectedChanged="OnItemSelected" />
+                    <ValidationMessage For=" () => Question.AnswerCheckbox" />
+                }
+                else
+                {
+                    @*<InputRadioGroup class="form-check form-check-inline" Name="Answer" @bind-Value="Question.Answer">
+                        <FormCheck IsInline="true" Name="Yes">
+                            <InputRadio class="form-check-input" Value="@("True")" />
+                        </FormCheck>
+                        <FormCheck IsInline="true" Name="No">
+                            <InputRadio class="form-check-input" Value="@("False")" />
+                        </FormCheck>
+                    </InputRadioGroup>*@
+                    <InputRadioGroup @bind-Value="Question.Answer">
+                        @foreach (var choice in Question.GetChoices())
+                        {
+                            <FormCheck IsInline="true" Name="@choice.Text">
+                                <InputRadio class="form-check-input" Value="@choice.Value" />
+                            </FormCheck>
+                        }
+                    </InputRadioGroup>
+                    <ValidationMessage For=" () => Question.Answer" />
+                }
+                break;
+        }
+
+        @if (Question is BootStrapQuestionAnswerSubQuestionAnswerResponseDto questionAnswer)
+        {
+            <Stack class="ms-4 mt-2 gap-3"
+                   AlignItems="StackAlignItems.Stretch"
+                   Justify="StackJustifyContent.Start"
+                   IsRow="false">
+                @foreach (var subQuestion in questionAnswer.SubQuestions)
+                {
+                    <StackItem>
+                        <QuestionAnswer Question="@subQuestion" />
+                    </StackItem>
+                }
+            </Stack>
+        }
+    </BodyTemplate>
+</Card>
+@code {
+    [Parameter] public BootStrapQuestionAnswerBaseResponseDto Question { get; set; }
+    [Parameter] public bool IsBootStrap { get; set; } = true;
+
+    public async Task OnItemSelected(IEnumerable<SelectedItem> items, string selectedStr)
+    {
+        StateHasChanged();
+    }
+}
+

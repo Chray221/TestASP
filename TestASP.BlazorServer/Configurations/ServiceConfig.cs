@@ -17,6 +17,7 @@ namespace TestASP.BlazorServer.Configurations
             services.AddApiService<IAuthService, AuthService>();
             services.AddApiService<IWeatherForecastService, WeatherForecastService>();
             services.AddApiService<IUserService, UserService>();
+            services.AddApiService<IQuestionnaireService, QuestionnaireService>();
 
             //services
             //services.AddTransient<IAuthService, AuthService>();

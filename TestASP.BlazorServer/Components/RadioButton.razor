@@ -1,0 +1,29 @@
+﻿@typeparam TValueType
+
+<div class="form-check">
+    @*<input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>*@
+    <InputRadio @ref="inputRadio" id="@Id" class="form-check-input" Name="GroupName" Value="Value" />
+    <label class="form-check-label" for="@Id">@Name</label>
+</div>
+
+@code {
+    //[CascadingParameter] RadioButtonGroup RadioButtonGroup { get; set; }
+    //[CascadingParameter] InputRadioGroup<TValueType> RadioButtonGroup { get; set; }
+    //[CascadingParameter] InputRadioContext RadioButtonGroup { get; set; }
+
+    [Parameter] public string? GroupName { get; set; } = null;
+    [Parameter] public string Name { get; set; }
+    [Parameter] public TValueType Value { get; set; }
+    [Parameter] public string Id { get; set; } = null;
+
+    InputRadio<TValueType> inputRadio;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        Id = Id ?? Guid.NewGuid().ToString();
+        //GroupName = GroupName ?? RadioButtonGroup.Name;
+        //GroupName = GroupName ??
+    }
+}
+

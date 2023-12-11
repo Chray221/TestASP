@@ -9,6 +9,30 @@
 @if (!IsLoaded)
 {
     <h1>Loading...</h1>
+    @*<div class="container">
+        <Row ItemsPerRow="ItemsPerRow.One">
+            <Stack IsRow="false" AlignItems="StackAlignItems.Baseline">
+                <StackItem AlignSelf="StackAlignItems.Baseline">
+                    <SkeletonAvatar Circle="true" />
+                </StackItem>
+                <StackItem>
+                    <label>Name: <SkeletonParagraph  Active="true" /></label>
+                </StackItem>
+                <StackItem>
+                    <label>Email: <SkeletonParagraph Active="false" /></label>
+                </StackItem>
+                <StackItem>
+                    <label>Address: <SkeletonParagraph Active="true" /></label>
+                </StackItem>
+                <StackItem>
+                    <label>Birthplace: <SkeletonParagraph Active="false" /></label>
+                </StackItem>
+                <StackItem>
+                    <label>Birthdate: <SkeletonParagraph Active="true" /></label>
+                </StackItem>
+            </Stack>
+        </Row>
+    </div>*@
 }
 else if (User == null)
 {
@@ -17,19 +41,28 @@ else if (User == null)
 else
 {
     <div class="container">
-       <Row ItemsPerRow="ItemsPerRow.One">
-           <Stack IsRow="false" AlignItems="StackAlignItems.Baseline">
-               <StackItem AlignSelf="StackAlignItems.Baseline">
-                   <Avatar Url="@User.Image" IsCircle="true" Size="Size.ExtraExtraLarge" />
-               </StackItem>
-               <StackItem>
-                   <label>Name: @User.FirstName @User.LastName</label>
-               </StackItem>
-               <StackItem>
-                   <label>Email: @User.Email</label>
-               </StackItem>
-           </Stack>
-       </Row>
+        <Row ItemsPerRow="ItemsPerRow.One">
+            <Stack IsRow="false" AlignItems="StackAlignItems.Baseline">
+                <StackItem AlignSelf="StackAlignItems.Baseline">
+                    <Avatar Url="@User.Image" IsCircle="true" Size="Size.ExtraExtraLarge" />
+                </StackItem>
+                <StackItem>
+                    <label>Name: @User.FirstName @User.LastName</label>
+                </StackItem>
+                <StackItem>
+                    <label>Email: @User.Email</label>
+                </StackItem>
+                <StackItem>
+                    <label>Address: @User.AddressStr</label>
+                </StackItem>
+                <StackItem>
+                    <label>Birthplace: @User.BirthPlaceStr</label>
+                </StackItem>
+                <StackItem>
+                    <label>Birthdate: @User.Birthdate?.ToString("MMM dd, yyyy")</label>
+                </StackItem>
+            </Stack>
+        </Row>
     </div>
 }
 
@@ -78,8 +111,9 @@ else
                     }
                     if (!getUserResult.IsSuccess)
                     {
-
+                        return;
                     }
+                    User = getUserResult.Data;
                 }
             }
 

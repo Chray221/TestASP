@@ -1,0 +1,19 @@
+﻿<div class="form-check @FormOptions()">
+    <label class="form-check-label">
+        @ChildContent
+        @Name
+    </label>
+</div>
+@*<label class="form-check form-check-label @FormOptions()">
+    @ChildContent
+    @Name   
+</label>*@
+
+@code {
+    [Parameter] public string Name { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public bool IsInline { get; set; }
+
+    string FormOptions() => $"{(IsInline ? "form-check-inline" : "")}";
+}
+

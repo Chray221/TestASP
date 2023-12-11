@@ -4,24 +4,24 @@ namespace TestASP.Model.Helpers
 {
     public class EqualToValidationAttribute: ValidationAttribute
 	{
-        public string FieldName { get; set; }
-        public EqualToValidationAttribute(string fieldName): base()
+        public string PropertyName { get; set; }
+        public EqualToValidationAttribute(string propertyName): base()
 		{
-            FieldName = fieldName;
+            PropertyName = propertyName;
         }
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (validationContext != null)
             {
-                var fieldPropertry = validationContext.ObjectInstance.GetType().GetProperty(FieldName);
+                var fieldPropertry = validationContext.ObjectInstance.GetType().GetProperty(PropertyName);
                 if (fieldPropertry == null)
                 {
-                    return new ValidationResult($"{FieldName} does not exist");
+                    return new ValidationResult($"{PropertyName} does not exist");
                 }
                 else if (value != null && !value.Equals(fieldPropertry.GetValue(validationContext.ObjectInstance)))
                 {
-                    return new ValidationResult(ErrorMessage ?? $"{{0}} is not equals to {FieldName}.");
+                    return new ValidationResult(ErrorMessage ?? $"{{0}} is not equals to {PropertyName}.");
                 }
 
                 //return base.IsValid(value, validationContext);

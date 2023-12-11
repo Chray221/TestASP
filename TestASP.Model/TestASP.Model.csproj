@@ -10,11 +10,13 @@
     <None Remove="ChurchSongs\" />
     <None Remove="Request\" />
     <None Remove="Helpers\" />
+    <None Remove="Questionnaires\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ChurchSongs\" />
     <Folder Include="Request\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Questionnaires\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TestASP.Data\TestASP.Data.csproj" />

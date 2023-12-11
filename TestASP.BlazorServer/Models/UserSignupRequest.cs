@@ -18,6 +18,11 @@ namespace TestASP.BlazorServer.Models
         public IBrowserFile? Image { get; set; }
         [EmailAddress]
         public string Email { get; set; }
+
+        public string? AddressStr { get; set; }
+        public string? BirthPlaceStr { get; set; }
+        public DateTime? Birthdate { get; set; }
+
         [EqualToValidation(nameof(Password), ErrorMessage = "Password mismatched")]
         public string ConfirmPassword { get; set; }
 

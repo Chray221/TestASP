@@ -1,0 +1,186 @@
+﻿@page "/Questionnaire/{QuestionnaireId:int}/Answer"
+
+@using TestASP.Model;
+@using TestASP.BlazorServer.Models;
+@using TestASP.Model.Questionnaires;
+@using TestASP.Data.Enums;
+@using TestASP.Common.Extensions;
+@using AutoMapper;
+@using Microsoft.AspNetCore.Mvc;
+@using TestASP.BlazorServer.Components;
+@using System.ComponentModel.DataAnnotations;
+
+@attribute [AutoValidateAntiforgeryToken]
+
+@inject IQuestionnaireService _questionnaireService
+@inject ToastService _toastService
+@inject IMapper _mapper
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h1>You  have to login to answer this questionnaire</h1>
+    </NotAuthorized>
+    <Authorized>
+        @if (Questionnaire != null)
+        {
+            <EditForm Model="@Questionnaire" Context="Context" OnValidSubmit="SubmitQuestionnaireAnswer">
+                @*<DataAnnotationsValidator />*@
+                <ObjectGraphDataAnnotationsValidator />
+                <Card>
+                    <BodyTemplate>
+                        <h4>@Questionnaire.Name</h4>
+                        <p class="card-text">@Questionnaire.Description</p>
+                        <ValidationSummary/>
+                        <Stack class="gap-3" AlignItems="StackAlignItems.Stretch" Justify="StackJustifyContent.Start" IsRow="false">
+                            @foreach (var questionAnswer in Questionnaire.QuestionAnswers)
+                            {
+                                <StackItem>
+                                    <QuestionAnswer Question="@questionAnswer" />
+                                </StackItem>
+                            }
+                            <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit">Submit</Button>
+                        </Stack>
+                    </BodyTemplate>
+                </Card>
+            </EditForm>
+            <ValidateForm hidden @ref="validateForm"
+                          OnInvalidSubmit="OnSubmitQuestionnaireAnswerValidationError"
+                          Model="@Questionnaire" OnValidSubmit="SubmitQuestionnaireAnswer" ShowRequiredMark="true" ValidateAllProperties="true">
+                <ObjectGraphDataAnnotationsValidator />
+                <BootstrapBlazorDataAnnotationsValidator />
+                <Card>
+                    <BodyTemplate>
+                        <h4>@Questionnaire.Name</h4>
+                        <p class="card-text">@Questionnaire.Description</p>
+                        <Stack class="gap-3" AlignItems="StackAlignItems.Stretch" Justify="StackJustifyContent.Start" IsRow="false">
+                            @foreach (var question in Questionnaire.QuestionAnswers)
+                            {
+                                <StackItem>
+                                    @foreach (var questionAnswer in Questionnaire.QuestionAnswers)
+                                    {
+                                        <StackItem>
+                                            <QuestionAnswer Question="@questionAnswer" />
+                                        </StackItem>
+                                    }
+                                </StackItem>
+                            }
+                            <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit">Submit</Button>
+                        </Stack>
+                    </BodyTemplate>
+                </Card>
+            </ValidateForm>
+        }
+        else if (IsLoading)
+        {
+            <h1>Loading...</h1>
+        }
+        else
+        {
+            <h1>QuestionnaireNot Found</h1>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter] public int QuestionnaireId { get; set; }
+
+    public BootStrapQuestionnaireQuestionsResponseDto? Questionnaire { get; set; }
+    public bool IsLoading { get; set; } = true;
+    private ValidateForm? validateForm;
+    private EditContext? EditContext { get; set; }
+    ValidationMessageStore? MessageStore ;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            var getWithQuestionResult = await _questionnaireService.GetWithQuestionAnswerAsync(QuestionnaireId);
+            if (!getWithQuestionResult.IsSuccess)
+            {
+                if (!string.IsNullOrEmpty(getWithQuestionResult.Error))
+                {
+                    await _toastService.Error("Retreiving Questionnaire Error", getWithQuestionResult.Error);
+                }
+                return;
+            }
+            Questionnaire = _mapper.Map<BootStrapQuestionnaireQuestionsResponseDto>(getWithQuestionResult.Data);
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    public void FieldChanged(object sender, FieldChangedEventArgs arg)
+    {
+        MessageStore.Clear(arg.FieldIdentifier);
+        //EditContext.NotifyFieldChanged(arg.FieldIdentifier);
+    }
+
+    public async Task OnSubmitQuestionnaireAnswerValidationError(EditContext context)
+    {
+        //var validations = new List<ValidationResult>();
+        //if (validations.Count() > 0)
+        //{
+        //    foreach (var valResult in validations)
+        //    {
+        //        foreach (string propName in valResult.MemberNames)
+        //        {
+        //            //validateForm?.SetError(propName, valResult.ErrorMessage ?? "Required");
+        //            var fielld = context.Field(propName);
+        //            MessageStore.Add(fielld, valResult.ErrorMessage ?? "Required");
+        //        }
+        //    }
+        //    StateHasChanged();
+        //    return;
+        //}
+    }
+
+    public async Task SubmitQuestionnaireAnswer(EditContext context)
+    {
+        //var validations = Question1.Validate(null);
+        //if (validations.Count() > 0)
+        //{
+        //    foreach (var valResult in validations)
+        //    {
+        //        foreach (string propName in valResult.MemberNames)
+        //        {
+        //            //validateForm?.SetError(propName, valResult.ErrorMessage ?? "Required");
+        //            var fielld = context.Field(propName);
+        //            MessageStore.Add(fielld, valResult.ErrorMessage ?? "Required");
+        //        }
+        //    }
+        //    StateHasChanged();
+        //    return;
+        //}
+        EditContext.Validate();
+        var questionnaireValidations = Questionnaire.Validate(null);
+        if(questionnaireValidations.Count() > 0)
+        {
+            foreach(var result in questionnaireValidations)
+            {
+                foreach (string propName in result.MemberNames)
+                {
+                    validateForm?.SetError(propName, result.ErrorMessage ?? "Required");
+                }
+            }
+            StateHasChanged();
+            return;
+        }
+        //Questionnaire
+        var saveQuestionAnswer = await _questionnaireService.SaveAsync(QuestionnaireId, _mapper.Map<List<QuestionnaireAnswerSubAnswerRequestDto>>(Questionnaire));
+        if (!saveQuestionAnswer.IsSuccess)
+        {
+            if (saveQuestionAnswer.IsModelError)
+            {
+
+            }
+            else
+            {
+                await _toastService.Error("Save Questionnaire Answer Error!", saveQuestionAnswer.Error);
+            }
+            return;
+        }
+    }
+    }
+

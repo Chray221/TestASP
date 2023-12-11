@@ -55,6 +55,11 @@ namespace TestASP.API.Services
             return File.Exists(imagePath);
         }
 
+        public string GetFileString(string filePath)
+        {
+            return Path.Combine(Setting.Current.FileUrl, filePath.Replace(Setting.Current.FileUrl, ""));
+        }
+
         public byte[] GetImageByte(string imagePath)
         {
             return File.ReadAllBytes(GetImageString(imagePath));

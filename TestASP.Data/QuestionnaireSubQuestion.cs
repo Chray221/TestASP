@@ -12,7 +12,6 @@ namespace TestASP.Data
         public QuestionnaireQuestion? Question { get; set; }
         #endregion
 
-        public virtual List<QuestionnaireQuestionChoice> Choices { get; set; }
     }
 }
 

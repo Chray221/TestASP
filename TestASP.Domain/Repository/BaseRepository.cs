@@ -5,6 +5,7 @@ using TestASP.Core.IRepository;
 using TestASP.Data;
 using TestASP.Domain.Contexts;
 using TestASP.Common.Extensions;
+using System.Linq;
 
 namespace TestASP.Domain.Repository
 {
@@ -53,9 +54,31 @@ namespace TestASP.Domain.Repository
             return await _dbContext.FindAsync<T>(id);
         }
 
-        public Task<List<T>> GetAsync(List<int> ids)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="pagination">page of pagination e.g 1 or 2 or 3</param>
+        /// <param name="offset"> if pagiantion != null offset's value is 10 if null </param>
+        /// <returns></returns>
+        public Task<List<T>> GetAsync(List<int>? ids = null, int? pagination = null,int? offset = null)
         {
-            return _entity.Where(item => ids.Contains(item.Id)).ToListAsync();
+            return TryCatch(() =>
+            {
+                var query = _entity;
+                if (ids != null && ids.Count > 0)
+                {
+                    query = _entity.Where(item => ids.Contains(item.Id));
+                }
+
+                if(pagination != null)
+                {
+                    offset = offset ?? 10;
+                    query = query.Skip(pagination.Value * offset.Value)
+                                 .Take(offset.Value);
+                }
+                return query.ToListAsync();
+            });
         }
 
         virtual public async Task<bool> InsertAsync(T data)
@@ -98,7 +121,7 @@ namespace TestASP.Domain.Repository
         }
 
         IQueryable<T>? _queryReference;
-        internal BaseRepository<T> IncludeReference(Func<IQueryable<T>, IQueryable<T>> action)
+        internal IBaseRepository<T> IncludeReference(Func<IQueryable<T>, IQueryable<T>> action)
         {
             return this;
         }

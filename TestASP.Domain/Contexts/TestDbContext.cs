@@ -85,6 +85,13 @@ namespace TestASP.Domain.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<QuestionnaireQuestionChoice>(choiceBuilder =>
+            {
+                choiceBuilder.ToTable(choiceTableBuilder => choiceTableBuilder.HasCheckConstraint(
+                    name: $"CH_{nameof(QuestionnaireQuestionChoice)}_Either{nameof(QuestionnaireQuestionChoice.QuestionId)}Or{nameof(QuestionnaireQuestionChoice.SubQuestionId)}",
+                    sql: $"{nameof(QuestionnaireQuestionChoice.QuestionId)} NOT NULL OR " +
+                         $"{nameof(QuestionnaireQuestionChoice.SubQuestionId)} NOT NULL"));
+            });
         }
     }
 }

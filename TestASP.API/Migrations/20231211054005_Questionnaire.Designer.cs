@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TestASP.Domain.Contexts;
 
@@ -10,9 +11,11 @@ using TestASP.Domain.Contexts;
 namespace TestASP.API.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    partial class TestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231211054005_Questionnaire")]
+    partial class Questionnaire
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.14");
@@ -517,10 +520,7 @@ namespace TestASP.API.Migrations
 
                     b.HasIndex("SubQuestionId");
 
-                    b.ToTable("QuestionnaireQuestionChoices", t =>
-                        {
-                            t.HasCheckConstraint("CH_QuestionnaireQuestionChoice_EitherQuestionIdOrSubQuestionId", "QuestionId NOT NULL OR SubQuestionId NOT NULL");
-                        });
+                    b.ToTable("QuestionnaireQuestionChoices");
                 });
 
             modelBuilder.Entity("TestASP.Data.QuestionnaireSubAnswer", b =>

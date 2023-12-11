@@ -14,7 +14,8 @@ namespace TestASP.Domain.Configurations
             services.AddTransient<IImageFileRepository, ImageFileRepository>();
             services.AddTransient<IPostCommentRepository, PostCommentRepository>();
             services.AddTransient<IPostRepository, PostRepository>();
-            
+            services.AddTransient<IQuestionnaireRepository, QuestionnaireRepository>();
+
             return services;
         }
 

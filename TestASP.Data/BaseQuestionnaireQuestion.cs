@@ -9,6 +9,8 @@ namespace TestASP.Data
         public QuestionTypeEnum QuestionTypeId { get; set; }
         public string Question { get; set; }
         public string Number { get; set; }
+
+        public virtual List<QuestionnaireQuestionChoice> Choices { get; set; }
     }
 }
 

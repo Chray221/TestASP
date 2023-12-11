@@ -5,6 +5,11 @@ using TestASP.API.Helpers;
 
 namespace TestASP.API.Controllers
 {
+    /// <summary>
+    /// <br>[ApiController]</br>
+    /// <br>[ApiVersion("1.0")]</br>
+    /// <br>[Route("v{version:apiversion}/api/[controller]")]</br>
+    /// </summary>
     public class MyControllerBase : ControllerBase
     {
 

@@ -78,7 +78,7 @@ namespace TestASP.BlazorServer.Services
                                 {
                                     SubQuestionId = 2,
                                     Number = "1.b",
-                                    Question = "What do you this is the reason?",
+                                    Question = "What do you think is the reason?",
                                     QuestionTypeId = QuestionTypeEnum.BooleanYesSubQuestion,
                                     AnswerTypeId = AnswerTypeEnum.Text,
                                 },
@@ -94,7 +94,7 @@ namespace TestASP.BlazorServer.Services
                                 {
                                     SubQuestionId = 4,
                                     Number = "1.d",
-                                    Question = "How may sub question is this question?",
+                                    Question = "How many sub question is this question?",
                                     QuestionTypeId = QuestionTypeEnum.BooleanYesSubQuestion,
                                     AnswerTypeId = AnswerTypeEnum.Number,
                                 },
@@ -110,7 +110,7 @@ namespace TestASP.BlazorServer.Services
                                 {
                                     SubQuestionId = 6,
                                     Number = "1.e",
-                                    Question = "Do you want to know why this questionnaire is asking why",
+                                    Question = "Do you want to know why this questionnaire is asking why?",
                                     QuestionTypeId = QuestionTypeEnum.SubQuestion,
                                     AnswerTypeId = AnswerTypeEnum.Boolean,
                                 },
@@ -120,7 +120,7 @@ namespace TestASP.BlazorServer.Services
                         {
                             QuestionId = 2,
                             Number = "2",
-                            Question = "Do you this is question has sub question?",
+                            Question = "Do you know this question has sub question?",
                             QuestionTypeId = QuestionTypeEnum.Question,
                             AnswerTypeId = AnswerTypeEnum.Boolean
                         },
@@ -146,7 +146,7 @@ namespace TestASP.BlazorServer.Services
                         new QuestionAnswerSubQuestionAnswerResponseDto()
                         {
                             QuestionId = 4,
-                            Number = "4.",
+                            Number = "4",
                             Question = "How many did you answer in this questionnaire?",
                             QuestionTypeId = QuestionTypeEnum.Question,
                             AnswerTypeId = AnswerTypeEnum.Number
@@ -154,7 +154,7 @@ namespace TestASP.BlazorServer.Services
                         new QuestionAnswerSubQuestionAnswerResponseDto()
                         {
                             QuestionId = 5,
-                            Number = "5.",
+                            Number = "5",
                             Question = "What do you think of this questionnaire?(explain why)",
                             QuestionTypeId = QuestionTypeEnum.Question,
                             AnswerTypeId = AnswerTypeEnum.Text
@@ -162,7 +162,7 @@ namespace TestASP.BlazorServer.Services
                         new QuestionAnswerSubQuestionAnswerResponseDto()
                         {
                             QuestionId = 6,
-                            Number = "5.",
+                            Number = "5",
                             Question = "How do you feel about this questionnaire?",
                             QuestionTypeId = QuestionTypeEnum.Question,
                             AnswerTypeId = AnswerTypeEnum.MultipleChoice,

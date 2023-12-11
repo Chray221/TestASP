@@ -78,8 +78,8 @@ namespace TestASP.Model.Questionnaires
         public string Question { get; set; }
         public string Number { get; set; }
         // Question Answer
-        public string Answer { get; set; }
-        public int AnswerId { get; set; }
+        public string? Answer { get; set; }
+        public int? AnswerId { get; set; }
 
         public List<QuestionChoiceDto> Choices { get; set; }
     }

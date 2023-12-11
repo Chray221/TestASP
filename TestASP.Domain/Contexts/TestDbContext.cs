@@ -21,7 +21,7 @@ namespace TestASP.Domain.Contexts
         public DbSet<User> User { get; set; }
         public DbSet<ImageFile> Image { get; set; }
 
-        //SOCIALS
+        // SOCIALS
         public DbSet<Event> Events { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostComment> PostComments { get; set; }
@@ -29,6 +29,15 @@ namespace TestASP.Domain.Contexts
         public DbSet<PostLike> PostLikes { get; set; }
         public DbSet<PostShare> PostShares { get; set; }
         public DbSet<PostImage> PostImages { get; set; }
+
+        // QUESTIONNAIRE
+        public DbSet<Questionnaire> Questionnaires { get; set; }
+        public DbSet<QuestionnaireQuestion> QuestionnaireQuestions { get; set; }
+        public DbSet<QuestionnaireSubQuestion> QuestionnaireSubQuestions { get; set; }
+        public DbSet<QuestionnaireQuestionChoice> QuestionnaireQuestionChoices { get; set; }
+        public DbSet<QuestionnaireAnswer> QuestionnaireAnswers { get; set; }
+        public DbSet<QuestionnaireSubAnswer> QuestionnaireSubAnswers { get; set; }
+
 
         #endregion
 

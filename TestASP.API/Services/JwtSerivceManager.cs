@@ -36,7 +36,7 @@ namespace TestASP.API.Services
         {
             if(user != null)
             {
-                List<Claim> authClaims = CreateClaims(user.Username);
+                List<Claim> authClaims = CreateClaims(user.Username, user.Role);
 
                 JwtSecurityToken token = CreateSecurityToken(authClaims);
 
@@ -53,7 +53,7 @@ namespace TestASP.API.Services
         public ClaimsPrincipal CreateClaimsPrincipal(UserDto user)
         {
             var claimsIdentity = new ClaimsIdentity(
-                CreateClaims(user.Username),
+                CreateClaims(user.Username, user.Role),
                 CookieAuthenticationDefaults.AuthenticationScheme);
             return new ClaimsPrincipal(claimsIdentity);
         }
@@ -168,13 +168,14 @@ namespace TestASP.API.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        List<Claim> CreateClaims(string username)
+        List<Claim> CreateClaims(string username, string? role = null)
         {
             return new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub,username),
                 new Claim(ClaimTypes.NameIdentifier, username),
                 new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role?.ToLower() ?? "user"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
         }

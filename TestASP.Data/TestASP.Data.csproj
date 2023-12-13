@@ -15,4 +15,10 @@
   <ItemGroup>
     <ProjectReference Include="..\TestASP.Common\TestASP.Common.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Questionnaires\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Questionnaires\" />
+  </ItemGroup>
 </Project>

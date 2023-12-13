@@ -27,6 +27,8 @@ namespace TestASP.Data
         public string? BirthPlaceStr { get; set; }
         public DateOnly Birthdate { get; set; }
 
+        public string? Role { get; set; }
+
 
         [ForeignKey(nameof(ImageFileId))]
         public virtual ImageFile? ImageFile { get; set; }

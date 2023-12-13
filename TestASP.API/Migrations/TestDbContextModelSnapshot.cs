@@ -209,6 +209,47 @@ namespace TestASP.API.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TestASP.Data.AuditLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Actor")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AffectedColumns")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("KeyValues")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NewValues")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OldValues")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TableName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs");
+                });
+
             modelBuilder.Entity("TestASP.Data.DataTypeTable", b =>
                 {
                     b.Property<int>("Id")
@@ -418,11 +459,16 @@ namespace TestASP.API.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("UserQuestionnaireId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
 
                     b.HasIndex("QuestionId");
+
+                    b.HasIndex("UserQuestionnaireId");
 
                     b.ToTable("QuestionnaireAnswers");
                 });
@@ -589,6 +635,10 @@ namespace TestASP.API.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("QuestionId")
                         .HasColumnType("INTEGER");
 
@@ -606,6 +656,44 @@ namespace TestASP.API.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("QuestionnaireSubQuestions");
+                });
+
+            modelBuilder.Entity("TestASP.Data.Questionnaires.UserQuestionnaire", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("QuestionnaireId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionnaireId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserQuestionnaires");
                 });
 
             modelBuilder.Entity("TestASP.Data.Social.Post", b =>
@@ -848,6 +936,9 @@ namespace TestASP.API.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Role")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("TEXT");
 
@@ -984,9 +1075,17 @@ namespace TestASP.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TestASP.Data.Questionnaires.UserQuestionnaire", "UserQuestionnaire")
+                        .WithMany()
+                        .HasForeignKey("UserQuestionnaireId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AnswerChoice");
 
                     b.Navigation("Question");
+
+                    b.Navigation("UserQuestionnaire");
                 });
 
             modelBuilder.Entity("TestASP.Data.QuestionnaireQuestion", b =>
@@ -1034,13 +1133,32 @@ namespace TestASP.API.Migrations
 
             modelBuilder.Entity("TestASP.Data.QuestionnaireSubQuestion", b =>
                 {
-                    b.HasOne("TestASP.Data.QuestionnaireQuestion", "Question")
+                    b.HasOne("TestASP.Data.QuestionnaireQuestion", "QuestionnaireQuestion")
                         .WithMany("SubQuestions")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Question");
+                    b.Navigation("QuestionnaireQuestion");
+                });
+
+            modelBuilder.Entity("TestASP.Data.Questionnaires.UserQuestionnaire", b =>
+                {
+                    b.HasOne("TestASP.Data.Questionnaire", "Questionnaire")
+                        .WithMany()
+                        .HasForeignKey("QuestionnaireId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestASP.Data.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Questionnaire");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TestASP.Data.Social.Post", b =>

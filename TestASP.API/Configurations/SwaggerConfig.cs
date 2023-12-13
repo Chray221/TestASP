@@ -88,7 +88,20 @@ namespace TestASP.Configurations
                 //option.TagActionsBy(api => api.HttpMethod);
 
                 //Change Operation Sort Order (e.g. for UI Sorting)
-                option.OrderActionsBy((apiDesc) => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.HttpMethod}");
+                option.OrderActionsBy((apiDesc) =>
+                {
+                    int num = 0;
+                    switch(apiDesc.HttpMethod?.ToLower())
+                    {
+                        case "get": num = 0; break;
+                        case "put": num = 1; break;
+                        case "delete": num = 2; break;
+                        //case "get": num = 0; break;
+                    }
+                    //return $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.HttpMethod}";
+                    return $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{num}";
+                });
+                //option.OrderActionsBy((apiDesc) => $"{apiDesc.HttpMethod}");
 
                 // custom schema ids
                 option.CustomSchemaIds((type) => type.FullName);
@@ -141,7 +154,7 @@ namespace TestASP.Configurations
                     swagger.Servers = new List<OpenApiServer> 
                     {
                         new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}", Description = "Https" },
-                        new OpenApiServer { Url = $"http://localhost:5266", Description = "Http" }
+                        new OpenApiServer { Url = $"http://localhost:{httpReq.Host.Port}", Description = "Http" }
                     };
                 });
             });

@@ -5,7 +5,7 @@ namespace TestASP.Data;
 
 public abstract class BaseData
 {
-    [Key]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string CreatedBy { get; set; } = string.Empty;
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -54,6 +54,14 @@ namespace TestASP.API.Helpers
             };
         }
 
+        public static IActionResult Unauthorized(string message)
+        {
+            return new ObjectResult(ResultBase.Error(message, StatusCodes.Status401Unauthorized))
+            {
+                StatusCode = StatusCodes.Status401Unauthorized
+            };
+        }
+
         private static IActionResult ToObjectResult(ResultBase resultBase)
         {
             return new ObjectResult(resultBase)

@@ -7,6 +7,8 @@ using TestASP.Common.Utilities;
 using TestASP.Model.Questionnaires;
 using TestASP.Data.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using TestASP.Common.Extensions;
+using Newtonsoft.Json;
 
 namespace TestASP.BlazorServer.Services
 {
@@ -49,13 +51,12 @@ namespace TestASP.BlazorServer.Services
         public Task<ApiResult<QuestionnaireQuestionsResponseDto>> GetWithQuestionAnswerAsync(int questionId)
         {
             //return SendAsync<QuestionnaireResponseDto>(ApiRequest.GetRequest($"{ApiEndpoints.LoginAuthUrl}/{questionId}"));
-            return Task.FromResult(ApiResult.Success(
-                new QuestionnaireQuestionsResponseDto()
-                {
-                    Id = questionId,
-                    Name = "Why Questionnaire",
-                    Description = "Why is this questionnaire asking why?",
-                    QuestionAnswers = new List<QuestionAnswerSubQuestionAnswerResponseDto>()
+            var data = new QuestionnaireQuestionsResponseDto()
+            {
+                Id = questionId,
+                Name = "Why Questionnaire",
+                Description = "Why is this questionnaire asking why?",
+                QuestionAnswers = new List<QuestionAnswerSubQuestionAnswerResponseDto>()
                     {
                         new QuestionAnswerSubQuestionAnswerResponseDto()
                         {
@@ -201,7 +202,9 @@ namespace TestASP.BlazorServer.Services
                             }
                         },
                     }
-                }));
+            };
+            _logger.LogMessage(JsonConvert.SerializeObject(data));
+            return Task.FromResult(ApiResult.Success(data));
         }
 
         public Task<ApiResult<QuestionnaireResponseDto>> SaveAsync(int questionId, List<QuestionnaireAnswerSubAnswerRequestDto> answers)

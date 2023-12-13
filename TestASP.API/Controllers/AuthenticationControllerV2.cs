@@ -64,7 +64,8 @@ namespace TestASP.API.Controllers
                     //if (SaltHasher.VerifyHash(user.Password, userFound.Password))
                     if(userFound.VerifyPassword(user.Password, userFound.Password))
                     {
-                        UserDto userDto = new UserDto(userFound, this.GetRootUrl());
+                        //UserDto userDto = new UserDto(userFound, this.GetRootUrl());
+                        UserDto userDto = _mapper.Map<UserDto>(userFound);
                         if (jwtSerivceManager.IsEnabled)
                         {
                             //userDto.Token = await jwtSerivceManager.CreateToken(user);

@@ -25,63 +25,8 @@ namespace TestASP.Domain.Repository
             _entity = _dbContext.Set<T>();
         }
 
-        virtual public async Task<bool> DeleteAsync(int id)
-        {
-            //if (id == Guid.Empty)
-            if (id == default)
-            {
-                throw new NullReferenceException($"Parammeter \"{typeof(T).Name}Id\" is empty in DeleteAsync");
-            }
-
-            T? deletedUser = await _dbContext.FindAsync<T>(id);
-            if (deletedUser != null)
-            {
-                deletedUser.IsDeleted = true;
-                deletedUser.UpdatedAt = DateTime.Now;
-                _dbContext.Update(deletedUser);
-            }
-            return deletedUser != null;
-            
-        }
-
-        virtual public async Task<T?> GetAsync(int id)
-        {
-            //if (id == Guid.Empty)
-            if (id == default)
-            {
-                throw new NullReferenceException($"Parammeter \"{typeof(T).Name}Id\" is empty in GetAsync");
-            }
-            return await _dbContext.FindAsync<T>(id);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <param name="pagination">page of pagination e.g 1 or 2 or 3</param>
-        /// <param name="offset"> if pagiantion != null offset's value is 10 if null </param>
-        /// <returns></returns>
-        public Task<List<T>> GetAsync(List<int>? ids = null, int? pagination = null,int? offset = null)
-        {
-            return TryCatch(() =>
-            {
-                var query = _entity;
-                if (ids != null && ids.Count > 0)
-                {
-                    query = _entity.Where(item => ids.Contains(item.Id));
-                }
-
-                if(pagination != null)
-                {
-                    offset = offset ?? 10;
-                    query = query.Skip(pagination.Value * offset.Value)
-                                 .Take(offset.Value);
-                }
-                return query.ToListAsync();
-            });
-        }
-
-        virtual public async Task<bool> InsertAsync(T data)
+        // Create
+        virtual public async Task<bool> InsertAsync(T data, string createdBy = "System")
         {
             if (data == null)
             {
@@ -95,14 +40,56 @@ namespace TestASP.Domain.Repository
                 //    data.Id = Guid.NewGuid();
                 //}
                 data.CreatedAt = DateTime.Now;
+                data.CreatedBy = createdBy;
                 await _dbContext.AddAsync(data);
-                await _dbContext.SaveChangesAsync();
-                return true;
-            }            
+                int insertedCount = await _dbContext.SaveChangesAsync();
+                return insertedCount > 1;
+            }
             return false;
         }
 
-        virtual public async Task<bool> UpdateAsync(T data)
+
+        // get 1
+        virtual public async Task<T?> GetAsync(int id)
+        {
+            //if (id == Guid.Empty)
+            if (id == default)
+            {
+                //throw new NullReferenceException($"Parammeter \"{typeof(T).Name}Id\" is empty in GetAsync");
+                return null;
+            }
+            return await _dbContext.FindAsync<T>(id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <param name="pagination">page of pagination e.g 1 or 2 or 3</param>
+        /// <param name="offset"> if pagiantion != null offset's value is 10 if null </param>
+        /// <returns></returns>
+        public Task<List<T>> GetAsync(List<int>? ids = null, int? pagination = null, int? offset = null)
+        {
+            return TryCatch(() =>
+            {
+                var query = _entity;
+                if (ids != null && ids.Count > 0)
+                {
+                    query = _entity.Where(item => ids.Contains(item.Id));
+                }
+
+                if (pagination != null)
+                {
+                    offset = offset ?? 10;
+                    query = query.Skip(pagination.Value * offset.Value)
+                                 .Take(offset.Value);
+                }
+                return query.ToListAsync();
+            });
+        }
+
+        //update
+        virtual public async Task<bool> UpdateAsync(T data, string updatedBy = "System")
         {
             if (data == null)
             {
@@ -111,13 +98,34 @@ namespace TestASP.Domain.Repository
 
             if (data != null)
             {
-                data.IsDeleted = true;
                 data.UpdatedAt = DateTime.Now;
+                data.UpdatedBy = updatedBy;
                 _dbContext.Update(data);
-                await _dbContext.SaveChangesAsync();
-                return true;
+                int updatedCount = await _dbContext.SaveChangesAsync();
+                return updatedCount > 1;
             }
             return false;
+        }
+
+        // delete
+        virtual public async Task<bool> DeleteAsync(int id, string deletedBy = "System")
+        {
+            //if (id == Guid.Empty)
+            if (id == default)
+            {
+                throw new NullReferenceException($"Parammeter \"{typeof(T).Name}Id\" is empty in DeleteAsync");
+            }
+
+            T? item = await _dbContext.FindAsync<T>(id);
+            if (item != null)
+            {
+                item.IsDeleted = true;
+                item.UpdatedAt = DateTime.Now;
+                item.UpdatedBy = deletedBy;
+                _dbContext.Update(item);
+            }
+            return item != null;
+            
         }
 
         IQueryable<T>? _queryReference;

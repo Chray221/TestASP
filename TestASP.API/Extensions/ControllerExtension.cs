@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using TestASP.API.Helpers;
 using TestASP.Data;
 
 namespace TestASP.API.Extensions;
@@ -15,6 +17,20 @@ public static class ControllerExtension
             return user;
         }
         return null;
+    }
+    public static User? GetLoggedInUser(this ControllerBase controller)
+    {
+        return GetLoggedInUser(controller.HttpContext);
+    }
+
+    public static Task<IActionResult> VerifyLogin(this ControllerBase controller, Func<User,Task<IActionResult>> func)
+    {
+        User? user = GetLoggedInUser(controller);
+        if (user != null)
+        {
+            return func.Invoke(user);
+        }
+        return Task.FromResult(MessageHelper.Unauthorized("Unauthorized access."));
     }
 
     public static ModelStateDictionary AddRuleFor<T, FieldDT>(

@@ -6,7 +6,12 @@ namespace TestASP.Model
         public KeyDT Id { get; set; }
     }
 
-    public class BaseDto: BaseDto<int>
+    public class BaseDto: BaseDto<int?>
+    {
+
+    }
+
+    public class BaseRequestDto : BaseDto<int?>
     {
 
     }

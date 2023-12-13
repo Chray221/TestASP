@@ -4,6 +4,9 @@ using TestASP.Model;
 using TestASP.Data;
 using static System.Net.Mime.MediaTypeNames;
 using TestASP.API.Models;
+using TestASP.Model.Questionnaires;
+using TestASP.Model.Request.Questionnaires;
+using TestASP.API.Extensions;
 
 namespace TestASP.API.Configurations
 {
@@ -11,11 +14,15 @@ namespace TestASP.API.Configurations
 	{
 		public MappingConfig()
 		{
-			CreateMap<User, UserDto>().ReverseMap();
+			CreateMap<User, UserDto>()
+                .ForMember(
+                    dest => dest.Image,
+                    opt => opt.MapFrom((src, dest) => string.IsNullOrEmpty(src.Image) ? string.Empty : Setting.Current.GetUserFileUrl(src.Image)))
+                .ReverseMap();
             CreateMap<User, PublicProfile>()
                 .ForMember(
-                    publicProfile => publicProfile.Image,
-                    opt => opt.MapFrom((u,pp) => Setting.Current.GetUserFileUrl(u.Image)) )
+                    dest => dest.Image,
+                    opt => opt.MapFrom((src,dest) => string.IsNullOrEmpty(src.Image) ? string.Empty : Setting.Current.GetUserFileUrl(src.Image)) )
                 .ReverseMap();
             //CreateMap<User, SignInUserRequestDto>().ReverseMap();
             //CreateMap<User, SignUpUserRequestDto>().ReverseMap();
@@ -23,7 +30,96 @@ namespace TestASP.API.Configurations
             CreateMap<SignUpUserRequestDto, User>();
 
             CreateMap<DataTypeTable, DataTypeDto>().ReverseMap();
+
+            //questionnaire
+            CreateMapForQuestionnaire();
+
+
+
         }
-	}
+
+        private void CreateMapForQuestionnaire()
+        {
+            #region Response
+            CreateMap<Questionnaire, QuestionnaireQuestionsResponseDto>()
+                .ForMember(dest => dest.QuestionAnswers, map => map.Ignore())
+                .AfterMap((src, dest, context) =>
+                    dest.QuestionAnswers = src.Questions?.Select(qstn => context.Mapper.Map<QuestionAnswerSubQuestionAnswerResponseDto>(qstn))
+                                                        .ToList() ?? new List<QuestionAnswerSubQuestionAnswerResponseDto>());
+            CreateMap<QuestionnaireQuestion, QuestionAnswerSubQuestionAnswerResponseDto>()
+                .ForMember(dest => dest.SubQuestionAnswers, map => map.Ignore())
+                .ForMember(dest => dest.Choices, map => map.Ignore())
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.SubQuestionAnswers = src.SubQuestions?.Select(subQstn => context.Mapper.Map<SubQuestionAnswerResponseDto>(subQstn))
+                                                              .ToList();
+                    dest.Choices = src.Choices?.Select(choice => context.Mapper.Map<QuestionChoiceDto>(choice))
+                                                              .ToList();
+                });
+            CreateMap<QuestionnaireSubQuestion, SubQuestionAnswerResponseDto>()
+                .ForMember(dest => dest.Choices, map => map.Ignore())
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.Choices = src.Choices?.Select(choice => context.Mapper.Map<QuestionChoiceDto>(choice))
+                                                              .ToList();
+                });
+
+            CreateMap<QuestionnaireQuestionChoice, QuestionChoiceDto>()
+                .ForMember(dest => dest.Name, map => map.MapFrom(src => src.Label))
+                .ReverseMap()
+                .ForMember(dest => dest.Label, map => map.MapFrom(src => src.Name));
+            #endregion
+
+            #region Request
+
+            CreateMap<QuestionnaireSaveRequest,Questionnaire>()
+                .ForMember(dest => dest.Questions, map => map.Ignore())
+                .AfterMap((src, dest, context) =>
+                    dest.Questions = src.Questions.Select(qstn => context.Mapper.Map<QuestionnaireQuestion>(qstn))
+                                                        .ToList())
+                .ReverseMap();
+
+            CreateMap<QuestionSubQuestionSaveRequestDto, QuestionnaireQuestion>()
+                .IgnoreMember(dest => dest.SubQuestions)
+                .IgnoreMember(dest => dest.Choices)
+                .AfterMap((src, dest, context) =>
+                {
+                    //dest.SubQuestions = src.SubQuestions?.Select(qstn => context.Mapper.Map<QuestionnaireSubQuestion>(qstn))
+                    //                                    .ToList();
+                    dest.SubQuestions = src.SubQuestions?.SelectMapList<QuestionnaireSubQuestion>(context.Mapper);
+                    dest.Choices = src.Choices?.Select(choice => context.Mapper.Map<QuestionnaireQuestionChoice>(choice))
+                                                        .ToList();
+                })
+                .ReverseMap()
+                //.IgnoreMember(dest => dest.)
+                .IgnoreMember(dest => dest.SubQuestions)
+                .IgnoreMember(dest => dest.Choices)
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.SubQuestions = src.SubQuestions.Select(qstn => context.Mapper.Map<BaseQuestionResponseDto>(qstn))
+                                                        .ToList();
+                    dest.Choices = src.Choices?.Select(choice => context.Mapper.Map<QuestionChoiceDto>(choice))
+                                                        .ToList();
+                });
+
+            CreateMap<BaseQuestionResponseDto, QuestionnaireSubQuestion>()
+                .IgnoreMember(dest => dest.Choices)
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.Choices = src.Choices?.Select(choice => context.Mapper.Map<QuestionnaireQuestionChoice>(choice))
+                                                        .ToList();
+                })
+                .ReverseMap()
+                 .IgnoreMember(dest => dest.Choices)
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.Choices = src.Choices?.SelectMapList<QuestionChoiceDto>(context.Mapper);
+                    //dest.Choices = src.Choices?.Select(choice => context.Mapper.Map<QuestionChoiceDto>(choice))
+                    //                                    .ToList();
+                });
+
+            #endregion
+        }
+    }
 }
 

@@ -58,7 +58,6 @@
                                   IsVertical="true"
                                   @bind-Value="Question.AnswerCheckbox"
                                   Items="@Question.GetChoices()"
-                                  ValidateRules="Question.InputRules"
                                   OnSelectedChanged="OnItemSelected" />
                     <ValidationMessage For=" () => Question.AnswerCheckbox" />
                 }

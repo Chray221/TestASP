@@ -18,10 +18,10 @@ namespace TestASP.Domain.Repository
         public Task<Questionnaire?> GetAllDetailsAsync(int id)
         {
             return TryCatch(() => _entity.Include( questionnaire => questionnaire.Questions)
-                                         .ThenInclude(question => question.SubQuestions)
-                                         .ThenInclude(subQuestion => subQuestion.Choices.Where(choice => choice.SubQuestionId == subQuestion.Id))
+                                         .ThenInclude(question => question.SubQuestions!)
+                                         .ThenInclude(subQuestion => subQuestion.Choices)
                                          .Include(questionnaire => questionnaire.Questions)
-                                         .ThenInclude(question => question.Choices.Where(choice => choice.QuestionId == question.Id))
+                                         .ThenInclude(question => question.Choices)
                                          .FirstOrDefaultAsync( questionnaire => questionnaire.Id == id) );
         }
     }

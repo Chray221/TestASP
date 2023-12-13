@@ -10,7 +10,7 @@ namespace TestASP.Data
         public string Question { get; set; }
         public string Number { get; set; }
 
-        public virtual List<QuestionnaireQuestionChoice> Choices { get; set; }
+        public virtual List<QuestionnaireQuestionChoice>? Choices { get; set; }
     }
 }
 

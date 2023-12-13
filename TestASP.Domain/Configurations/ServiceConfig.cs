@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TestASP.Core.IRepository;
 using TestASP.Core.IRepository.Social;
+using TestASP.Core.IService;
 using TestASP.Domain.Repository;
 using TestASP.Domain.Repository.Social;
+using TestASP.Domain.Services;
 
 namespace TestASP.Domain.Configurations
 {
@@ -15,6 +17,7 @@ namespace TestASP.Domain.Configurations
             services.AddTransient<IPostCommentRepository, PostCommentRepository>();
             services.AddTransient<IPostRepository, PostRepository>();
             services.AddTransient<IQuestionnaireRepository, QuestionnaireRepository>();
+            services.AddTransient<IUserQuestionnaireRepository, UserQuestionnaireRepository>();
 
             return services;
         }
@@ -26,6 +29,7 @@ namespace TestASP.Domain.Configurations
             //services.AddScoped<PostListViewService>();
             //services.AddScoped<IPopupService, PopupService>();
             //services.AddScoped<ImageService>();
+            services.AddTransient<IDataValidationService, DataValidationService>();
             return services;
         }
     }

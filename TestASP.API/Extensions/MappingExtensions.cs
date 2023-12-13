@@ -17,22 +17,22 @@ namespace TestASP.API.Extensions
         public static IMappingExpression<TSource, TDestination> SetIgnoredMember<TSource, TDestination, TMember>(
             this IMappingExpression<TSource, TDestination> mappingExpression,
             Expression<Func<TDestination, TMember>> ignoreMemberExpression,
-            Action<TDestination,IRuntimeMapper> map)
+            Action<TSource,TDestination,IRuntimeMapper> map)
         {
             return mappingExpression
                     .ForMember(ignoreMemberExpression, map => map.Ignore())
                     .AfterMap((src, dest, context) =>
                     {
-                        map.Invoke(dest, context.Mapper);
+                        map.Invoke(src, dest, context.Mapper);
                     });
         }
 
-        public static IEnumerable<TDestination> SelectMap<TDestination>(this IEnumerable<object> items, IRuntimeMapper mapper)
+        public static IEnumerable<TDestination> SelectMap<TDestination>(this IEnumerable<object> items, IMapperBase mapper)
         {
             return items.Select(item => mapper.Map<TDestination>(item));
         }
 
-        public static List<TDestination> SelectMapList<TDestination>(this IEnumerable<object> items, IRuntimeMapper mapper)
+        public static List<TDestination> SelectMapList<TDestination>(this IEnumerable<object> items, IMapperBase mapper)
         {
             return items.SelectMap<TDestination>(mapper).ToList();
         }

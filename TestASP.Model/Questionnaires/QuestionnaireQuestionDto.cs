@@ -40,7 +40,7 @@ namespace TestASP.Model.Questionnaires
         }]
     }    
     */
-    public class QuestionnaireQuestionsResponseDto : QuestionnaireResponseDto
+    public class QuestionnaireQuestionsResponseDto : UserQuestionnaireResponseDto
     {
         public List<QuestionAnswerSubQuestionAnswerResponseDto> QuestionAnswers { get; set; }
     }

@@ -134,7 +134,6 @@ namespace TestASP.BlazorServer.Models
         public int SubQuestionId { get; set; }
     }
 
-    [ComplexType]
     public class BootStrapQuestionAnswerSubQuestionAnswerResponseDto : BootStrapQuestionAnswerResponseDto
     {
         public List<BootStrapSubQuestionAnswerResponseDto> SubQuestionAnswers { get; set; }

@@ -7,6 +7,7 @@ using TestASP.API.Models;
 using TestASP.Model.Questionnaires;
 using TestASP.Model.Request.Questionnaires;
 using TestASP.API.Extensions;
+using TestASP.Data.Questionnaires;
 
 namespace TestASP.API.Configurations
 {
@@ -33,6 +34,8 @@ namespace TestASP.API.Configurations
 
             //questionnaire
             CreateMapForQuestionnaire();
+            //questionnaire answer
+            CreateMapForQuestionnaireAnswer();
 
 
 
@@ -41,6 +44,14 @@ namespace TestASP.API.Configurations
         private void CreateMapForQuestionnaire()
         {
             #region Response
+            CreateMap<UserQuestionnaire, QuestionnaireQuestionsResponseDto>()
+                .ConvertUsing((src, dest, context) =>
+                {
+                    dest = context.Mapper.Map<QuestionnaireQuestionsResponseDto>(src.Questionnaire?? new Questionnaire());
+                    dest.UserQuestionnaireId = src.Id;
+                    return dest;
+                });
+
             CreateMap<Questionnaire, QuestionnaireQuestionsResponseDto>()
                 .ForMember(dest => dest.QuestionAnswers, map => map.Ignore())
                 .AfterMap((src, dest, context) =>
@@ -119,6 +130,28 @@ namespace TestASP.API.Configurations
                 });
 
             #endregion
+            CreateMap<Questionnaire, UserQuestionnaireResponseDto>();
+            CreateMap<UserQuestionnaire, UserQuestionnaireResponseDto>()
+                .ConvertUsing((src, dest, context) =>
+                {
+                    context.Mapper.Map<UserQuestionnaireResponseDto>(src.Questionnaire ?? new Questionnaire());    
+                    dest.UserQuestionnaireId = src.Id;
+                    return dest;
+                });
+        }
+
+        private void CreateMapForQuestionnaireAnswer()
+        {
+            CreateMap<QuestionnaireAnswerSubAnswerRequestDto,QuestionnaireAnswer>()
+                .SetIgnoredMember(
+                    dest => dest.SubAnswers,
+                    (src, dest, mapper) => dest.SubAnswers = src.SubAnswers?.SelectMapList<QuestionnaireSubAnswer>(mapper))
+                .ReverseMap()
+                .SetIgnoredMember(
+                    dest => dest.SubAnswers,
+                    (src, dest, mapper) => dest.SubAnswers = src.SubAnswers?.SelectMapList<SubQuestionAnswerRequestDto>(mapper));
+            CreateMap<SubQuestionAnswerRequestDto, QuestionnaireSubAnswer>()
+                .ReverseMap();
         }
     }
 }

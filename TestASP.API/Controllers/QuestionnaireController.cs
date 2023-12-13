@@ -102,6 +102,7 @@ namespace TestASP.API.Controllers
             return MessageHelper.BadRequest(ModelState);
         }
 
+        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(SuccessResult))]
         [HttpDelete("{id}")]
         public Task<IActionResult> Delete(int id)
         {

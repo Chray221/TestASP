@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using TestASP.API.Extensions;
 using TestASP.API.Helpers;
 using TestASP.Common.Extensions;
@@ -45,6 +46,10 @@ public class ControllerExceptionFilter : IExceptionFilter
                     StatusCode = httpResponseException.StatusCode
                 };
             }
+            else if(exception is ActionResultException actionResultException)
+            {
+                result = actionResultException.Result;
+            }
             else if (exception is DbUpdateException dbUpdateException)
             {
                 /* if (dbUpdateException.InnerException is SqlException sqlException)
@@ -77,6 +82,25 @@ public class HttpResponseException : Exception
 
     public int StatusCode { get; }
 
-    public object Value { get; }
+    public object Value { get; }    
+}
+
+public class ActionResultException : Exception
+{
+    public IActionResult Result { get; set; }
+    public ActionResultException(IActionResult actionResult, string? message) : base(message)
+    {
+        Result = actionResult;
+    }
+
+    public ActionResultException(IActionResult actionResult) : base()
+    {
+        Result = actionResult;
+    }
+
+    public static ActionResultException BadRequest(string message)
+    {
+        return new ActionResultException(MessageHelper.BadRequest(message), message);
+    }
 }
 

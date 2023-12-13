@@ -22,7 +22,7 @@ namespace TestASP.Domain.Repository
             _dbContext = dbContext;
             _logger = logger;
 
-            _entity = _dbContext.Set<T>();
+            _entity = _dbContext.Set<T>().Where(e => !e.IsDeleted);
         }
 
         // Create

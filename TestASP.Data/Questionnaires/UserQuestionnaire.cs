@@ -13,9 +13,18 @@ namespace TestASP.Data.Questionnaires
 		[ForeignKey(nameof(QuestionnaireId))]
 		public Questionnaire? Questionnaire { get; set; }
 		#endregion
+
+		public List<QuestionnaireAnswer>? QuestionAnswers { get; set; }
+
 		public UserQuestionnaire()
 		{
 		}
-	}
+
+        public UserQuestionnaire(int userId, int questionnaireId)
+        {
+            UserId = userId;
+            QuestionnaireId = questionnaireId;
+        }
+    }
 }
 

@@ -20,14 +20,14 @@ namespace TestASP.BlazorServer.Models
         public string Question { get; set; }
         public string Number { get; set; }
         // Question Answer
-        [EitherRequired(nameof(AnswerId))]
+        //[EitherRequired(nameof(AnswerId))]
         public string? Answer { get; set; }
         public int? AnswerId { get; set; }
 
         DateTime? _answerDate;
         public DateTime? AnswerDate
         {
-            get { return _answerDate; }
+            get { return _answerDate = _answerDate ?? (DateTime.TryParse(Answer,out DateTime result) ? result : null); }
             set { _answerDate = value; Answer = _answerDate?.ToString("MMM dd, yyyy"); }
         }
 
@@ -43,11 +43,23 @@ namespace TestASP.BlazorServer.Models
         string? _answerCheckbox;
         public string? AnswerCheckbox
         {
-            get { return _answerCheckbox; }
-            set {  _answerCheckbox = string.IsNullOrEmpty(_answerCheckbox) ? value : value?.Replace(_answerCheckbox ?? "", "").Replace(",","") ?? "";
+            get { return _answerCheckbox = _answerCheckbox ?? Answer ?? $"{AnswerId}"; }
+            set
+            {
+                _answerCheckbox = string.IsNullOrEmpty(_answerCheckbox) ? value : value?.Replace(_answerCheckbox ?? "", "").Replace(",", "") ?? "";
                 SetAnswer(_answerCheckbox);
             }
         }
+
+        //public string? AnswerCheckbox
+        //{
+        //    get { return Answer; }
+        //    set
+        //    {
+        //        string? _answerCheckbox = string.IsNullOrEmpty(Answer) ? value : value?.Replace(Answer ?? "", "").Replace(",", "") ?? "";
+        //        SetAnswer(_answerCheckbox);
+        //    }
+        //}
 
         IEnumerable<SelectedItem>? _choices;
         public IEnumerable<SelectedItem>? GetChoices()
@@ -58,13 +70,13 @@ namespace TestASP.BlazorServer.Models
                 case AnswerTypeEnum.BooleanWithSubQuestion:
                     _choices = _choices ?? new List<SelectedItem>()
                     {
-                        new SelectedItem("True", "Yes"),
-                        new SelectedItem("False", "No")
+                        new SelectedItem("True", "Yes") {  Active = Answer == "True"},
+                        new SelectedItem("False", "No") { Active = Answer == "False"}
                     };
                     break;
                 case AnswerTypeEnum.MultipleChoice:
                     _choices = _choices ?? Choices?.Select(choice =>
-                    new SelectedItem($"{choice.Id}", $"{choice.Value} - {choice.Name}")).ToList();
+                        new SelectedItem($"{choice.Id}", $"{choice.Value} - {choice.Name}") {  Active = choice.Id == AnswerId}).ToList();
                     break;
                 default:
                     return null;
@@ -100,7 +112,7 @@ namespace TestASP.BlazorServer.Models
 
         public bool HasNoAnswer()
         {
-            return string.IsNullOrEmpty(Answer) && AnswerDate == null && AnswerId <= 0;
+            return string.IsNullOrEmpty(Answer) && AnswerDate == null && (AnswerId ?? 0) <= 0;
         }
 
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

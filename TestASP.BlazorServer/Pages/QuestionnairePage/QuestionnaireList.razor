@@ -3,6 +3,9 @@
 @using TestASP.Model;
 @using TestASP.Model.Questionnaires;
 @using TestASP.Data.Enums;
+@using TestASP.Common.Extensions;
+
+@inherits AuthorizedPage
 
 @inject IQuestionnaireService _questionnaireService
 @inject ToastService _toastService
@@ -17,13 +20,31 @@
                 {
                     <Card>
                         <HeaderTemplate>
-                            Not Answered
+                            @if (questionnair.IsAnswered)
+                            {
+                                @("Answered")
+                                <label>Answered :</label>
+                                <label class="ms-auto text-muted "> (@(questionnair.DateAnswered?.GetTimelapse()))</label>
+                            }
+                            else
+                            {
+                                <label>Not Answered</label>                                
+                            }
+                            @*@(questionnair.IsAnswered ? "Answered" : "Not Answered")*@ 
                         </HeaderTemplate>
                         <BodyTemplate>
                             <h5>@questionnair.Name</h5>
-                            <p class="card-text">@questionnair.Description</p>
-                            <a class="btn btn-primary" href="Questionnaire/@questionnair.Id/Answer">Answer</a>
+                            <p class="card-text">@questionnair.Description</p>                            
                         </BodyTemplate>
+                        <FooterTemplate>
+                            <div class="row gap-2">
+                                <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-primary" href="Questionnaire/@questionnair.Id/Answer">Answer</a>
+                                @if (questionnair.IsAnswered)
+                                {
+                                    <a class="col-15 col-sm-12 col-md-7 col-lg-5 btn btn-primary" href="Questionnaire/@questionnair.Id/Answer/@questionnair.UserQuestionnaireId">Update</a>
+                                }
+                            </div>
+                        </FooterTemplate>
                     </Card>
                 }
             </Row>
@@ -41,17 +62,17 @@ else
 
 @code {
 
-    public List<QuestionnaireResponseDto> Questionnaires { get; set; }
+    public List<UserQuestionnaireResponseDto> Questionnaires { get; set; }
 
     public bool IsLoading { get; set; } = true;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-
-        if (firstRender)
+        await GetLoggedInUser();
+        if (firstRender && IsLoggedIn)
         {
-            var getWithQuestionResult = await _questionnaireService.GetAsync();
-            if (!getWithQuestionResult.IsSuccess)
+            var getWithQuestionResult = await _questionnaireService.GetAsync(LoggedInUser?.Id ?? 0);
+            if (getWithQuestionResult?.IsSuccess != true)
             {
                 if (!string.IsNullOrEmpty(getWithQuestionResult.Error))
                 {

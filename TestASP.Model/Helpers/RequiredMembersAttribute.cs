@@ -35,7 +35,7 @@ namespace TestASP.Model.Helpers
                 }
                 else if(IsRequired)
                 {
-                    return new ValidationResult($"{{0}} is required.");
+                    return new ValidationResult($"{validationContext.DisplayName} is required.");
                 }
 
                 //return base.IsValid(value, validationContext);
@@ -82,7 +82,7 @@ namespace TestASP.Model.Helpers
                             return null;
                         }
                     }
-                    return new ValidationResult(ErrorMessage ?? $"{{0}} is Required.");
+                    return new ValidationResult(ErrorMessage ?? $"{validationContext.DisplayName} is Required.");
                 }
                 //return base.IsValid(value, validationContext);
             }
@@ -111,7 +111,7 @@ namespace TestASP.Model.Helpers
                 }
                 else if (value != null && !value.Equals(fieldPropertry.GetValue(validationContext.ObjectInstance)))
                 {
-                    return new ValidationResult(ErrorMessage ?? $"{{0}} is not equals to {PropertyName}.");
+                    return new ValidationResult(ErrorMessage ?? $"{validationContext.DisplayName} is not equals to {PropertyName}.");
                 }
 
                 //return base.IsValid(value, validationContext);

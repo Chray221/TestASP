@@ -9,6 +9,8 @@ using TestASP.Data.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using TestASP.Common.Extensions;
 using Newtonsoft.Json;
+using TestASP.Data;
+using TestASP.Data.Questionnaires;
 
 namespace TestASP.BlazorServer.Services
 {
@@ -23,34 +25,65 @@ namespace TestASP.BlazorServer.Services
         {
         }
 
-        public Task<ApiResult<List<QuestionnaireResponseDto>>> GetAsync()
+        public Task<ApiResult<List<QuestionnaireResponseDto>>> GetAdminAsync()
         {
-            //return SendAsync<List<QuestionnaireResponseDto>>(ApiRequest.GetRequest($"{ApiEndpoints.Questionnaire}"));
-            return Task.FromResult(ApiResult.Success(new List<QuestionnaireResponseDto>()
-            {
-                new QuestionnaireResponseDto()
-                {
-                    Id = 1,
-                    Name = "Why Questionnaire",
-                    Description = "Why is this questionnaire asking why?",
-                }
-            }));
+            return SendAsync<List<QuestionnaireResponseDto>>(
+                ApiRequest.GetRequest(ApiEndpoint.AdminQuestionnaire));
+            //return Task.FromResult(ApiResult.Success(new List<QuestionnaireResponseDto>()
+            //{
+            //    new QuestionnaireResponseDto()
+            //    {
+            //        Id = 1,
+            //        Name = "Why Questionnaire",
+            //        Description = "Why is this questionnaire asking why?",
+            //    }
+            //}));
         }
 
-        public Task<ApiResult<QuestionnaireResponseDto>> GetAsync(int questionId)
+        public Task<ApiResult<List<UserQuestionnaireResponseDto>>> GetAsync(int userId)
+        {
+            return SendAsync<List<UserQuestionnaireResponseDto>>(
+                ApiRequest.GetRequest(ApiEndpoint.UserQuestionnaires,userId));
+            //return Task.FromResult(ApiResult.Success(new List<QuestionnaireResponseDto>()
+            //{
+            //    new QuestionnaireResponseDto()
+            //    {
+            //        Id = 1,
+            //        Name = "Why Questionnaire",
+            //        Description = "Why is this questionnaire asking why?",
+            //    }
+            //}));
+        }
+
+        public Task<ApiResult<QuestionnaireQuestionsResponseDto>> GetAsync(int userId, int questionnaireId, int? userQuestionnaireId = null)
         {
             //return SendAsync<QuestionnaireResponseDto>(ApiRequest.GetRequest($"{ApiEndpoints.Questionnaire}/{questionId}"));
-            return Task.FromResult(ApiResult.Success(
-                new QuestionnaireResponseDto() {
-                    Id = 1,
-                    Name = "Why Questionnaire",
-                    Description = "Why is this questionnaire asking why?",                    
-                }));
+            if (userQuestionnaireId == null)
+            {
+                return SendAsync<QuestionnaireQuestionsResponseDto>(
+                    ApiRequest.GetRequest(ApiEndpoint.UserQuestionnaireAnswer, userId, questionnaireId, userQuestionnaireId!));
+            }
+            return SendAsync<QuestionnaireQuestionsResponseDto>(
+                ApiRequest.GetRequest(ApiEndpoint.SaveUserQuestionnaire, userId, questionnaireId));
+            //return Task.FromResult(ApiResult.Success(
+            //    new QuestionnaireResponseDto() {
+            //        Id = 1,
+            //        Name = "Why Questionnaire",
+            //        Description = "Why is this questionnaire asking why?",                    
+            //    }));
         }
 
-        public Task<ApiResult<QuestionnaireQuestionsResponseDto>> GetWithQuestionAnswerAsync(int questionId)
+        public Task<ApiResult<QuestionnaireQuestionsResponseDto>> GetWithQuestionAnswerAsync(int userId, int questionnaireId, int? userQuestionnaireId = null)
         {
             //return SendAsync<QuestionnaireResponseDto>(ApiRequest.GetRequest($"{ApiEndpoints.LoginAuthUrl}/{questionId}"));
+            if (userQuestionnaireId != null)
+            {
+                return SendAsync<QuestionnaireQuestionsResponseDto>(
+                    ApiRequest.GetRequest(ApiEndpoint.UserQuestionnaireAnswer, userId, questionnaireId, userQuestionnaireId!));
+            }
+            return SendAsync<QuestionnaireQuestionsResponseDto>(
+                ApiRequest.GetRequest(ApiEndpoint.SaveUserQuestionnaire, userId, questionnaireId));
+            /* //Mock Questionnaire with Questions and SubQuestions
             var data = new QuestionnaireQuestionsResponseDto()
             {
                 Id = questionId,
@@ -204,15 +237,32 @@ namespace TestASP.BlazorServer.Services
                     }
             };
             _logger.LogMessage(JsonConvert.SerializeObject(data));
-            return Task.FromResult(ApiResult.Success(data));
+            return Task.FromResult(ApiResult.Success(data)); */
         }
 
-        public Task<ApiResult<QuestionnaireResponseDto>> SaveAsync(int questionId, List<QuestionnaireAnswerSubAnswerRequestDto> answers)
+        public Task<ApiResult<QuestionnaireQuestionsResponseDto>> SaveAsync(
+            int userId,
+            int questionnaireId,
+            List<QuestionnaireAnswerSubAnswerRequestDto> answers)
         {
-            return SendAsync<List<QuestionnaireAnswerSubAnswerRequestDto>, QuestionnaireResponseDto>(
+            return SendAsync<List<QuestionnaireAnswerSubAnswerRequestDto>, QuestionnaireQuestionsResponseDto>(
                 ApiRequest.PostRequest(
-                    ApiEndpoints.FromFormat(ApiEndpoints.SaveQuestionnaire, questionId),
-                    answers));
+                    answers,
+                    ApiEndpoint.SaveUserQuestionnaire,
+                    userId, questionnaireId));
+        }
+
+        public Task<ApiResult<QuestionnaireQuestionsResponseDto>> UpdateAsync(
+            int userId,
+            int questionnaireId,
+            int userQuestionnaireId,
+            List<QuestionnaireAnswerSubAnswerRequestDto> answers)
+        {
+            return SendAsync<List<QuestionnaireAnswerSubAnswerRequestDto>, QuestionnaireQuestionsResponseDto>(
+                ApiRequest.PutRequest(
+                    answers,
+                    ApiEndpoint.UserQuestionnaireAnswer,
+                    userId, questionnaireId, userQuestionnaireId));
         }
     }
 }

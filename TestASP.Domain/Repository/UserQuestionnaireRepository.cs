@@ -20,12 +20,14 @@ namespace TestASP.Domain.Repository
         public Task<UserQuestionnaire?> GetAllDetailAsync(int id)
         {
             return TryCatch(() => _entity.Include(uQstnr => uQstnr.Questionnaire)
-                                         .ThenInclude(questionnaire => questionnaire!.Questions)
-                                         .ThenInclude(question => question.SubQuestions!)
-                                         .ThenInclude(subQuestion => subQuestion.Choices)
+                                         .ThenInclude(questionnaire => questionnaire!.Questions.Where(item => !item.IsDeleted))
+                                         .ThenInclude(question => question.SubQuestions!.Where(item => !item.IsDeleted))
+                                         .ThenInclude(subQuestion => subQuestion.Choices!.Where(item => !item.IsDeleted))
                                          .Include(uQstnr => uQstnr.Questionnaire)
-                                         .ThenInclude(questionnaire => questionnaire!.Questions)
-                                         .ThenInclude(question => question.Choices)
+                                         .ThenInclude(questionnaire => questionnaire!.Questions.Where(item => !item.IsDeleted))
+                                         .ThenInclude(question => question.Choices!.Where(item => !item.IsDeleted))
+                                         .Include( uQstnr => uQstnr.QuestionAnswers!.Where(item => !item.IsDeleted))
+                                         .ThenInclude(answer => answer.SubAnswers!.Where( item => !item.IsDeleted))
                                          .FirstOrDefaultAsync(uQuestionnaire => uQuestionnaire.Id == id));
         }
 

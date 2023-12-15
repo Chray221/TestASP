@@ -1,4 +1,5 @@
 ﻿@page "/Questionnaire/{QuestionnaireId:int}/Answer"
+@page "/Questionnaire/{QuestionnaireId:int}/Answer/{UserQuestionnaireId:int}"
 
 @using TestASP.Model;
 @using TestASP.BlazorServer.Models;
@@ -10,10 +11,13 @@
 @using TestASP.BlazorServer.Components;
 @using System.ComponentModel.DataAnnotations;
 
+@inherits AuthorizedPage
+
 @attribute [AutoValidateAntiforgeryToken]
 
 @inject IQuestionnaireService _questionnaireService
 @inject ToastService _toastService
+@inject NavigationManager _navigationManager
 @inject IMapper _mapper
 
 <AuthorizeView>
@@ -24,13 +28,12 @@
         @if (Questionnaire != null)
         {
             <EditForm Model="@Questionnaire" Context="Context" OnValidSubmit="SubmitQuestionnaireAnswer">
-                @*<DataAnnotationsValidator />*@
                 <ObjectGraphDataAnnotationsValidator />
                 <Card>
                     <BodyTemplate>
                         <h4>@Questionnaire.Name</h4>
                         <p class="card-text">@Questionnaire.Description</p>
-                        <ValidationSummary/>
+                        @*<ValidationSummary />*@
                         <Stack class="gap-3" AlignItems="StackAlignItems.Stretch" Justify="StackJustifyContent.Start" IsRow="false">
                             @foreach (var questionAnswer in Questionnaire.QuestionAnswers)
                             {
@@ -38,13 +41,14 @@
                                     <QuestionAnswer Question="@questionAnswer" />
                                 </StackItem>
                             }
-                            <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit">Submit</Button>
                         </Stack>
                     </BodyTemplate>
+                    <FooterTemplate>
+                        <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit">@(UserQuestionnaireId == null ? "Save" : "Update")</Button>
+                    </FooterTemplate>
                 </Card>
             </EditForm>
             <ValidateForm hidden @ref="validateForm"
-                          OnInvalidSubmit="OnSubmitQuestionnaireAnswerValidationError"
                           Model="@Questionnaire" OnValidSubmit="SubmitQuestionnaireAnswer" ShowRequiredMark="true" ValidateAllProperties="true">
                 <ObjectGraphDataAnnotationsValidator />
                 <BootstrapBlazorDataAnnotationsValidator />
@@ -64,7 +68,7 @@
                                     }
                                 </StackItem>
                             }
-                            <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit">Submit</Button>
+                            <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit">@(UserQuestionnaireId == null ? "Submit" : "Update" ) </Button>
                         </Stack>
                     </BodyTemplate>
                 </Card>
@@ -81,22 +85,26 @@
     </Authorized>
 </AuthorizeView>
 
-@code {
+@code
+{
     [Parameter] public int QuestionnaireId { get; set; }
+    [Parameter] public int? UserQuestionnaireId { get; set; } = null;
 
     public BootStrapQuestionnaireQuestionsResponseDto? Questionnaire { get; set; }
     public bool IsLoading { get; set; } = true;
     private ValidateForm? validateForm;
     private EditContext? EditContext { get; set; }
-    ValidationMessageStore? MessageStore ;
+    ValidationMessageStore? MessageStore;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender)
+        await GetLoggedInUser();
+
+        if (firstRender && IsLoggedIn)
         {
-            var getWithQuestionResult = await _questionnaireService.GetWithQuestionAnswerAsync(QuestionnaireId);
+            var getWithQuestionResult = await _questionnaireService.GetWithQuestionAnswerAsync(LoggedInUser!.Id ?? 0, QuestionnaireId, UserQuestionnaireId);
             if (!getWithQuestionResult.IsSuccess)
             {
                 if (!string.IsNullOrEmpty(getWithQuestionResult.Error))
@@ -117,47 +125,12 @@
         //EditContext.NotifyFieldChanged(arg.FieldIdentifier);
     }
 
-    public async Task OnSubmitQuestionnaireAnswerValidationError(EditContext context)
-    {
-        //var validations = new List<ValidationResult>();
-        //if (validations.Count() > 0)
-        //{
-        //    foreach (var valResult in validations)
-        //    {
-        //        foreach (string propName in valResult.MemberNames)
-        //        {
-        //            //validateForm?.SetError(propName, valResult.ErrorMessage ?? "Required");
-        //            var fielld = context.Field(propName);
-        //            MessageStore.Add(fielld, valResult.ErrorMessage ?? "Required");
-        //        }
-        //    }
-        //    StateHasChanged();
-        //    return;
-        //}
-    }
-
     public async Task SubmitQuestionnaireAnswer(EditContext context)
     {
-        //var validations = Question1.Validate(null);
-        //if (validations.Count() > 0)
-        //{
-        //    foreach (var valResult in validations)
-        //    {
-        //        foreach (string propName in valResult.MemberNames)
-        //        {
-        //            //validateForm?.SetError(propName, valResult.ErrorMessage ?? "Required");
-        //            var fielld = context.Field(propName);
-        //            MessageStore.Add(fielld, valResult.ErrorMessage ?? "Required");
-        //        }
-        //    }
-        //    StateHasChanged();
-        //    return;
-        //}
-        EditContext.Validate();
-        var questionnaireValidations = Questionnaire.Validate(null);
-        if(questionnaireValidations.Count() > 0)
+        var questionnaireValidations = Questionnaire?.Validate(null!);
+        if (questionnaireValidations?.Count() > 0)
         {
-            foreach(var result in questionnaireValidations)
+            foreach (var result in questionnaireValidations)
             {
                 foreach (string propName in result.MemberNames)
                 {
@@ -168,19 +141,47 @@
             return;
         }
         //Questionnaire
-        var saveQuestionAnswer = await _questionnaireService.SaveAsync(QuestionnaireId, _mapper.Map<List<QuestionnaireAnswerSubAnswerRequestDto>>(Questionnaire));
-        if (!saveQuestionAnswer.IsSuccess)
+        if (IsLoggedIn)
         {
-            if (saveQuestionAnswer.IsModelError)
+            ApiResult<QuestionnaireQuestionsResponseDto> questionAnswerResponse = null;
+            if (UserQuestionnaireId == null)
             {
+                questionAnswerResponse = await _questionnaireService.SaveAsync(
+                    LoggedInUser?.Id ?? 0,
+                    QuestionnaireId,
+                    _mapper.Map<List<QuestionnaireAnswerSubAnswerRequestDto>>(Questionnaire));
+            }
+            else // updated
+            {
+                questionAnswerResponse = await _questionnaireService.UpdateAsync(
+                    LoggedInUser?.Id ?? 0,
+                    QuestionnaireId,
+                    UserQuestionnaireId ?? 0,
+                    _mapper.Map<List<QuestionnaireAnswerSubAnswerRequestDto>>(Questionnaire));
+            }
+            if (!questionAnswerResponse.IsSuccess)
+            {
+                if (questionAnswerResponse.IsModelError)
+                {
 
+                }
+                else
+                {
+                    await _toastService.Error("Save Questionnaire Answer Error!", questionAnswerResponse.Error);
+                }
+                return;
             }
             else
             {
-                await _toastService.Error("Save Questionnaire Answer Error!", saveQuestionAnswer.Error);
+                await _toastService.Success(UserQuestionnaireId == null ? "Successfully save answers" : "Successfully updated answers", questionAnswerResponse.Message);
+                if (UserQuestionnaireId == null)
+                {
+                    await Task.Delay(2000);
+                    _navigationManager.NavigateTo("Questionnaire", true);
+                }
             }
-            return;
+
         }
     }
-    }
+}
 

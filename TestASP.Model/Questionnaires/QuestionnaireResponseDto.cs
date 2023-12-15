@@ -6,6 +6,7 @@ namespace TestASP.Model.Questionnaires
         public string Name { get; set; }
         public string Description { get; set; }
         public string? Content { get; set; }
+        public DateTime? DateAnswered { get; set; }
     }
 
     public class UserQuestionnaireResponseDto : QuestionnaireResponseDto

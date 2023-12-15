@@ -5,7 +5,7 @@ namespace TestASP.Data
 {
     public abstract class BaseQuestionnaireAnswer : BaseData
     {
-        public string Answer { get; set; }
+        public string? Answer { get; set; }
         public int? AnswerId { get; set; }
 
         #region ForeignKey

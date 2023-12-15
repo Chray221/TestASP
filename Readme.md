@@ -2,10 +2,10 @@
 
 # TestASP.API
 
-## Auto Mapper
-
+## [Auto Mapper](https://docs.automapper.org/en/stable/Getting-started.html)
 - ### Setup
     - add Package "AutoMapper"
+    - add Package "AutoMapper.Extensions.Microsoft.DependencyInjection"
     - create "MappingConfig"
         ``` csharp
         using AutoMapper;
@@ -22,6 +22,8 @@
     - in `Program.cs`
         ```csharp    
         builder.Services.AddAutoMapper(typeof(MappingConfig));
+        //before add controller
+        builder.Services.AddControllers();
         ```
 - To Use
     - in `Controller`
@@ -53,7 +55,7 @@
         ```bash
         dotnet ef migrations add MigrationTitle --project ProjectName 
         ```
-    -- remove migration
+    - remove migration
         ```bash
         dotnet ef migrations remove
         ```
@@ -99,10 +101,10 @@
 - kill running project
     ```bash
     kill -9 $(lsof -i:PORT -t) 2> /dev/null
-    e.g
+    #e.g
     #my local api
     kill -9 $(lsof -i:7069 -t) 2> /dev/null
-    or
+    #or
     #my local blazor server
     kill -9 $(lsof -i:7070 -t) 2> /dev/null
     ```

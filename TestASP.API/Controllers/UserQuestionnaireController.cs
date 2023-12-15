@@ -9,6 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using TestASP.API.Extensions;
 using TestASP.API.Helpers;
 using TestASP.API.Services;
+using TestASP.Common.Utilities;
 using TestASP.Core.IRepository;
 using TestASP.Core.IService;
 using TestASP.Data;
@@ -40,11 +41,11 @@ namespace TestASP.API.Controllers
             _questionnaireRepository = questionnaireRepository;
         }
 
-        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(DataResult<List<QuestionnaireResponseDto>>))]
+        [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(DataResult<List<UserQuestionnaireResponseDto>>))]
         [HttpGet]
         public Task<IActionResult> GetAsync()
         {
-            return this.VerifyLogin( async loggedInUser =>
+            return VerifyLogin( async loggedInUser =>
             {
                 List<Questionnaire> questionnaires = await _questionnaireRepository.GetAsync();
                 List<UserQuestionnaire> userQuestionnaires = await _repository.GetByUserIdAsync(loggedInUser.Id);
@@ -60,9 +61,10 @@ namespace TestASP.API.Controllers
                         UserQuestionnaireResponseDto? userQuestionnaireDto = userQuestionnaireDtos.FirstOrDefault(dto => dto.Id == userQuestionnaire.QuestionnaireId);
                         if(userQuestionnaireDto != null)
                         {
-                            if(userQuestionnaireDto.IsAnswered)
+                            userQuestionnaireDto.DateAnswered = userQuestionnaire.UpdatedAt ?? userQuestionnaire.CreatedAt;
+                            if (userQuestionnaireDto.IsAnswered)
                             {
-                                UserQuestionnaireResponseDto newDto = _mapper.Map<UserQuestionnaireResponseDto>(userQuestionnaireDto);
+                                UserQuestionnaireResponseDto newDto = userQuestionnaireDto.Clone();
                                 newDto.UserQuestionnaireId = userQuestionnaire.Id;
                                 userQuestionnaireDtos.Add(newDto);
                             }
@@ -78,10 +80,12 @@ namespace TestASP.API.Controllers
         }
 
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(DataResult<QuestionnaireQuestionsResponseDto>))]
-        [HttpGet("{id}/Answer/{userQuestionnaireId}")]
-        public Task<IActionResult> GetAsync(int id, int? userQuestionnaireId)
+        [HttpGet("{id}/Answer/{userQuestionnaireId}" , Name = "GetUserQuestionnaireAnswer")]
+        [HttpGet("{id}/Answer")]
+        [ActionName("GetUserQuestionnaireAnswer")]
+        public Task<IActionResult> GetAsync([FromRoute]int id, [FromRoute]int? userQuestionnaireId)
         {
-            return this.VerifyLogin(async loggedInUser =>
+            return VerifyLogin(async loggedInUser =>
             {
                 if (userQuestionnaireId == null)
                 {
@@ -107,63 +111,67 @@ namespace TestASP.API.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(DataResult<QuestionnaireQuestionsResponseDto>))]
         [HttpPost("{id}/Answer")]
         public async Task<IActionResult> SaveAsync(
-            int id,
+            [FromRoute] int id,
             [FromBody] List<QuestionnaireAnswerSubAnswerRequestDto> saveRequest,
-            ValidationService validationService)
+            [FromServices] ValidationService validationService)
         {
             Questionnaire questionnaire = await validationService.ValidateSaveQuestionnaireAsync(ModelState, id, saveRequest);
 
-            if (ModelState.IsValid)
+            return await VerifyLogin(async loggedInUser =>
             {
-                return await this.VerifyLogin(async loggedInUser =>
+                UserQuestionnaire newUserQuestionnaire = new UserQuestionnaire(loggedInUser.Id, id);
+                newUserQuestionnaire.QuestionAnswers = new List<QuestionnaireAnswer>();
+                foreach (var answer in saveRequest)
                 {
-                    UserQuestionnaire newUserQuestionnaire = new UserQuestionnaire(loggedInUser.Id, id);
-                    newUserQuestionnaire.QuestionAnswers = new List<QuestionnaireAnswer>();
-                    foreach (var answer in saveRequest)
-                    {
-                        newUserQuestionnaire.QuestionAnswers.Add(_mapper.Map<QuestionnaireAnswer>(answer));
-                    }
-                    if (!await _repository.InsertAsync(newUserQuestionnaire, loggedInUser.Username ?? "System"))
-                    {
-                        return MessageHelper.InternalServerError("Something went wrong in saving questionnaire answer");
-                    }
+                    newUserQuestionnaire.QuestionAnswers.Add(_mapper.Map<QuestionnaireAnswer>(answer));
+                }
+                if (!await _repository.InsertAsync(newUserQuestionnaire, loggedInUser.Username ?? "System"))
+                {
+                    return MessageHelper.InternalServerError("Something went wrong in saving questionnaire answer");
+                }
 
-                    return MessageHelper.Ok(_mapper.Map<QuestionnaireQuestionsResponseDto>(questionnaire), "Successfully saved");
-                });
-            }
-            return MessageHelper.BadRequest(ModelState);
+                return MessageHelper.Ok(_mapper.Map<QuestionnaireQuestionsResponseDto>(newUserQuestionnaire), "Successfully saved");
+                //return RedirectToAction
+                //return RedirectToAction("GetUserQuestionnaireAnswer",new { id = newUserQuestionnaire.Id });
+            });
         }
 
-        [HttpPut("{id}/Answer/{userQuestionnaireId}")]
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(DataResult<QuestionnaireQuestionsResponseDto>))]
-        public async Task<IActionResult> UpdateAsync(int id, int userQuestionnaireId, [FromBody] QuestionnaireAnswerSubAnswerRequestDto updateRequest)
+        [HttpPut("{id}/Answer/{userQuestionnaireId}")]
+        public async Task<IActionResult> UpdateAsync(
+            [FromRoute] int id,
+            [FromRoute] int userQuestionnaireId,
+            [FromBody] List<QuestionnaireAnswerSubAnswerRequestDto> updateRequest,
+            [FromServices] ValidationService validationService)
         {
-            if (ModelState.IsValid)
-            {
-                //return await this.VerifyLogin(async loggedInUser =>
-                //{
-                //    Questionnaire? questionnaire = await _repository.GetAllDetailsAsync(id);
-                //    if (questionnaire == null)
-                //    {
-                //        MessageHelper.NotFound("Questionnaire not found.");
-                //    }
-                //    if (questionnaire!.Update(updateRequest, _mapper) && !await _repository.UpdateAsync(questionnaire!, loggedInUser.Username ?? "System"))
-                //    {
-                //        MessageHelper.InternalServerError("Something went wrong in updating questionnaire");
-                //    }
+            Questionnaire questionnaire = await validationService.ValidateSaveQuestionnaireAsync(ModelState, id, updateRequest);
 
-                //    return MessageHelper.Ok(_mapper.Map<QuestionnaireQuestionsResponseDto>(questionnaire), "Successfully saved");
-                //});
-            }
-            return MessageHelper.BadRequest(ModelState);
+            return await VerifyLogin(async loggedInUser =>
+            {
+                UserQuestionnaire? userQuestionnaire = await _repository.GetAllDetailAsync(userQuestionnaireId);
+                if(userQuestionnaire == null)
+                {
+                    return MessageHelper.BadRequest("User questionnaire answer not found.");
+                }
+
+                if (userQuestionnaire!.Update(updateRequest, _mapper) && !await _repository.InsertAsync(userQuestionnaire, loggedInUser.Username ?? "System"))
+                {
+                    return MessageHelper.InternalServerError("Something went wrong in saving questionnaire answer");
+                }
+
+                return MessageHelper.Ok(_mapper.Map<QuestionnaireQuestionsResponseDto>(userQuestionnaire), "Successfully updated");
+                //return RedirectToAction("GetUserQuestionnaireAnswer", new { id = userQuestionnaire.Id });
+            });
         }
 
         [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(SuccessResult))]
         [HttpDelete("{id}/Answer/{userQuestionnaireId}")]
-        public Task<IActionResult> Delete(int id, int userQuestionnaireId,
+        public Task<IActionResult> DeleteAsync(
+            [FromRoute] int id,
+            [FromRoute] int userQuestionnaireId,
             IDataValidationService dataValidationService)
         {
-            return this.VerifyLogin(async loggedInUser =>
+            return VerifyLogin(async loggedInUser =>
             {
                 if (!await dataValidationService.IsDataExist<Questionnaire>(id))
                 {

@@ -15,6 +15,8 @@ namespace TestASP.API.Configurations
         {
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<IJwtSerivceManager, JwtSerivceManager>();
+            services.AddTransient<ValidationService>();
+            
             //services.AddSingleton<IFirebaseStorageService, FirebaseStorageService>();
             return services;
         }

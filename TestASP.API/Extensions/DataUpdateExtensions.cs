@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics.CodeAnalysis;
+using TestASP.Common.Extensions;
 using TestASP.Data;
 using TestASP.Data.Enums;
+using TestASP.Data.Questionnaires;
 using TestASP.Model;
 using TestASP.Model.Questionnaires;
 using TestASP.Model.Request.Questionnaires;
@@ -133,7 +135,6 @@ namespace TestASP.API.Extensions
 
             return isUpdated;
         }
-        #endregion
 
         public static bool BaseUpdate(this BaseQuestionnaireQuestion data, BaseQuestionResponseDto update, [NotNull] IMapper mapper)
         {
@@ -166,7 +167,7 @@ namespace TestASP.API.Extensions
                     data.Choices = data.Choices ?? new List<QuestionnaireQuestionChoice>();
                     foreach (var updateChoice in update.Choices)
                     {
-                        if(data.Choices.TryUpsertList(updateChoice, mapper, choice => choice!.Update(updateChoice)))
+                        if (data.Choices.TryUpsertList(updateChoice, mapper, choice => choice!.Update(updateChoice)))
                         {
                             isUpdated = true;
                         }
@@ -189,6 +190,91 @@ namespace TestASP.API.Extensions
             return isUpdated;
         }
 
+        #endregion
+
+        #region Questionnaire Answer
+        public static bool Update(this UserQuestionnaire data, List<QuestionnaireAnswerSubAnswerRequestDto> update, [NotNull] IMapper mapper)
+        {
+            bool isUpdated = false;
+            if (data != null && update?.Count > 0)
+            {
+                if (data.QuestionAnswers == null)
+                {
+                    foreach (var updateQA in update)
+                    {
+                        if (data.QuestionAnswers?.TryUpsertList(updateQA, mapper, src => src.Update(updateQA, mapper)) == true)
+                        {
+                            isUpdated = true;
+                        }
+                    }
+                }
+            }
+            return isUpdated;
+        }
+
+        public static bool Update(this QuestionnaireAnswer data, QuestionnaireAnswerSubAnswerRequestDto update, [NotNull] IMapper mapper)
+        {
+
+            bool isUpdated = false;
+            if (data != null && update != null)
+            {
+                if(data.Question?.AnswerTypeId == AnswerTypeEnum.BooleanWithSubQuestion &&
+                    data.Answer?.EqualsLower(update.Answer!) == true)
+                {
+                    data.SubAnswers?.ForEach(sub => sub.IsDeleted = true);
+                }
+                if (data.Update(update))
+                {
+                    isUpdated = true;
+                }
+                foreach (var updateSQA in update.SubAnswers ?? new())
+                {
+                    if (data.SubAnswers?.TryUpsertList(updateSQA, mapper, src => src.Update(updateSQA)) == true)
+                    {
+                        isUpdated = true;
+                    }
+                }
+            }
+            return isUpdated;
+        }
+        #endregion
+
+        public static bool Update(this BaseQuestionnaireAnswer data, BaseAnswerRequestDto update)
+        {
+
+            bool isUpdated = false;
+            if (data != null && update != null)
+            {
+                if (TryUpdatedValue(data.Answer, update.Answer, out string? Answer))
+                {
+                    data.Answer = Answer;
+                    isUpdated = true;
+                }
+                if (TryUpdatedValue(data.AnswerId, update.AnswerId, out int? AnswerId))
+                {
+                    data.AnswerId = AnswerId;
+                    isUpdated = true;
+                }
+            }
+            return isUpdated;
+        }
+
+        /// <summary>
+        /// <code>
+        /// //sample code
+        /// if(srcList?.TryUpsertList(updateDto, mapper, src => src.Update(updateDto, mapper)) == true)
+        /// {
+        ///     isUpdated = true;
+        /// }
+        /// </code>
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TRequest"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="update"></param>
+        /// <param name="mapper"></param>
+        /// <param name="updateAction"></param>
+        /// <returns></returns>
         public static bool TryUpsertList<TSource,TRequest>(this IList<TSource> data, TRequest update, [NotNull] IMapper mapper, Func<TSource,bool> updateAction)
             where TSource: BaseData
             where TRequest: BaseDto

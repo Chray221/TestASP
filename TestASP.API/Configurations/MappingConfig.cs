@@ -48,6 +48,27 @@ namespace TestASP.API.Configurations
                 .ConvertUsing((src, dest, context) =>
                 {
                     dest = context.Mapper.Map<QuestionnaireQuestionsResponseDto>(src.Questionnaire?? new Questionnaire());
+                    if(dest.QuestionAnswers?.Count > 0)
+                    {
+                        foreach(var qaDest in dest.QuestionAnswers)
+                        {
+                            if (src.QuestionAnswers?.FirstOrDefault(answer => answer.QuestionId == qaDest.QuestionId) is QuestionnaireAnswer qaSrc)
+                            {
+                                qaDest.Id = qaSrc.Id;
+                                qaDest.Answer = qaSrc.Answer;
+                                qaDest.AnswerId = qaSrc.AnswerId;
+                                foreach (var sqaDest in qaDest.SubQuestionAnswers ?? new())
+                                {
+                                    if (qaSrc.SubAnswers?.FirstOrDefault(sub => sub.SubQuestionId == sqaDest.SubQuestionId) is QuestionnaireSubAnswer sqaSrc)
+                                    {
+                                        sqaDest.Id = sqaSrc.Id;
+                                        sqaDest.Answer = sqaSrc.Answer;
+                                        sqaDest.AnswerId = sqaSrc.AnswerId;
+                                    }
+                                }
+                            }
+                        }
+                    }
                     dest.UserQuestionnaireId = src.Id;
                     return dest;
                 });
@@ -58,6 +79,8 @@ namespace TestASP.API.Configurations
                     dest.QuestionAnswers = src.Questions?.Select(qstn => context.Mapper.Map<QuestionAnswerSubQuestionAnswerResponseDto>(qstn))
                                                         .ToList() ?? new List<QuestionAnswerSubQuestionAnswerResponseDto>());
             CreateMap<QuestionnaireQuestion, QuestionAnswerSubQuestionAnswerResponseDto>()
+                //.ForMember(dest => dest.QuestionId, map => map.MapFrom( src => src.Id))
+                .ForMemberMap(dest => dest.QuestionId, src => src.Id)
                 .ForMember(dest => dest.SubQuestionAnswers, map => map.Ignore())
                 .ForMember(dest => dest.Choices, map => map.Ignore())
                 .AfterMap((src, dest, context) =>
@@ -68,6 +91,7 @@ namespace TestASP.API.Configurations
                                                               .ToList();
                 });
             CreateMap<QuestionnaireSubQuestion, SubQuestionAnswerResponseDto>()
+                .ForMemberMap(dest => dest.SubQuestionId, src => src.Id)
                 .ForMember(dest => dest.Choices, map => map.Ignore())
                 .AfterMap((src, dest, context) =>
                 {
@@ -136,6 +160,7 @@ namespace TestASP.API.Configurations
                 {
                     context.Mapper.Map<UserQuestionnaireResponseDto>(src.Questionnaire ?? new Questionnaire());    
                     dest.UserQuestionnaireId = src.Id;
+                    dest.DateAnswered = src.UpdatedAt ?? src.CreatedAt;
                     return dest;
                 });
         }

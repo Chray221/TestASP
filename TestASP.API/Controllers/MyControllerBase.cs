@@ -2,9 +2,13 @@
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using TestASP.API.Extensions;
 using TestASP.API.Helpers;
+using TestASP.API.Migrations;
 using TestASP.Core.IRepository;
 using TestASP.Data;
+using TestASP.Data.Questionnaires;
+using TestASP.Model.Questionnaires;
 
 namespace TestASP.API.Controllers
 {
@@ -24,6 +28,41 @@ namespace TestASP.API.Controllers
             //Host.HostEnvironment = environment ?? throw new ArgumentNullException(nameof(environment));
             //this.Log($"PATH {RootPath}");
         }
+
+
+        /// <summary>
+        /// return Unauthorize if User is null and not verified from UserAuthAsyncFilter using JWT Token
+        /// <br>return BadRequest if ModelState.IsValid == false</br>
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        internal Task<IActionResult> VerifyLogin(Func<User, Task<IActionResult>> func)
+        {
+            User? user = this.GetLoggedInUser();
+            if (user != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    return func.Invoke(user);
+                }
+                return Task.FromResult(MessageHelper.BadRequest(ModelState));
+            }
+            return Task.FromResult(MessageHelper.Unauthorized("Unauthorized access."));
+        }
+
+        /// <summary>
+        /// return BadRequest if ModelState.IsValid == false
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        //internal Task<IActionResult> VerifyModelState(Func<Task<IActionResult>> func)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        return func.Invoke();
+        //    }
+        //    return Task.FromResult(MessageHelper.BadRequest(ModelState));
+        //}
     }
 
     /// <summary>

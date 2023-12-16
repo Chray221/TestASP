@@ -38,8 +38,11 @@ namespace TestASP.Common.Utilities
         ///<summary> GET: User </summary>
         public static ApiEndpoint User => new("User");
 
-        ///<summary> GET: Questionnaire </summary>
+        ///<summary> GET,POST: Questionnaire </summary>
         public static ApiEndpoint AdminQuestionnaire => new("Questionnaire");
+
+        ///<summary> GET,PUT,DELETE: Questionnaire/{id} </summary>
+        public static ApiEndpoint AdminQuestionnaireItem => new("Questionnaire/{id}");
 
         ///<summary> GET: User/{userId}/Questionnaire </summary>
         public static ApiEndpoint UserQuestionnaires => new("User/{userId}/Questionnaire");

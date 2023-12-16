@@ -1,4 +1,5 @@
-﻿using TestASP.Data;
+﻿using TestASP.Common.Extensions;
+using TestASP.Data;
 
 namespace TestASP.Model
 {
@@ -24,6 +25,11 @@ namespace TestASP.Model
             BirthPlaceStr = user.BirthPlaceStr;
             Birthdate = user.Birthdate;
             Role = user.Role;
+        }
+
+        public bool IsAdmin()
+        {
+            return Role?.EqualsLower("admin") == true;
         }
 
         public User ToData()

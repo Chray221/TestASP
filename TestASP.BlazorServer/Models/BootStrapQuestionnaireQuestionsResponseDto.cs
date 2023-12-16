@@ -216,7 +216,6 @@ namespace TestASP.BlazorServer.Models
         }
     }
 
-    [ComplexType]
     public class BootStrapQuestionnaireQuestionsResponseDto : QuestionnaireResponseDto , IValidatableObject
     {
         [ValidateComplexType]
@@ -241,22 +240,6 @@ namespace TestASP.BlazorServer.Models
                                             qaValidationResult.ErrorMessage,
                                             qaValidationResult.MemberNames.Select( memName => $"{qaPropName}.{memName}"  ));
                     }
-                    //if(questionAnswer.SubQuestions != null && questionAnswer.SubQuestions.Count() > 0)
-                    //{
-                    //    int sqaCount = 0;
-                    //    string sqaPropName = "";
-                    //    foreach (BootStrapSubQuestionAnswerResponseDto subQuestionAnswer in questionAnswer.SubQuestions)
-                    //    {
-                    //        sqaPropName = $"{qaPropName}.{nameof(questionAnswer.SubQuestions)}[{sqaCount++}]";
-                    //        //sqaPropName = $"{qaPropName}.{nameof(questionAnswer.GetSubQuestions)}";
-                    //        foreach (ValidationResult sqavalidationResult in subQuestionAnswer.Validate(validationContext))
-                    //        {
-                    //            yield return new ValidationResult(
-                    //                                sqavalidationResult.ErrorMessage,
-                    //                                sqavalidationResult.MemberNames.Select(memName => $"{sqaPropName}.{memName}"));
-                    //        }
-                    //    }
-                    //}
                 }
             }
         }

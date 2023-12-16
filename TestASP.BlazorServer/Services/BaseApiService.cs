@@ -82,22 +82,6 @@ namespace TestASP.BlazorServer.Services
                     foreach(var property in apiRequest.Data.GetType().GetProperties())
                     {
                         AddContent(multipart, apiRequest.Data, property);
-                        //propertyName = property.Name;
-                        //item = property.GetValue(apiRequest.Data);
-                        //if (IsListType(property.GetType()))
-                        //{
-
-                        //}
-                        //else if(item is IBrowserFile browserFile)
-                        //{
-                        //    multipart.Add(CreateStreamContent(browserFile.OpenReadStream(),
-                        //                                      propertyName,
-                        //                                      item.ToString() ?? ""));
-                        //}
-                        //else if (item != null)
-                        //{
-                        //    multipart.Add(CreateStringContent(propertyName, item.ToString() ?? ""));
-                        //}
                     }
                     request.Content = multipart;
                 }
@@ -112,6 +96,11 @@ namespace TestASP.BlazorServer.Services
             {
 
                 HttpResponseMessage response = await client.SendAsync(request);
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
+                    response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    return ApiResult.Unauthorized<TResponse>();
+                }
 
                 var responseContent = await response.Content.ReadAsStringAsync();
 

@@ -41,7 +41,7 @@ namespace TestASP.API.Controllers
                 MessageHelper.InternalServerError("Something went wrong in retrieving questionnaires.");
             }
             return MessageHelper.Ok(
-                questionnaires.Select( _mapper.Map<QuestionnaireResponseDto>),
+                questionnaires?.Select( _mapper.Map<QuestionnaireResponseDto>),
                 "Successfully retrieved questionnaires");
         }
 

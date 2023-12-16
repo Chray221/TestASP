@@ -25,7 +25,26 @@
             </NavLink>
         </div>
         <AuthorizeView>
-            <Authorized>
+            <Authorized Context="context">
+                @if (context.User.IsInRole("admin"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" @onclick="ToggleMaintenanceNav" Match="NavLinkMatch.All">
+                            <span class="oi oi-list-rich" aria-hidden="true"></span>
+                            Maintenance
+                            <span class="@(collapseMaintenance ? "fas fa-angle-down" : "fas fa-angle-up") ms-auto" aria-hidden="true"></span>
+                        </NavLink>
+                    </div>
+                    <div class="@MaintenanceNavMenuCssClass sub-nav-scrollable ps-5">
+                        <nav class="flex-column py-0">
+                            <div class="nav-item px-3 py-0 pb-2">
+                                <NavLink class="nav-link" href="maintenance/questionnaire">
+                                    <span class="fas fa-file-circle-question me-2" aria-hidden="true"></span> Questionnaires
+                                </NavLink>
+                            </div>
+                        </nav>
+                    </div>
+                }
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="questionnaire">
                         <span class="fas fa-file-circle-question me-2" aria-hidden="true"></span> Questionnaires
@@ -62,12 +81,19 @@
 
 @code {
     private bool collapseNavMenu = true;
+    private bool collapseMaintenance = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string? MaintenanceNavMenuCssClass => collapseMaintenance ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private void ToggleMaintenanceNav()
+    {
+        collapseMaintenance = !collapseMaintenance;
     }
 }
 

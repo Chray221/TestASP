@@ -11,6 +11,7 @@ using TestASP.Common.Extensions;
 using Newtonsoft.Json;
 using TestASP.Data;
 using TestASP.Data.Questionnaires;
+using TestASP.Model.Request.Questionnaires;
 
 namespace TestASP.BlazorServer.Services
 {
@@ -29,15 +30,30 @@ namespace TestASP.BlazorServer.Services
         {
             return SendAsync<List<QuestionnaireResponseDto>>(
                 ApiRequest.GetRequest(ApiEndpoint.AdminQuestionnaire));
-            //return Task.FromResult(ApiResult.Success(new List<QuestionnaireResponseDto>()
-            //{
-            //    new QuestionnaireResponseDto()
-            //    {
-            //        Id = 1,
-            //        Name = "Why Questionnaire",
-            //        Description = "Why is this questionnaire asking why?",
-            //    }
-            //}));
+        }
+
+        public Task<ApiResult<QuestionnaireSaveRequest>> GetAdminItemAsync(int questionnaireId)
+        {
+            return SendAsync<QuestionnaireSaveRequest>(
+                ApiRequest.GetRequest(ApiEndpoint.AdminQuestionnaireItem,questionnaireId));
+        }
+
+        public Task<ApiResult<QuestionnaireSaveRequest>> SaveAdminAsync(QuestionnaireSaveRequest saveRequest)
+        {
+            return SendAsync<QuestionnaireSaveRequest,QuestionnaireSaveRequest>(
+                ApiRequest.PostRequest(saveRequest,ApiEndpoint.AdminQuestionnaire));
+        }
+
+        public Task<ApiResult<QuestionnaireSaveRequest>> UpdateAdminAsync(int questionnaireId, QuestionnaireSaveRequest saveRequest)
+        {
+            return SendAsync<QuestionnaireSaveRequest,QuestionnaireSaveRequest>(
+                ApiRequest.PutRequest(saveRequest,ApiEndpoint.AdminQuestionnaireItem,questionnaireId));
+        }
+
+        public Task<ApiResult<string>> DeleteAdminItemAsync(int questionnaireId)
+        {
+            return SendAsync<string>(
+                ApiRequest.DeleteRequest(ApiEndpoint.AdminQuestionnaireItem,questionnaireId));
         }
 
         public Task<ApiResult<List<UserQuestionnaireResponseDto>>> GetAsync(int userId)

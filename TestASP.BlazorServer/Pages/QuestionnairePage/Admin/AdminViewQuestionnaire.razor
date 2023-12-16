@@ -1,0 +1,206 @@
+﻿@page "/Maintenance/Questionnaire/Add"
+@page "/Maintenance/Questionnaire/{Id:int}"
+
+@using TestASP.BlazorServer.Models;
+@using TestASP.Model.Questionnaires;
+@using TestASP.Data.Enums;
+@using TestASP.Common.Extensions;
+@using TestASP.BlazorServer.Models.Questionnaires;
+@using TestASP.BlazorServer.Models.Questionnaires.Admin;
+@using TestASP.BlazorServer.Components;
+@using System.Collections.Generic;
+@using AutoMapper;
+@using TestASP.Model.Request.Questionnaires;
+
+@inherits AuthorizedPage
+
+@inject IQuestionnaireService _questionnaireService
+@inject ToastService _toastService
+@inject NavigationManager _navigationManager
+@inject IMapper _mapper
+
+
+@if (IsLoading)
+{
+    <h1>Loading...</h1>
+}
+else if (Questionnaire != null)
+{
+    <EditForm Model="@Questionnaire" Context="Context" OnValidSubmit="SubmitQuestionnaireAnswer">
+        <ObjectGraphDataAnnotationsValidator />
+        <ValidationSummary/>
+        <Card>
+            <HeaderTemplate>
+                <h1>Questinnaire</h1>
+                <Button class="ms-auto" Color="Color.Success" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit">@(Id == null ? "Save" : "Update")</Button>
+            </HeaderTemplate>
+            <BodyTemplate>
+                <div class="col">
+                    <BootstrapInput ShowLabel="true" @bind-Value="@Questionnaire!.Name" />
+                    <ValidationMessage For="() => Questionnaire.Name" />
+                </div>
+                <div class="col">
+                    <Textarea ShowLabel="true" @bind-Value="@Questionnaire!.Description" />
+                    <ValidationMessage For="@(() => Questionnaire.Description)" />
+                </div>
+                <div class="col mb-3">
+                    <label><InputCheckbox @bind-Value="@HasContent" /> HasContent</label>
+                    <br/>
+                    @if (HasContent)
+                    {
+                        <Textarea ShowLabel="true" @bind-Value="@Questionnaire!.Content" />
+                        <ValidationMessage For="@(() => Questionnaire.Content)" />
+                    }
+                </div>
+                @*<p class="card-text">@Questionnaire.Description</p>*@
+                @*<ValidationSummary />*@
+                <Stack class="gap-3" AlignItems="StackAlignItems.Stretch" Justify="StackJustifyContent.Start" IsRow="false">
+                    @if (Questionnaire.Questions != null)
+                    {
+                        @foreach (var question in @Questionnaire.Questions)
+                        {
+                            <StackItem>
+                                <AddQuestion Question="@question" AnswerTypes="@AnswerTypes" QuestionTypes="@QuestionTypes" OnItemDeleted="OnQuestionDeleted" />
+                            </StackItem>
+                        }
+                    }
+                </Stack>
+            </BodyTemplate>
+            <FooterTemplate>
+                <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add Questionn" OnClick="AddQuestion" />
+            </FooterTemplate>
+        </Card>
+    </EditForm>
+}
+else
+{
+    <h1>Questionnaire Not Found</h1>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private BlazorAdminQuestionnaire? Questionnaire;
+    private bool HasContent;
+    private bool IsLoading = true;
+
+    private IEnumerable<SelectedItem> AnswerTypes;
+    private IEnumerable<SelectedItem> QuestionTypes;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        await GetLoggedInUser();
+        if (firstRender)
+        {
+            if (IsLoggedIn)
+            {
+                if (Id != null)
+                {
+                    var getWithQuestionResult = await _questionnaireService.GetAdminItemAsync(Id ?? 0)
+                                                    ?? Models.ApiResult.InternalServerError<QuestionnaireSaveRequest>();
+                    if (getWithQuestionResult?.IsSuccess != true)
+                    {
+                        if (!string.IsNullOrEmpty(getWithQuestionResult.Error))
+                        {
+                            await _toastService.Error("Retreiving Questionnaire Error", getWithQuestionResult.Error);
+                        }
+                        return;
+                    }
+                    Questionnaire = _mapper.Map<BlazorAdminQuestionnaire>(getWithQuestionResult.Data);
+                }
+                Questionnaire = Questionnaire ?? new BlazorAdminQuestionnaire();
+            }
+
+            AnswerTypes = typeof(AnswerTypeEnum).GetValues<AnswerTypeEnum>().Select(enumVal => new SelectedItem(enumVal.Value, enumVal.Value));
+            QuestionTypes = typeof(QuestionTypeEnum).GetValues<QuestionTypeEnum>().Select(enumVal => new SelectedItem(enumVal.Value, enumVal.Value));
+            IsLoading = false;
+            StateHasChanged();
+        }
+
+    }
+
+    public void OnQuestionDeleted(BaseBlazorAdminQuestionResponseDto deletedItem)
+    {
+        if (deletedItem is BlazorAdminQuestion deleteQuestion &&
+            Questionnaire?.Questions?.Count > 0 &&
+            Questionnaire!.Questions.Any(item => item == deleteQuestion))
+        {
+            Questionnaire!.Questions.Remove(deleteQuestion);
+            StateHasChanged();
+        }
+    }
+
+    public void AddQuestion()
+    {
+        if (Questionnaire!.Questions == null)
+        {
+            Questionnaire!.Questions = new List<BlazorAdminQuestion>();
+        }
+        Questionnaire!.Questions.Add(new BlazorAdminQuestion() { QuestionTypeId = QuestionTypeEnum.Question });
+        StateHasChanged();
+    }
+
+    public async Task SubmitQuestionnaireAnswer(EditContext context)
+    {
+        var questionnaireValidations = Questionnaire?.Validate(null!);
+        //if (questionnaireValidations?.Count() > 0)
+        //{
+        //    foreach (var result in questionnaireValidations)
+        //    {
+        //        foreach (string propName in result.MemberNames)
+        //        {
+        //            validateForm?.SetError(propName, result.ErrorMessage ?? "Required");
+        //        }
+        //    }
+        //    StateHasChanged();
+        //    return;
+        //}
+        //Questionnaire
+        var validated = context.Validate();
+        if (IsLoggedIn)
+        {
+            ApiResult<QuestionnaireSaveRequest> questionnaireResponse = null;
+            if (Id == null)
+            {
+                questionnaireResponse = await _questionnaireService.SaveAdminAsync(_mapper.Map<QuestionnaireSaveRequest>(Questionnaire));
+            }
+            else // updated
+            {
+                questionnaireResponse = await _questionnaireService.UpdateAdminAsync(Id ?? 0,_mapper.Map<QuestionnaireSaveRequest>(Questionnaire));
+            }
+            if (questionnaireResponse == null)
+            {
+                await _toastService.Error("Error!", $"Something went wrong in {(Id == null ? "saving" : "updating")} questionnaire.");
+            }
+            else if (!questionnaireResponse!.IsSuccess)
+            {
+                if (questionnaireResponse.IsModelError)
+                {
+
+                }
+                else
+                {
+                    await _toastService.Error("Save Questionnaire Answer Error!", questionnaireResponse.Error);
+                }
+                return;
+            }
+            else
+            {
+                await _toastService.Success(Id == null ? "Successfully save answers" : "Successfully updated answers", questionnaireResponse.Message);
+                if (Id == null)
+                {
+                    await Task.Delay(2000);
+                    _navigationManager.NavigateTo("Maintenance/Questionnaire", true);
+                }
+                else
+                {
+                    Questionnaire = Questionnaire ?? new BlazorAdminQuestionnaire();
+                    StateHasChanged();
+                }
+            }
+        }
+    }
+
+}
+

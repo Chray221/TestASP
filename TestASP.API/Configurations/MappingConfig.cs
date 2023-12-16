@@ -72,6 +72,8 @@ namespace TestASP.API.Configurations
                     dest.UserQuestionnaireId = src.Id;
                     return dest;
                 });
+            CreateMap<Questionnaire, QuestionnaireResponseDto>()
+                .ReverseMap();
 
             CreateMap<Questionnaire, QuestionnaireQuestionsResponseDto>()
                 .ForMember(dest => dest.QuestionAnswers, map => map.Ignore())

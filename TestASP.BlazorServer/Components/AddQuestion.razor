@@ -1,0 +1,143 @@
+﻿@using TestASP.BlazorServer.Models.Questionnaires.Admin;
+@using TestASP.Data.Enums;
+
+@inject  ToastService _toastService
+@inject DialogService _dialog
+
+<Card>
+    <HeaderTemplate>
+
+        @if (Question is BlazorAdminQuestion question)
+        {
+            <h4> Question</h4>
+        }
+        else
+        {
+            <h4> Sub Question</h4>
+        }
+        <Button class="ms-auto" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Color="Color.Danger" Text="Delete" OnClick="DeleteQuestion_Clicked" />
+    </HeaderTemplate>
+    <BodyTemplate>
+        <div class="col">
+            <BootstrapInput ShowLabel="true" DisplayText="Question Number" @bind-Value="@Question.Number" />
+            <ValidationMessage For="() => Question.Number" />
+        </div>
+        <div class="col">
+            @*<BootstrapInput type="editor" @bind-Value="@Question.Question" />*@
+            <Textarea ShowLabel="true" placeholder="Please enter ..." @bind-Value="@Question.Question" />
+            <ValidationMessage For="() => Question.Question" />
+        </div>
+        <div class="col">
+            @*<Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeId" />*@
+            <Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeId" Items="@AnswerTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
+            <ValidationMessage For="() => Question.Question" />
+        </div>
+
+        @if (Question is BlazorAdminSubQuestion)
+        {
+            <div class="col">
+                <Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeId"
+                        Items="@QuestionTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
+                @*<Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeId" />*@
+                <ValidationMessage For="() => Question.Question" />
+            </div>
+        }
+        @if (Question is BlazorAdminQuestion question)
+        {
+            <Stack class="ms-4 mt-2 gap-3"
+                   AlignItems="StackAlignItems.Stretch"
+                   Justify="StackJustifyContent.Start"
+                   IsRow="false">
+                @if (question.SubQuestions != null)
+                {
+                    @foreach (var subQuestion in question.SubQuestions!)
+                    {
+                        <StackItem>
+                            <AddQuestion Question="@subQuestion" IsBootStrap="@IsBootStrap"
+                                         AnswerTypes="@AnswerTypes"
+                                         QuestionTypes="@GetSubAnswerQuestionTyes()"
+                                         OnItemDeleted="@OnSubItemDeleted" />
+                        </StackItem>
+                    }
+                }
+            </Stack>
+        }
+    </BodyTemplate>
+    <FooterTemplate>
+        @if (Question is BlazorAdminQuestion)
+        {
+            <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add SubQuestionn" OnClick="AddSubQuestion" />
+        }
+    </FooterTemplate>
+        
+</Card>
+@code {
+    [Parameter] public BaseBlazorAdminQuestionResponseDto Question { get; set; }
+    [Parameter] public bool IsBootStrap { get; set; } = true;
+    [Parameter] public IEnumerable<SelectedItem>? AnswerTypes { get; set; }
+    [Parameter] public IEnumerable<SelectedItem>? QuestionTypes { get; set; }
+    [Parameter] public Action<BaseBlazorAdminQuestionResponseDto> OnItemDeleted { get; set; }
+
+    protected override void OnInitialized()
+    {
+    }
+
+    public async Task OnItemSelected(IEnumerable<SelectedItem> items, string selectedStr)
+    {
+        StateHasChanged();
+    }
+
+    public IEnumerable<SelectedItem>? GetSubAnswerQuestionTyes()
+    {
+        return QuestionTypes?.Where(arg =>
+        {
+            bool other = true;
+            switch(Question.AnswerTypeId)
+            {
+                case AnswerTypeEnum.Boolean:
+                case AnswerTypeEnum.BooleanWithSubQuestion:
+                    break;
+                default:
+                    other = arg.Value != QuestionTypeEnum.BooleanNoSubQuestion.ToString() ||
+                            arg.Value != QuestionTypeEnum.BooleanYesSubQuestion.ToString();
+                    break;
+            }
+            return other || arg.Value != QuestionTypeEnum.Question.ToString();
+        });
+    }
+
+    public void OnSubItemDeleted(BaseBlazorAdminQuestionResponseDto deletedItem)
+    {
+        if(deletedItem is BlazorAdminSubQuestion deletedSubQuestion &&
+            Question is BlazorAdminQuestion question &&
+            question.SubQuestions?.Count > 0)
+        {
+            question.SubQuestions!.Remove(deletedSubQuestion);
+            StateHasChanged();
+        }
+    }
+
+    public void DeleteQuestion_Clicked()
+    {
+        OnItemDeleted?.Invoke(Question);
+    }
+
+    public async Task OnAnswerTypeSelectedItem(SelectedItem selectedItem)
+    {
+        StateHasChanged();
+    }
+
+    public void AddSubQuestion()
+    {
+        if (Question is BlazorAdminQuestion adminQuestion)
+        {
+            if (adminQuestion.SubQuestions == null)
+            {
+                adminQuestion.SubQuestions = new List<BlazorAdminSubQuestion>();
+            }
+            adminQuestion.SubQuestions.Add(new BlazorAdminSubQuestion());
+            StateHasChanged();
+        }
+    }
+}
+

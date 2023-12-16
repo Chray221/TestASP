@@ -17,6 +17,14 @@ namespace TestASP.BlazorServer.Models
             };
         }
 
+		public static ApiResult<T> Unauthorized<T>()
+        {
+            return new ApiResult<T>(StatusCodes.Status401Unauthorized)
+            {
+                Error = "Unauthorized Access."
+            };
+        }
+
         public static ApiResult<T> InternalServerError<T>(string message = "Something went wrong in parsing api response.")
         {
             return new ApiResult<T>(StatusCodes.Status500InternalServerError)

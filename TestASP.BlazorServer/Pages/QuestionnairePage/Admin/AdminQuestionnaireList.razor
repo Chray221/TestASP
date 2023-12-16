@@ -1,0 +1,86 @@
+﻿@page  "/Maintenance/Questionnaire"
+
+@using TestASP.Model;
+@using TestASP.Model.Questionnaires;
+@using TestASP.Data.Enums;
+@using TestASP.Common.Extensions;
+
+@inherits AuthorizedPage
+
+@inject IQuestionnaireService _questionnaireService
+@inject ToastService _toastService
+
+@if (Questionnaires != null)
+{
+    <Card>
+        <HeaderTemplate>
+            <h5>Questionnaires</h5>
+            <a class="btn btn-primary ms-auto" href="Maintenance/Questionnaire/Add">Add</a>
+        </HeaderTemplate>
+        <BodyTemplate>
+            <Row ItemsPerRow="ItemsPerRow.Three" RowType="RowType.Normal">
+                @foreach (var questionnair in Questionnaires)
+                {
+                    <Card>
+                        <HeaderTemplate>
+                            <p>Published</p>
+                            <p class="ms-auto text-muted "> (@(DateTime.Now.GetTimelapse()))</p>
+                        </HeaderTemplate>
+                        <BodyTemplate>
+                            <h5>@questionnair.Name</h5>
+                            <p class="card-text">@questionnair.Description</p>
+                        </BodyTemplate>
+                        <FooterTemplate>
+                            <div class="row gap-2">
+                                <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-primary"
+                                   href="Maintenance/Questionnaire/@questionnair.Id">View</a>
+                                @*@if (questionnair.IsAnswered)
+                                {*@
+                                    <a class="col-15 col-sm-12 col-md-7 col-lg-5 btn btn-primary"
+                                       href="Maintenance/Questionnaire/@questionnair.Id">Publish</a>
+                                @*}*@
+                            </div>
+                        </FooterTemplate>
+                    </Card>
+                }
+            </Row>
+        </BodyTemplate>
+    </Card>
+}
+else if (IsLoading)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <h1>QuestionnaireNot Found</h1>
+}
+
+@code {
+
+    public List<QuestionnaireResponseDto> Questionnaires { get; set; }
+
+    public bool IsLoading { get; set; } = true;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        await GetLoggedInUser();
+        if (firstRender && IsLoggedIn)
+        {
+            var getWithQuestionResult = await _questionnaireService.GetAdminAsync()
+                                            ?? Models.ApiResult.InternalServerError<List<QuestionnaireResponseDto>>();
+            if (getWithQuestionResult?.IsSuccess != true)
+            {
+                if (!string.IsNullOrEmpty(getWithQuestionResult.Error))
+                {
+                    await _toastService.Error("Retreiving Questionnaire Error", getWithQuestionResult.Error);
+                }
+                return;
+            }
+            Questionnaires = getWithQuestionResult.Data;
+        }
+        IsLoading = false;
+        StateHasChanged();
+    }
+}
+

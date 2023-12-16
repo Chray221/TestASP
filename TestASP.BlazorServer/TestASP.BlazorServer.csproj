@@ -26,6 +26,9 @@
     <None Remove="Pages\Profile\" />
     <None Remove="Pages\QuestionnairePage\" />
     <None Remove="Components\" />
+    <None Remove="Pages\QuestionnairePage\Admin\" />
+    <None Remove="Models\Questionnaires\" />
+    <None Remove="Models\Questionnaires\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\Authentication\" />
@@ -37,6 +40,9 @@
     <Folder Include="Pages\Profile\" />
     <Folder Include="Pages\QuestionnairePage\" />
     <Folder Include="Components\" />
+    <Folder Include="Pages\QuestionnairePage\Admin\" />
+    <Folder Include="Models\Questionnaires\" />
+    <Folder Include="Models\Questionnaires\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BootstrapBlazor" Version="8.0.3" />

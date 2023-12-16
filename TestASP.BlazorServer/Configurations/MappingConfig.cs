@@ -2,7 +2,10 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestASP.BlazorServer.Models;
+using TestASP.BlazorServer.Models.Questionnaires.Admin;
 using TestASP.Model.Questionnaires;
+using TestASP.Model.Request.Questionnaires;
+using TestASP.BlazorServer.Extensions;
 
 namespace TestASP.BlazorServer.Configurations
 {
@@ -52,6 +55,38 @@ namespace TestASP.BlazorServer.Configurations
                                     context.Mapper.Map<QuestionnaireAnswerSubAnswerRequestDto>(questionAnswer))
                                 .ToList();
                 });
+            MapForAdminQuestionnaire();
+        }
+
+        public void MapForAdminQuestionnaire()
+        {
+            CreateMap<BlazorAdminQuestionnaire, QuestionnaireSaveRequest>()
+                .IgnoreMember(dest => dest.Questions)
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.Questions = src.Questions.SelectMapList<QuestionSubQuestionSaveRequestDto>(context.Mapper);
+                })
+                .ReverseMap()
+                .IgnoreMember(dest => dest.Questions)
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.Questions = src.Questions?.SelectMapList<BlazorAdminQuestion>(context.Mapper) ?? new ();
+                });
+            
+            CreateMap<BlazorAdminQuestion, QuestionSubQuestionSaveRequestDto>()
+                .IgnoreMember(dest => dest.SubQuestions)
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.SubQuestions = src.SubQuestions?.SelectMapList<BaseQuestionResponseDto>(context.Mapper);
+                })
+                .ReverseMap()
+                .IgnoreMember(dest => dest.SubQuestions)
+                .AfterMap((src, dest, context) =>
+                {
+                    dest.SubQuestions = src.SubQuestions?.SelectMapList<BlazorAdminSubQuestion>(context.Mapper);
+                });
+            CreateMap<BlazorAdminSubQuestion, BaseQuestionResponseDto>().ReverseMap();
+            
         }
     }
 }

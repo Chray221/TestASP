@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 //using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 
@@ -55,6 +56,32 @@ namespace TestASP.Common.Extensions
             }
 
             return $"{(int)timelapse.TotalSeconds} second ago";
+        }
+
+        /// <summary>
+        /// append a string at start
+        /// <br>e.g</br>
+        /// <br>"Arr" => "<paramref name="propertyName"/>.Arr"</br>
+        /// </summary>
+        /// <param name="strings"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> AppendPropertyName(this IEnumerable<string> strings, string propertyName)
+        {
+            return strings.Select(memName => $"{propertyName}.{memName}");
+        }
+
+        /// <summary>
+        /// e.g   
+        /// MemberNames = "ErrorPropertyName" => "<paramref name="propertyName"/>.ErrorPropertyName"
+        /// </summary>
+        /// <param name="validationResult"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        public static ValidationResult ToParentValidationResult(this ValidationResult validationResult, string propertyName)
+        {
+            return new ValidationResult(validationResult.ErrorMessage,
+                                        validationResult.MemberNames.AppendPropertyName(propertyName));
         }
     }
 }

@@ -6,26 +6,35 @@ namespace TestASP.BlazorServer.Models.Questionnaires.Admin;
 
 public class BlazorAdminQuestionnaire : QuestionnaireResponseDto, IValidatableObject
 {
-	public List<BlazorAdminQuestion> Questions { get; set; }
-	public BlazorAdminQuestionnaire()
+    [ValidateComplexType]
+    public List<BlazorAdminQuestion> Questions { get; set; }
+    public BlazorAdminQuestionnaire()
 	{
 	}
 
 	public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if(Questions?.Count > 0)
+        if (string.IsNullOrEmpty(Name))
         {
-            int qaCount = 0;
-            string qaPropName = "";
-            foreach (var questionAnswer in Questions)
+            yield return new ValidationResult("Name is required", new[] { "Name" });
+        }
+        if (string.IsNullOrEmpty(Description))
+        {
+            yield return new ValidationResult("Description is required", new[] { "Description" });
+        }
+        if (Questions?.Count > 0)
+        {
+            int qCount = 0;
+            string qPropName = "";
+            foreach (BlazorAdminQuestion question in Questions)
             {
-                qaPropName = $"{nameof(Questions)}[{qaCount++}]";
+                qPropName = $"{nameof(Questions)}[{qCount++}]";
                 //qaPropName = $"{nameof(QuestionAnswers)}";
-                foreach (ValidationResult qaValidationResult in questionAnswer.Validate(validationContext))
+                foreach (ValidationResult qaValidationResult in question.Validate(validationContext))
                 {
                     yield return new ValidationResult(
                                         qaValidationResult.ErrorMessage,
-                                        qaValidationResult.MemberNames.Select( memName => $"{qaPropName}.{memName}"  ));
+                                        qaValidationResult.MemberNames.Select(memName => $"{qPropName}.{memName}"));
                 }
             }
         }

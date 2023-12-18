@@ -48,7 +48,7 @@
                     </FooterTemplate>
                 </Card>
             </EditForm>
-            <ValidateForm hidden @ref="validateForm"
+            @*<ValidateForm hidden @ref="validateForm"
                           Model="@Questionnaire" OnValidSubmit="SubmitQuestionnaireAnswer" ShowRequiredMark="true" ValidateAllProperties="true">
                 <ObjectGraphDataAnnotationsValidator />
                 <BootstrapBlazorDataAnnotationsValidator />
@@ -72,7 +72,7 @@
                         </Stack>
                     </BodyTemplate>
                 </Card>
-            </ValidateForm>
+            </ValidateForm>*@
         }
         else if (IsLoading)
         {
@@ -94,7 +94,6 @@
     public bool IsLoading { get; set; } = true;
     private ValidateForm? validateForm;
     private EditContext? EditContext { get; set; }
-    ValidationMessageStore? MessageStore;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -119,28 +118,8 @@
         }
     }
 
-    public void FieldChanged(object sender, FieldChangedEventArgs arg)
-    {
-        MessageStore.Clear(arg.FieldIdentifier);
-        //EditContext.NotifyFieldChanged(arg.FieldIdentifier);
-    }
-
     public async Task SubmitQuestionnaireAnswer(EditContext context)
     {
-        var questionnaireValidations = Questionnaire?.Validate(null!);
-        if (questionnaireValidations?.Count() > 0)
-        {
-            foreach (var result in questionnaireValidations)
-            {
-                foreach (string propName in result.MemberNames)
-                {
-                    validateForm?.SetError(propName, result.ErrorMessage ?? "Required");
-                }
-            }
-            StateHasChanged();
-            return;
-        }
-        //Questionnaire
         if (IsLoggedIn)
         {
             ApiResult<QuestionnaireQuestionsResponseDto> questionAnswerResponse = null;

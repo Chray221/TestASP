@@ -7,111 +7,151 @@
 
 @inject ToastService _toastService
 @inject DialogService _dialog
-
-
 <Accordion>
-    <AccordionItem IsShow="true">
-        <HeaderTemplate>
+        <AccordionItem IsShow="true">
+            <HeaderTemplate>
 
-            @if (Question is BlazorAdminQuestion question)
-            {
-                <h4> Question @Question.Number. @Question.Question</h4>
-            }
-            else
-            {
-                <h4> Sub Question @Question.Number. @Question.Question</h4>
-            }
-            <Button class="ms-auto" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Color="Color.Danger" Text="Delete" OnClick="DeleteQuestion_Clicked" />
-        </HeaderTemplate>
-        <BodyTemplate>
-            <div class="col">
-                <BootstrapInput ShowLabel="true" DisplayText="Question Number" @bind-Value="@Question.Number" />
-                <ValidationMessage For="() => Question.Number" />
-            </div>
-            <div class="col">
-                @*<BootstrapInput type="editor" @bind-Value="@Question.Question" />*@
-                <Textarea ShowLabel="true" placeholder="Please enter ..." @bind-Value="@Question.Question" />
-                <ValidationMessage For="() => Question.Question" />
-            </div>
-            <div class="col">
-                @*<Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeId" />*@
-                <Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeSelected" Items="@AnswerTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
-                <ValidationMessage For="() => Question.Question" />
-            </div>
-
-            @if (Question is BlazorAdminSubQuestion)
-            {
+                @if (Question is BlazorAdminQuestion question)
+                {
+                    <h4> Question @Question.Number. @Question.Question</h4>
+                }
+                else
+                {
+                    <h4> Sub Question @Question.Number. @Question.Question</h4>
+                }
+                <Button class="ms-auto" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Color="Color.Danger" Text="Delete" OnClick="DeleteQuestion_Clicked" />
+            </HeaderTemplate>
+            <BodyTemplate>
                 <div class="col">
-                    <Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeSelected"
-                            Items="@QuestionTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
-                    @*<Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeId" />*@
+
+                    @if (IsBootStrap)
+                    {
+                        <BootstrapInput ShowLabel="true" DisplayText="Number" @bind-Value="@Question.Number" />
+                    }
+                    else
+                    {
+                        <InputText DisplayName="Answer" @bind-Value="Question.Number" />
+                    }
+                    <ValidationMessage For="() => Question.Number" />
+                </div>
+                <div class="col">
+                    @if (IsBootStrap)
+                    {
+                        <Textarea ShowLabel="true" placeholder="Please enter ..." @bind-Value="@Question.Question" />
+                    }
+                    else
+                    {
+                        <InputTextArea DisplayName="Question" placeholder="Please enter ..."  @bind-Value="Question.Question"/>
+                    }
                     <ValidationMessage For="() => Question.Question" />
                 </div>
-            }
-
-            @if (Question.AnswerTypeId == AnswerTypeEnum.MultipleChoice)
-            {
-                <Accordion class="mt-2">
-                    <AccordionItem IsShow="true">
-                        <HeaderTemplate>
-                            <h5>Choices</h5>
-                        </HeaderTemplate>
-                        <BodyTemplate>
-                            @if (Question.Choices?.Count > 0)
-                            {
-                                @foreach (var choice in Question.Choices)
-                                {
-                                    <div class="row mt-2">
-                                        <div class="col-2">
-                                            <BootstrapInput ShowLabel="true" PlaceHolder="Value" @bind-Value="@choice.Value" />
-                                            <ValidationMessage For="() => Question.Question" />
-                                        </div>
-                                        <div class="col">
-                                            <BootstrapInput ShowLabel="true" PlaceHolder="Name" @bind-Value="@choice.Name" />
-                                            <ValidationMessage For="() => Question.Number" />
-                                        </div>
-                                    </div>
-                                }
-                            }
-                        </BodyTemplate>
-                        <FooterTemplate>
-                            <Button class="ms-3" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add Choice" OnClick="AddChoices" />
-                        </FooterTemplate>
-                    </AccordionItem>
-                </Accordion>
-
-            }
-            @if (Question is BlazorAdminQuestion question)
-            {
-                <Stack class="ms-4 mt-2 gap-3"
-                       AlignItems="StackAlignItems.Stretch"
-                       Justify="StackJustifyContent.Start"
-                       IsRow="false">
-                    @if (question.SubQuestions != null)
+                <div class="col">
+                    @if (IsBootStrap)
                     {
-                        @foreach (var subQuestion in question.SubQuestions!)
-                        {
-                            <StackItem>
-                                <AddQuestion Question="@subQuestion" IsBootStrap="@IsBootStrap"
-                                             AnswerTypes="@AnswerTypes"
-                                             QuestionTypes="@GetSubAnswerQuestionTyes()"
-                                             OnItemDeleted="@OnSubItemDeleted" />
-                            </StackItem>
-                        }
+                        <Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeSelected" Items="@AnswerTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
                     }
-                </Stack>
-            }
-        </BodyTemplate>
-        <FooterTemplate>
-            @if (Question is BlazorAdminQuestion)
-            {
-                <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add SubQuestionn" OnClick="AddSubQuestion" />
-            }
-        </FooterTemplate>
-    </AccordionItem>
-</Accordion>
+                    else
+                    {
+                        <InputSelect DisplayText="Answer Type" PlaceHolder="Asnwer Type"
+                                     @bind-Value="@Question.AnswerTypeSelected" >
+                            @foreach (var answerType in AnswerTypes)
+                            {
+                                <option value="@answerType.Value">@answerType.Text</option>
+                            }
+                        </InputSelect>
+                        <InputTextArea DisplayName="Question" placeholder="Please enter ..." @bind-Value="Question.Question" />
+                    }
+                    <ValidationMessage For="() => Question.AnswerTypeSelected" />
+                </div>
 
-@*<Card hidden>
+                @if (Question is BlazorAdminSubQuestion)
+                {
+                    <div class="col">
+
+                        @if (IsBootStrap)
+                        {
+                            <Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeSelected"
+                                    Items="@QuestionTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
+                        }
+                        else
+                        {
+                            <InputSelect DisplayText="Answer Type" PlaceHolder="Asnwer Type"
+                                         @bind-Value="@Question.AnswerTypeSelected">
+                                @foreach (var questionType in QuestionTypes)
+                                {
+                                    <option value="@questionType.Value">@questionType.Text</option>
+                                }
+                            </InputSelect>
+                            <InputTextArea DisplayName="Question" placeholder="Please enter ..." @bind-Value="Question.Question" />
+                        }
+                        <ValidationMessage For=" () => Question.QuestionTypeSelected" />
+                    </div>
+                }
+
+                @if (Question.AnswerTypeId == AnswerTypeEnum.MultipleChoice)
+                {
+                    <Accordion class="mt-2">
+                        <AccordionItem IsShow="true">
+                            <HeaderTemplate>
+                                <h5>Choices</h5>
+                            </HeaderTemplate>
+                            <BodyTemplate>
+                                @if (Question.Choices?.Count > 0)
+                                {
+                                    @foreach (var choice in Question.Choices)
+                                    {
+                                        <div class="row mt-2">
+                                            <div class="col-2">
+                                                <BootstrapInput ShowLabel="true" PlaceHolder="Value" @bind-Value="@choice.Value" />
+                                                <ValidationMessage For="() => choice.Value" />
+                                            </div>
+                                            <div class="col">
+                                                <BootstrapInput ShowLabel="true" PlaceHolder="Name" @bind-Value="@choice.Name" />
+                                                <ValidationMessage For="() => choice.Name" />
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </BodyTemplate>
+                            <FooterTemplate>
+                                <Button class="ms-3" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add Choice" OnClick="AddChoices" />
+                            </FooterTemplate>
+                        </AccordionItem>
+                    </Accordion>
+                    <ValidationMessage For="() => Question.Choices" />
+
+                }
+                @if (Question is BlazorAdminQuestion question)
+                {
+                    <Stack class="ms-4 mt-2 gap-3"
+                           AlignItems="StackAlignItems.Stretch"
+                           Justify="StackJustifyContent.Start"
+                           IsRow="false">
+                        @if (question.SubQuestions != null)
+                        {
+                            @foreach (var subQuestion in question.SubQuestions!)
+                            {
+                                <StackItem>
+                                    <AddQuestion Question="@subQuestion" IsBootStrap="@IsBootStrap"
+                                                 AnswerTypes="@AnswerTypes"
+                                                 QuestionTypes="@GetSubAnswerQuestionTyes()"
+                                                 OnItemDeleted="@OnSubItemDeleted" />
+                                </StackItem>
+                            }
+                        }
+                    </Stack>
+                }
+            </BodyTemplate>
+            <FooterTemplate>
+                @if (Question is BlazorAdminQuestion)
+                {
+                    <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add SubQuestionn" OnClick="AddSubQuestion" />
+                }
+            </FooterTemplate>
+        </AccordionItem>
+    </Accordion>
+
+@*<Card>
     <HeaderTemplate>
 
         @if (Question is BlazorAdminQuestion question)
@@ -135,7 +175,7 @@
         </div>
         <div class="col">
             <Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeSelected" Items="@AnswerTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
-            <ValidationMessage For="() => Question.Question" />
+            <ValidationMessage For="() => Question.AnswerTypeSelected" />
         </div>
 
         @if (Question is BlazorAdminSubQuestion)
@@ -143,7 +183,7 @@
             <div class="col">
                 <Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeSelected"
                         Items="@QuestionTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
-                <ValidationMessage For="() => Question.Question" />
+                <ValidationMessage For="() => Question.QuestionTypeSelected" />
             </div>
         }
 
@@ -161,11 +201,11 @@
                             <div class="row mt-2">
                                 <div class="col-2">
                                     <BootstrapInput ShowLabel="true" PlaceHolder="Value" @bind-Value="@choice.Value" />
-                                    <ValidationMessage For="() => Question.Question" />
+                                    <ValidationMessage For="() => choice.Value" />
                                 </div>
                                 <div class="col">
                                     <BootstrapInput ShowLabel="true" PlaceHolder="Name" @bind-Value="@choice.Name" />
-                                    <ValidationMessage For="() => Question.Number" />
+                                    <ValidationMessage For="() => choice.Name" />
                                 </div>
                             </div>
                         }
@@ -185,7 +225,7 @@
                    IsRow="false">
                 @if (question.SubQuestions != null)
                 {
-                    @foreach (var subQuestion in question.SubQuestions!)
+                    @foreach (var subQuestion in question.SubQuestions)
                     {
                         <StackItem>
                             <AddQuestion Question="@subQuestion" IsBootStrap="@IsBootStrap"

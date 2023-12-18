@@ -61,3 +61,4 @@
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/bin/Debug/net7.0/AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/bin/Debug/net7.0/DataAnnotationsValidator.dll
 /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/bin/Debug/net7.0/Microsoft.AspNetCore.Components.DataAnnotations.Validation.dll
+/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/obj/Debug/net7.0/scopedcss/Components/Bootstrap/AccordionItem.razor.rz.scp.css

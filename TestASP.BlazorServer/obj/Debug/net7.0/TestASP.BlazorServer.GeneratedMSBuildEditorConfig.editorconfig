@@ -24,6 +24,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BZGRRdWVzdGlvbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Components/Bootstrap/Accordion.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Cb290c3RyYXAvQWNjb3JkaW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Components/FormCheck.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Gb3JtQ2hlY2sucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -87,6 +91,10 @@ build_metadata.AdditionalFiles.CssScope =
 [/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Components/Bootstrap/AccordionItem.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Cb290c3RyYXAvQWNjb3JkaW9uSXRlbS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-qg9hom6i3i
 
 [/Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.BlazorServer/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL01haW5MYXlvdXQucmF6b3I=

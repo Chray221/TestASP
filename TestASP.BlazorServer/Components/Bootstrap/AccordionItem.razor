@@ -1,0 +1,69 @@
+﻿@using System.Diagnostics.CodeAnalysis;
+@using TestASP.Common.Helpers;
+
+@inherits BlazorComponentBase
+
+<div @attributes="@AdditionalAttributes" class="@ClassString">
+    <h2 class="accordion-header">
+        <button class="accordion-button @(IsShow ? "" : "collapsed")" type="button" data-bs-toggle="collapse"
+                data-bs-target="#@Id"
+                aria-expanded="@IsShow"
+                aria-controls="@Id"
+                @onclick="IsCollapse">
+            @if (HeaderTemplate != null)
+            {
+                @HeaderTemplate
+            }
+            else
+            {
+                @HeaderText
+            }
+        </button>
+    </h2>
+    <div id="@Id" class="accordion-collapse collapse @(IsShow ? "show" : "")">
+        <div class="accordion-body">
+            @BodyTemplate
+        </div>
+    </div>
+    @if (FooterTemplate != null)
+    {
+        @*<h2 class="accordion-header">
+                <button class="accordion-button" type="button">
+                    @FooterTemplate
+                </button>
+            </h2>*@
+        <h2 class="accordion-footer">
+            @FooterTemplate
+        </h2>
+    }
+</div>
+
+@code {
+    [CascadingParameter, NotNull] public Accordion Accordion { get; set; }
+    [Parameter] public RenderFragment? HeaderTemplate { get; set; }
+    [Parameter] public string HeaderText { get; set; } = "Accordion Item #1";
+    [Parameter] public RenderFragment BodyTemplate { get; set; }
+    [Parameter] public RenderFragment? FooterTemplate { get; set; }
+    [Parameter] public bool IsShow { get; set; }
+    [Parameter] public string Id { get; set; }
+
+    private string? ClassString => CssBuilder.Default("accordion-item")
+        .AddClassFromAttributes(AdditionalAttributes)
+        .Build();
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (Accordion != null)
+        {
+            Id = Id ?? (Accordion.Id + "_" + RandomizerHelper.GetRandomName());
+        }
+    }
+
+    public void IsCollapse()
+    {
+        IsShow = !IsShow;
+    }
+
+}
+

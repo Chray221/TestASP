@@ -1,0 +1,23 @@
+﻿@inherits BlazorComponentBase
+
+<CascadingValue Value="this">
+    <div @attributes="@AdditionalAttributes" class="@ClassString" id="accordionPanelsStayOpenExample">
+        @ChildContent        
+    </div>
+</CascadingValue>
+
+@code {
+    [Parameter] public string Id { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string? ClassString => CssBuilder.Default("accordion")
+        .AddClassFromAttributes(AdditionalAttributes)
+        .Build();
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        Id = Id ?? Guid.NewGuid().ToString();
+    }
+}
+

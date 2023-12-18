@@ -1,3 +1,22 @@
+/* _content/TestASP.BlazorServer/Components/Bootstrap/AccordionItem.razor.rz.scp.css */
+body[b-qg9hom6i3i] {
+}
+
+.accordion-footer[b-qg9hom6i3i] {
+    margin-bottom: 0px;
+    color: #0c63e4;
+    background-color: #e7f1ff;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    text-align: left;
+    border: 17px black;
+    border-radius: 0;
+}
 /* _content/TestASP.BlazorServer/Shared/MainLayout.razor.rz.scp.css */
 .page[b-i27dhqxm5n] {
     position: relative;

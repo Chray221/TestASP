@@ -11,6 +11,7 @@
 @using System.Collections.Generic;
 @using AutoMapper;
 @using TestASP.Model.Request.Questionnaires;
+@using TestASP.BlazorServer.Components.Bootstrap;
 
 @inherits AuthorizedPage
 
@@ -19,6 +20,7 @@
 @inject NavigationManager _navigationManager
 @inject IMapper _mapper
 
+<PageTitle>@(Id == null ? "Add Questionnaire" : "View or Update Questionnaire" )</PageTitle>
 
 @if (IsLoading)
 {
@@ -52,8 +54,6 @@ else if (Questionnaire != null)
                         <ValidationMessage For="@(() => Questionnaire.Content)" />
                     }
                 </div>
-                @*<p class="card-text">@Questionnaire.Description</p>*@
-                @*<ValidationSummary />*@
                 <Stack class="gap-3" AlignItems="StackAlignItems.Stretch" Justify="StackJustifyContent.Start" IsRow="false">
                     @if (Questionnaire.Questions != null)
                     {

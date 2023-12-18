@@ -1,10 +1,117 @@
 ﻿@using TestASP.BlazorServer.Models.Questionnaires.Admin;
+@using TestASP.Model.Questionnaires;
 @using TestASP.Data.Enums;
+@using TestASP.BlazorServer.Extensions;
+@using TestASP.Common.Extensions;
+@using TestASP.BlazorServer.Components.Bootstrap;
 
-@inject  ToastService _toastService
+@inject ToastService _toastService
 @inject DialogService _dialog
 
-<Card>
+
+<Accordion>
+    <AccordionItem IsShow="true">
+        <HeaderTemplate>
+
+            @if (Question is BlazorAdminQuestion question)
+            {
+                <h4> Question @Question.Number. @Question.Question</h4>
+            }
+            else
+            {
+                <h4> Sub Question @Question.Number. @Question.Question</h4>
+            }
+            <Button class="ms-auto" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Color="Color.Danger" Text="Delete" OnClick="DeleteQuestion_Clicked" />
+        </HeaderTemplate>
+        <BodyTemplate>
+            <div class="col">
+                <BootstrapInput ShowLabel="true" DisplayText="Question Number" @bind-Value="@Question.Number" />
+                <ValidationMessage For="() => Question.Number" />
+            </div>
+            <div class="col">
+                @*<BootstrapInput type="editor" @bind-Value="@Question.Question" />*@
+                <Textarea ShowLabel="true" placeholder="Please enter ..." @bind-Value="@Question.Question" />
+                <ValidationMessage For="() => Question.Question" />
+            </div>
+            <div class="col">
+                @*<Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeId" />*@
+                <Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeSelected" Items="@AnswerTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
+                <ValidationMessage For="() => Question.Question" />
+            </div>
+
+            @if (Question is BlazorAdminSubQuestion)
+            {
+                <div class="col">
+                    <Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeSelected"
+                            Items="@QuestionTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
+                    @*<Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeId" />*@
+                    <ValidationMessage For="() => Question.Question" />
+                </div>
+            }
+
+            @if (Question.AnswerTypeId == AnswerTypeEnum.MultipleChoice)
+            {
+                <Accordion class="mt-2">
+                    <AccordionItem IsShow="true">
+                        <HeaderTemplate>
+                            <h5>Choices</h5>
+                        </HeaderTemplate>
+                        <BodyTemplate>
+                            @if (Question.Choices?.Count > 0)
+                            {
+                                @foreach (var choice in Question.Choices)
+                                {
+                                    <div class="row mt-2">
+                                        <div class="col-2">
+                                            <BootstrapInput ShowLabel="true" PlaceHolder="Value" @bind-Value="@choice.Value" />
+                                            <ValidationMessage For="() => Question.Question" />
+                                        </div>
+                                        <div class="col">
+                                            <BootstrapInput ShowLabel="true" PlaceHolder="Name" @bind-Value="@choice.Name" />
+                                            <ValidationMessage For="() => Question.Number" />
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </BodyTemplate>
+                        <FooterTemplate>
+                            <Button class="ms-3" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add Choice" OnClick="AddChoices" />
+                        </FooterTemplate>
+                    </AccordionItem>
+                </Accordion>
+
+            }
+            @if (Question is BlazorAdminQuestion question)
+            {
+                <Stack class="ms-4 mt-2 gap-3"
+                       AlignItems="StackAlignItems.Stretch"
+                       Justify="StackJustifyContent.Start"
+                       IsRow="false">
+                    @if (question.SubQuestions != null)
+                    {
+                        @foreach (var subQuestion in question.SubQuestions!)
+                        {
+                            <StackItem>
+                                <AddQuestion Question="@subQuestion" IsBootStrap="@IsBootStrap"
+                                             AnswerTypes="@AnswerTypes"
+                                             QuestionTypes="@GetSubAnswerQuestionTyes()"
+                                             OnItemDeleted="@OnSubItemDeleted" />
+                            </StackItem>
+                        }
+                    }
+                </Stack>
+            }
+        </BodyTemplate>
+        <FooterTemplate>
+            @if (Question is BlazorAdminQuestion)
+            {
+                <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add SubQuestionn" OnClick="AddSubQuestion" />
+            }
+        </FooterTemplate>
+    </AccordionItem>
+</Accordion>
+
+@*<Card hidden>
     <HeaderTemplate>
 
         @if (Question is BlazorAdminQuestion question)
@@ -23,24 +130,52 @@
             <ValidationMessage For="() => Question.Number" />
         </div>
         <div class="col">
-            @*<BootstrapInput type="editor" @bind-Value="@Question.Question" />*@
             <Textarea ShowLabel="true" placeholder="Please enter ..." @bind-Value="@Question.Question" />
             <ValidationMessage For="() => Question.Question" />
         </div>
         <div class="col">
-            @*<Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeId" />*@
-            <Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeId" Items="@AnswerTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
+            <Select ShowLabel="true" IsVirtualize="true" DisplayText="Answer Type" PlaceHolder="Asnwer Type" @bind-Value="@Question.AnswerTypeSelected" Items="@AnswerTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
             <ValidationMessage For="() => Question.Question" />
         </div>
 
         @if (Question is BlazorAdminSubQuestion)
         {
             <div class="col">
-                <Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeId"
+                <Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeSelected"
                         Items="@QuestionTypes" OnSelectedItemChanged="OnAnswerTypeSelectedItem" />
-                @*<Select ShowLabel="true" IsVirtualize="true" DisplayText="Question Type" PlaceHolder="Question Type" @bind-Value="@Question.QuestionTypeId" />*@
                 <ValidationMessage For="() => Question.Question" />
             </div>
+        }
+
+        @if (Question.AnswerTypeId == AnswerTypeEnum.MultipleChoice)
+        {
+            <Card class="mt-2">
+                <HeaderTemplate>
+                    <h5>Choices</h5>
+                </HeaderTemplate>
+                <BodyTemplate>
+                    @if (Question.Choices?.Count > 0)
+                    {
+                        @foreach (var choice in Question.Choices)
+                        {
+                            <div class="row mt-2">
+                                <div class="col-2">
+                                    <BootstrapInput ShowLabel="true" PlaceHolder="Value" @bind-Value="@choice.Value" />
+                                    <ValidationMessage For="() => Question.Question" />
+                                </div>
+                                <div class="col">
+                                    <BootstrapInput ShowLabel="true" PlaceHolder="Name" @bind-Value="@choice.Name" />
+                                    <ValidationMessage For="() => Question.Number" />
+                                </div>
+                            </div>
+                        }
+                    }
+                </BodyTemplate>
+                <FooterTemplate>
+                    <Button class="ms-3" ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add Choice" OnClick="AddChoices" />
+                </FooterTemplate>
+            </Card>
+
         }
         @if (Question is BlazorAdminQuestion question)
         {
@@ -68,9 +203,11 @@
         {
             <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Button" Text="Add SubQuestionn" OnClick="AddSubQuestion" />
         }
+
     </FooterTemplate>
-        
-</Card>
+
+</Card>*@
+
 @code {
     [Parameter] public BaseBlazorAdminQuestionResponseDto Question { get; set; }
     [Parameter] public bool IsBootStrap { get; set; } = true;
@@ -80,6 +217,32 @@
 
     protected override void OnInitialized()
     {
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Question.Id > 0)
+        {
+            AnswerTypes?.ForEach((atIndex, answerType) =>
+            {
+                if (answerType.Value == Question.AnswerTypeId.ToString())
+                {
+                    answerType.Active = true;
+                    Question.AnswerTypeSelected = answerType;
+                }
+            });
+
+            QuestionTypes?.ForEach((qtIndex, questionType) =>
+            {
+                if (questionType.Value == Question.QuestionTypeId.ToString())
+                {
+                    questionType.Active = true;
+                    Question.QuestionTypeSelected = questionType;
+                }
+            });
+        }
     }
 
     public async Task OnItemSelected(IEnumerable<SelectedItem> items, string selectedStr)
@@ -92,23 +255,23 @@
         return QuestionTypes?.Where(arg =>
         {
             bool other = true;
-            switch(Question.AnswerTypeId)
+            switch (Question.AnswerTypeId)
             {
                 case AnswerTypeEnum.Boolean:
                 case AnswerTypeEnum.BooleanWithSubQuestion:
                     break;
                 default:
-                    other = arg.Value != QuestionTypeEnum.BooleanNoSubQuestion.ToString() ||
+                    other = arg.Value != QuestionTypeEnum.BooleanNoSubQuestion.ToString() &&
                             arg.Value != QuestionTypeEnum.BooleanYesSubQuestion.ToString();
                     break;
             }
-            return other || arg.Value != QuestionTypeEnum.Question.ToString();
+            return other && arg.Value != QuestionTypeEnum.Question.ToString();
         });
     }
 
     public void OnSubItemDeleted(BaseBlazorAdminQuestionResponseDto deletedItem)
     {
-        if(deletedItem is BlazorAdminSubQuestion deletedSubQuestion &&
+        if (deletedItem is BlazorAdminSubQuestion deletedSubQuestion &&
             Question is BlazorAdminQuestion question &&
             question.SubQuestions?.Count > 0)
         {
@@ -136,6 +299,19 @@
                 adminQuestion.SubQuestions = new List<BlazorAdminSubQuestion>();
             }
             adminQuestion.SubQuestions.Add(new BlazorAdminSubQuestion());
+            StateHasChanged();
+        }
+    }
+
+    public void AddChoices()
+    {
+        if (Question.AnswerTypeId == AnswerTypeEnum.MultipleChoice)
+        {
+            if (Question.Choices == null)
+            {
+                Question.Choices = new List<QuestionChoiceDto>();
+            }
+            Question.Choices.Add(new QuestionChoiceDto());
             StateHasChanged();
         }
     }

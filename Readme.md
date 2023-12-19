@@ -108,3 +108,104 @@
     #my local blazor server
     kill -9 $(lsof -i:7070 -t) 2> /dev/null
     ```
+
+
+# For VSCode
+
+- ## Build Solution
+    ```bash
+    dotnet build /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.sln /property:GenerateFullPaths=true
+    ```
+- ## Build API Project
+    ```bash
+    dotnet build /Users/macbookpro/Documents/Projects/Reference/WebApp/TestASP/TestASP.API/TestASP.API.csproj /property:GenerateFullPaths=true
+    ```
+- ## Add `launch.json` file in `.vscode` folder
+    ```json
+    {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "build",
+                "command": "dotnet",
+                "type": "process",
+                "args": [
+                    "build",
+                    "${workspaceFolder}/TestASP.sln",
+                    "/property:GenerateFullPaths=true",
+                    "/consoleloggerparameters:NoSummary;ForceNoAlign"
+                ],
+                "problemMatcher": "$msCompile"
+            },
+            {
+                "label": "publish",
+                "command": "dotnet",
+                "type": "process",
+                "args": [
+                    "publish",
+                    "${workspaceFolder}/TestASP.sln",
+                    "/property:GenerateFullPaths=true",
+                    "/consoleloggerparameters:NoSummary;ForceNoAlign"
+                ],
+                "problemMatcher": "$msCompile"
+            },
+            {
+                "label": "watch",
+                "command": "dotnet",
+                "type": "process",
+                "args": [
+                    "watch",
+                    "run",
+                    "--project",
+                    "${workspaceFolder}/TestASP.sln"
+                ],
+                "problemMatcher": "$msCompile"
+            }
+        ]
+    }```
+
+- ## Add `tasks.json` to `.vscode` folder (used in launch.json `preLaunchTask: $tasks.label`)
+    ```json
+    {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "build",
+                "command": "dotnet",
+                "type": "process",
+                "args": [
+                    "build",
+                    "${workspaceFolder}/TestASP.sln",
+                    "/property:GenerateFullPaths=true",
+                    "/consoleloggerparameters:NoSummary;ForceNoAlign"
+                ],
+                "problemMatcher": "$msCompile"
+            },
+            {
+                "label": "publish",
+                "command": "dotnet",
+                "type": "process",
+                "args": [
+                    "publish",
+                    "${workspaceFolder}/TestASP.sln",
+                    "/property:GenerateFullPaths=true",
+                    "/consoleloggerparameters:NoSummary;ForceNoAlign"
+                ],
+                "problemMatcher": "$msCompile"
+            },
+            {
+                "label": "watch",
+                "command": "dotnet",
+                "type": "process",
+                "args": [
+                    "watch",
+                    "run",
+                    "--project",
+                    "${workspaceFolder}/TestASP.sln"
+                ],
+                "problemMatcher": "$msCompile"
+            }
+        ]
+    }
+    ```
+

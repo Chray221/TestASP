@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestASP.BlazorServer", "Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestASP.Model", "TestASP.Model\TestASP.Model.csproj", "{97580164-0B28-484E-90BF-A9C20013A59A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestASP.Web", "TestASP.Web\TestASP.Web.csproj", "{246E9DCF-C168-4075-BEC3-C9982CEB762B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{97580164-0B28-484E-90BF-A9C20013A59A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97580164-0B28-484E-90BF-A9C20013A59A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97580164-0B28-484E-90BF-A9C20013A59A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{246E9DCF-C168-4075-BEC3-C9982CEB762B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{246E9DCF-C168-4075-BEC3-C9982CEB762B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{246E9DCF-C168-4075-BEC3-C9982CEB762B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{246E9DCF-C168-4075-BEC3-C9982CEB762B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

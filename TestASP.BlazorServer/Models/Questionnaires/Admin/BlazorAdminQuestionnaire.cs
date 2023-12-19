@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TestASP.BlazorServer.Components;
+using TestASP.Common.Extensions;
 using TestASP.Model.Questionnaires;
 
 namespace TestASP.BlazorServer.Models.Questionnaires.Admin;
@@ -14,14 +15,16 @@ public class BlazorAdminQuestionnaire : QuestionnaireResponseDto, IValidatableOb
 
 	public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (string.IsNullOrEmpty(Name))
-        {
-            yield return new ValidationResult("Name is required", new[] { "Name" });
-        }
-        if (string.IsNullOrEmpty(Description))
-        {
-            yield return new ValidationResult("Description is required", new[] { "Description" });
-        }
+        yield return this.RequiredFor(item => item.Name);
+        yield return this.RequiredFor(item => item.Description);
+        // if (string.IsNullOrEmpty(Name))
+        // {
+        //     yield return new ValidationResult("Name is required", new[] { "Name" });
+        // }
+        // if (string.IsNullOrEmpty(Description))
+        // {
+        //     yield return new ValidationResult("Description is required", new[] { "Description" });
+        // }
         if (Questions?.Count > 0)
         {
             int qCount = 0;
@@ -32,9 +35,12 @@ public class BlazorAdminQuestionnaire : QuestionnaireResponseDto, IValidatableOb
                 //qaPropName = $"{nameof(QuestionAnswers)}";
                 foreach (ValidationResult qaValidationResult in question.Validate(validationContext))
                 {
-                    yield return new ValidationResult(
-                                        qaValidationResult.ErrorMessage,
-                                        qaValidationResult.MemberNames.Select(memName => $"{qPropName}.{memName}"));
+                    if(qaValidationResult != null)
+                    {
+                        yield return new ValidationResult(
+                                            qaValidationResult.ErrorMessage,
+                                            qaValidationResult.MemberNames.Select(memName => $"{qPropName}.{memName}"));
+                    }
                 }
             }
         }

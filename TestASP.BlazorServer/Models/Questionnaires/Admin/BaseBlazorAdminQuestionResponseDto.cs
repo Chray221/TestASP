@@ -9,6 +9,8 @@ namespace TestASP.BlazorServer.Models.Questionnaires.Admin
 {
 	public class BaseBlazorAdminQuestionResponseDto : BaseQuestionResponseDto , IValidatableObject
     {
+        [ValidateComplexType]
+        public new List<QuestionChoiceDto>? Choices { get; set; }
         SelectedItem? _answerTypeSelected;
         [Required]
         public SelectedItem? AnswerTypeSelected
@@ -45,23 +47,30 @@ namespace TestASP.BlazorServer.Models.Questionnaires.Admin
 
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            //yield return new ValidationResult(nameof(), new[] { nameof() });
-            if (string.IsNullOrEmpty(Number))
+            if(this.TryRequiredFor( item => item.Number, out ValidationResult result))
             {
-                yield return new ValidationResult("Number is required", new[] { "Number" });
+                yield return result;
             }
-            if (string.IsNullOrEmpty(Question))
-            {
-                yield return new ValidationResult("Question is required", new[] { "Question" });
-            }
-            if (AnswerTypeSelected == null)
-            {
-                yield return new ValidationResult("AnswerType is required", new[] { "AnswerTypeSelected" });
-            }
-            if (QuestionTypeSelected == null)
-            {
-                yield return new ValidationResult("QuestionType is required", new[] { "QuestionTypeSelected" });
-            }
+            yield return this.RequiredFor(item => item.Number);
+            yield return this.RequiredFor(item => item.Question);
+            yield return this.RequiredFor(item => item.AnswerTypeSelected, "AnswerType is required");
+            yield return this.RequiredFor(item => item.QuestionTypeSelected, "QuestionType is required");
+            // if (string.IsNullOrEmpty(Number))
+            // {
+            //     yield return new ValidationResult($"{nameof(Number)} is required", new[] { nameof(Number) });
+            // }
+            // if (string.IsNullOrEmpty(Question))
+            // {
+            //     yield return new ValidationResult("Question is required", new[] { "Question" });
+            // }
+            // if (AnswerTypeSelected == null)
+            // {
+            //     yield return new ValidationResult("AnswerType is required", new[] { "AnswerTypeSelected" });
+            // }
+            // if (QuestionTypeSelected == null)
+            // {
+            //     yield return new ValidationResult("QuestionType is required", new[] { "QuestionTypeSelected" });
+            // }
             if(AnswerTypeId == AnswerTypeEnum.MultipleChoice)
             {
                 if (Choices?.Count > 0)

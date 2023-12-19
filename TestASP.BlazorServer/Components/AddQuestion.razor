@@ -7,7 +7,9 @@
 
 @inject ToastService _toastService
 @inject DialogService _dialog
-<Accordion>
+@if(Question != null)
+{
+    <Accordion>
         <AccordionItem IsShow="true">
             <HeaderTemplate>
 
@@ -53,7 +55,7 @@
                     else
                     {
                         <InputSelect DisplayText="Answer Type" PlaceHolder="Asnwer Type"
-                                     @bind-Value="@Question.AnswerTypeSelected" >
+                                        @bind-Value="@Question.AnswerTypeSelected" >
                             @foreach (var answerType in AnswerTypes)
                             {
                                 <option value="@answerType.Value">@answerType.Text</option>
@@ -76,7 +78,7 @@
                         else
                         {
                             <InputSelect DisplayText="Answer Type" PlaceHolder="Asnwer Type"
-                                         @bind-Value="@Question.AnswerTypeSelected">
+                                            @bind-Value="@Question.AnswerTypeSelected">
                                 @foreach (var questionType in QuestionTypes)
                                 {
                                     <option value="@questionType.Value">@questionType.Text</option>
@@ -124,18 +126,18 @@
                 @if (Question is BlazorAdminQuestion question)
                 {
                     <Stack class="ms-4 mt-2 gap-3"
-                           AlignItems="StackAlignItems.Stretch"
-                           Justify="StackJustifyContent.Start"
-                           IsRow="false">
+                            AlignItems="StackAlignItems.Stretch"
+                            Justify="StackJustifyContent.Start"
+                            IsRow="false">
                         @if (question.SubQuestions != null)
                         {
                             @foreach (var subQuestion in question.SubQuestions!)
                             {
                                 <StackItem>
                                     <AddQuestion Question="@subQuestion" IsBootStrap="@IsBootStrap"
-                                                 AnswerTypes="@AnswerTypes"
-                                                 QuestionTypes="@GetSubAnswerQuestionTyes()"
-                                                 OnItemDeleted="@OnSubItemDeleted" />
+                                                    AnswerTypes="@AnswerTypes"
+                                                    QuestionTypes="@GetSubAnswerQuestionTyes()"
+                                                    OnItemDeleted="@OnSubItemDeleted" />
                                 </StackItem>
                             }
                         }
@@ -150,6 +152,7 @@
             </FooterTemplate>
         </AccordionItem>
     </Accordion>
+}
 
 @*<Card>
     <HeaderTemplate>
@@ -249,7 +252,7 @@
 </Card>*@
 
 @code {
-    [Parameter] public BaseBlazorAdminQuestionResponseDto Question { get; set; }
+    [Parameter] public BaseBlazorAdminQuestionResponseDto? Question { get; set; }
     [Parameter] public bool IsBootStrap { get; set; } = true;
     [Parameter] public IEnumerable<SelectedItem>? AnswerTypes { get; set; }
     [Parameter] public IEnumerable<SelectedItem>? QuestionTypes { get; set; }

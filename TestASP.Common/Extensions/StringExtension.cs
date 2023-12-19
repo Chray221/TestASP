@@ -80,6 +80,10 @@ namespace TestASP.Common.Extensions
         /// <returns></returns>
         public static ValidationResult ToParentValidationResult(this ValidationResult validationResult, string propertyName)
         {
+            if(validationResult == null)
+            {
+                return null;
+            }
             return new ValidationResult(validationResult.ErrorMessage,
                                         validationResult.MemberNames.AppendPropertyName(propertyName));
         }

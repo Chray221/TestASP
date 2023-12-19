@@ -8,6 +8,9 @@ namespace TestASP.BlazorServer.Models.Questionnaires.Admin
 {
     public class BlazorAdminQuestion : BaseBlazorAdminQuestionResponseDto
     {
+        [ValidateComplexType]
+        public new List<QuestionChoiceDto>? Choices { get; set; }
+        [ValidateComplexType]
         public List<BlazorAdminSubQuestion>? SubQuestions { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

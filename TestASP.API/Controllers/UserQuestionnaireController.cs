@@ -61,15 +61,16 @@ namespace TestASP.API.Controllers
                         UserQuestionnaireResponseDto? userQuestionnaireDto = userQuestionnaireDtos.FirstOrDefault(dto => dto.Id == userQuestionnaire.QuestionnaireId);
                         if(userQuestionnaireDto != null)
                         {
-                            userQuestionnaireDto.DateAnswered = userQuestionnaire.UpdatedAt ?? userQuestionnaire.CreatedAt;
                             if (userQuestionnaireDto.IsAnswered)
                             {
                                 UserQuestionnaireResponseDto newDto = userQuestionnaireDto.Clone();
                                 newDto.UserQuestionnaireId = userQuestionnaire.Id;
+                                newDto.DateAnswered = userQuestionnaire.UpdatedAt ?? userQuestionnaire.CreatedAt;
                                 userQuestionnaireDtos.Add(newDto);
                             }
                             else
                             {
+                                userQuestionnaireDto.DateAnswered = userQuestionnaire.UpdatedAt ?? userQuestionnaire.CreatedAt;
                                 userQuestionnaireDto.UserQuestionnaireId = userQuestionnaire.Id;
                             }
                         }

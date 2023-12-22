@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using TestASP.Web.Extensions;
 using TestASP.Web.IServices;
 using TestASP.Web.Services;
@@ -9,6 +10,8 @@ public static class ServiceConfig
 {
       public static IServiceCollection RegisterServices(this IServiceCollection services)
       {
+            // override Default ASP MVC class names
+            services.AddSingleton<IHtmlGenerator, CustomHtmlGenerator>();
             //services.AddHttpClient<IVillaService, VillaService>();
             //services.AddScoped<IVillaService, VillaService>();
             //services.AddHttpClient<IVillaNumberService, VillaNumberService>();

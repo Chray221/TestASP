@@ -1,5 +1,7 @@
 ﻿@using TestASP.Common.Extensions;
 @using TestASP.Data.Enums;
+@using TestASP.Web.TagHelpers;
+
 @model TestASP.Web.Models.ViewModels.Questionnaires.QuestionnaireQuestionAnswerViewModel
 @{
     ViewBag.Title = "My Questionnaires";
@@ -10,10 +12,10 @@
     <h2 class="alert-danger">@ViewBag.ErrorMessage</h2>
 }
 @if (Model != null)
-{
+{    
     <form asp-route="@(Model.Id)/Answer" method="post">
-        <input hidden asp-for="Name"/>
         <input hidden asp-for="Id"/>
+        <input hidden asp-for="Name"/>
         <input hidden asp-for="Description"/>
         <input hidden asp-for="Content"/>
         <div class="card">
@@ -23,14 +25,14 @@
             <div class="card-body">
                 <h3 class="card-text">@Model.Description</h3>
                 <article class="card-text">@Model.Content</article>
-                <div asp-validation-summary="All" class="text-danger"></div>
+                @* <div asp-validation-summary="All" class="text-danger invalid-feedback"></div> *@
                 <div class="vstack gap-3">
                     @if(Model.QuestionAnswers != null)
                     {
                         @for(int questionIndex = 0; questionIndex < Model.QuestionAnswers.Count; questionIndex++)
                         {
                             var question = Model.QuestionAnswers[questionIndex];          
-                            <div class="card">    
+                            <div class="card">
                                 <div hidden>                                    
                                     <input hidden asp-for="QuestionAnswers[questionIndex].QuestionId"/>
                                     <input hidden asp-for="QuestionAnswers[questionIndex].Number"/>
@@ -46,72 +48,76 @@
                                     {
                                         case AnswerTypeEnum.Text:
                                             <input asp-for="QuestionAnswers[questionIndex].Answer" placeholder="Answer here" class="form-control"/>                                            
-                                            <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
+                                            <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
                                             break;
                                         case AnswerTypeEnum.Number:
                                             <input asp-for="QuestionAnswers[questionIndex].Answer" type="number" placeholder="Answer here" class="form-control"/>
-                                            <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
+                                            <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
                                             break;
                                         case AnswerTypeEnum.Date:
                                             <input asp-for="QuestionAnswers[questionIndex].Answer" type="date" placeholder="Answer here" class="form-control"/>
-                                            <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
+                                            <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
                                             break;
                                         case AnswerTypeEnum.Boolean:
                                         case AnswerTypeEnum.BooleanWithSubQuestion:                                                             
                                             string boolTrueId = $"QuestionAnswers[{questionIndex}].Answer.Yes";
                                             string boolFalseId = $"QuestionAnswers[{questionIndex}].Answer.No";
-
-                                            <div class="form-check ps-0 form-check-inline">
-                                                <input id="@boolTrueId" 
-                                                       asp-for="QuestionAnswers[questionIndex].Answer" 
-                                                       type="radio" 
-                                                       placeholder="Answer here" 
-                                                       class="form-control-input"
-                                                       value="True"
-                                                       onchange="boolean_choice_click(this,@($"'{boolTrueId}'"),@($"'{boolFalseId}'"))"/>
-                                                <label class="form-check-label" for="@boolTrueId">
-                                                    Yes
-                                                </label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input id="@boolFalseId" 
-                                                       asp-for="QuestionAnswers[questionIndex].Answer" 
-                                                       type="radio" 
-                                                       placeholder="Answer here" 
-                                                       class="form-control-input"
-                                                       value="False"
-                                                       onchange="boolean_choice_click(this,@($"'{boolTrueId}'"),@($"'{boolFalseId}'"))"/>
-                                                <label class="form-check-label" for="@boolFalseId">
-                                                    No
-                                                </label>
-                                            </div>
-                                            <br/>
-                                            <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
-                                            break;
-                                        case AnswerTypeEnum.MultipleChoice:
-                                            @for(int questionChoiceIndex=0 ; questionChoiceIndex < (Model.QuestionAnswers[questionIndex].Choices?.Count ?? 0); questionChoiceIndex++)
-                                            {
-                                                var questionChoice = Model.QuestionAnswers[questionIndex].Choices![questionChoiceIndex];
-                                                string questionChoiceId = $"QuestionAnswers[{questionIndex}].Choices[{questionChoiceIndex}].{questionChoice.Id}";
-                                               
-                                                <div class="form-check ps-0 pe-4 form-check-inline">
-                                                     <div hidden>
-                                                        <input hidden asp-for="QuestionAnswers[questionIndex].Choices![questionChoiceIndex].Id"/>
-                                                        <input hidden asp-for="QuestionAnswers[questionIndex].Choices![questionChoiceIndex].Name"/>
-                                                        <input hidden asp-for="QuestionAnswers[questionIndex].Choices![questionChoiceIndex].Value"/>
-                                                    </div>
-                                                    <input id="@questionChoiceId" 
-                                                       asp-for="QuestionAnswers[questionIndex].AnswerId" 
-                                                       placeholder="Answer here" 
-                                                       class="form-control-input"
-                                                       type="radio" value="@questionChoice.Id"/>
-                                                    <label class="form-check-label" for="@questionChoiceId">
-                                                        @questionChoice.Name - @questionChoice.Value 
+                                            
+                                            <div class="col-sm">
+                                                <div class="form-check form-check-inline">
+                                                    <input id="@boolTrueId" 
+                                                        asp-for="QuestionAnswers[questionIndex].Answer" 
+                                                        type="radio" 
+                                                        placeholder="Answer here" 
+                                                        class="form-check-input"
+                                                        value="True"
+                                                        onchange="boolean_choice_click(this,@($"'{boolTrueId}'"),@($"'{boolFalseId}'"))"/>
+                                                    <label class="form-check-label" for="@boolTrueId">
+                                                        Yes
                                                     </label>
                                                 </div>
-                                            }
-                                            <br/>
-                                            <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].AnswerId"></span>
+                                                <div class="form-check form-check-inline">
+                                                    <input id="@boolFalseId" 
+                                                        asp-for="QuestionAnswers[questionIndex].Answer" 
+                                                        type="radio" 
+                                                        placeholder="Answer here" 
+                                                        class="form-check-input"
+                                                        value="False"
+                                                        onchange="boolean_choice_click(this,@($"'{boolTrueId}'"),@($"'{boolFalseId}'"))"/>
+                                                    <label class="form-check-label" for="@boolFalseId">
+                                                        No
+                                                    </label>
+                                                </div>
+                                                <input hidden asp-for="QuestionAnswers[questionIndex].Answer" type="radio" class="form-check-input" value="default"/>
+                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
+                                            </div>
+                                            break;
+                                        case AnswerTypeEnum.MultipleChoice:
+                                            <div class="col-sm">
+                                                @for(int questionChoiceIndex=0 ; questionChoiceIndex < (Model.QuestionAnswers[questionIndex].Choices?.Count ?? 0); questionChoiceIndex++)
+                                                {
+                                                    var questionChoice = Model.QuestionAnswers[questionIndex].Choices![questionChoiceIndex];
+                                                    string questionChoiceId = $"QuestionAnswers[{questionIndex}].Choices[{questionChoiceIndex}].{questionChoice.Id}";
+                                                
+                                                    <div class="form-check form-check-inline">
+                                                        <div hidden>
+                                                            <input hidden asp-for="QuestionAnswers[questionIndex].Choices![questionChoiceIndex].Id"/>
+                                                            <input hidden asp-for="QuestionAnswers[questionIndex].Choices![questionChoiceIndex].Name"/>
+                                                            <input hidden asp-for="QuestionAnswers[questionIndex].Choices![questionChoiceIndex].Value"/>
+                                                        </div>
+                                                        <input id="@questionChoiceId" 
+                                                        asp-for="QuestionAnswers[questionIndex].AnswerId"
+                                                        placeholder="Answer here" 
+                                                        class="form-check-input"
+                                                        type="radio" value="@questionChoice.Id"/>
+                                                        <label class="form-check-label" for="@questionChoiceId">
+                                                            @questionChoice.Value - @questionChoice.Name
+                                                        </label>
+                                                    </div>
+                                                }
+                                                <input hidden asp-for="QuestionAnswers[questionIndex].AnswerId" type="radio" class="form-check-input" value="default"/>
+                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].AnswerId"></span>
+                                            </div>
                                             break;
                                     }
                                     @if(question.SubQuestionAnswers?.Count > 0)
@@ -141,15 +147,15 @@
                                                         {
                                                             case AnswerTypeEnum.Text:
                                                                 <input asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" placeholder="Answer here" class="form-control"/>
-                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
+                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
                                                                 break;
                                                             case AnswerTypeEnum.Number:
                                                                 <input asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" type="number" placeholder="Answer here" class="form-control"/>
-                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
+                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
                                                                 break;
                                                             case AnswerTypeEnum.Date:
                                                                 <input asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" type="date" placeholder="Answer here" class="form-control"/>
-                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
+                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
                                                                 break;
                                                             case AnswerTypeEnum.Boolean:
                                                             case AnswerTypeEnum.BooleanWithSubQuestion:   
@@ -160,7 +166,7 @@
                                                                         asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" 
                                                                         type="radio" 
                                                                         placeholder="Answer here" 
-                                                                        class="form-control-input"
+                                                                        class="form-check-input"
                                                                         value="True"
                                                                         onchange="boolean_choice_click(this,@($"'{boolTrueId}'"),@($"'{boolFalseId}'"))"/>
                                                                     <label class="form-check-label" for="@boolTrueId">
@@ -172,15 +178,15 @@
                                                                         asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" 
                                                                         type="radio" 
                                                                         placeholder="Answer here" 
-                                                                        class="form-control-input"
+                                                                        class="form-check-input"
                                                                         value="False"
                                                                         onchange="boolean_choice_click(this,@($"'{boolTrueId}'"),@($"'{boolFalseId}'"))"/>
                                                                     <label class="form-check-label" for="@boolFalseId">
                                                                         No
                                                                     </label>
                                                                 </div>
-                                                                <br/>
-                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
+                                                                <input hidden asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" type="radio" class="form-check-input" value="default"/>
+                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
                                                                 break;
                                                             case AnswerTypeEnum.MultipleChoice:
                                                                 @* <label asp-for="Answer" class="form-label" ></label> *@
@@ -195,15 +201,15 @@
                                                                         <input id="@questionChoiceId" 
                                                                         asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].AnswerId" 
                                                                         placeholder="Answer here" 
-                                                                        class="form-control-input"
+                                                                        class="form-check-input"
                                                                         type="radio" value="@questionChoice.Id"/>
                                                                         <label class="form-check-label" for="@questionChoiceId">
-                                                                            @questionChoice.Name - @questionChoice.Value 
+                                                                            @questionChoice.Value - @questionChoice.Name
                                                                         </label>
                                                                     </div>
                                                                 }
-                                                                <br/>
-                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].AnswerId"></span>
+                                                                <input hidden asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].AnswerId" type="radio" class="form-check-input" value="default"/>
+                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].AnswerId"></span>
                                                                 break;
                                                         }
                                                     </div>
@@ -217,7 +223,7 @@
                     }
                     else
                     {
-                        <h1 class="text-danger" > No Questions !!!</h1>
+                        <h1 class="text-danger invalid-feedback" > No Questions !!!</h1>
                     }
                 </div>
             </div>

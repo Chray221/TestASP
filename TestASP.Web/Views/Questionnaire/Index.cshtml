@@ -24,8 +24,7 @@
                                 <div class="card-header">
                                     @if (questionnair.IsAnswered)
                                     {
-                                        @("Answered")
-                                        <label>Answered :</label>
+                                        @("Answered :")
                                         <label class="ms-auto text-muted "> (@(questionnair.DateAnswered?.GetTimelapse()))</label>
                                     }
                                     else
@@ -39,10 +38,10 @@
                                 </div>
                                 <div class="card-footer">
                                     <div class="row gap-2">
-                                        <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-primary" href="Questionnaire/@questionnair.Id/Answer">Answer</a>
+                                        <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-primary" href="@questionnair.Id/Answer">Answer</a>
                                         @if (questionnair.IsAnswered)
                                         {
-                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 btn btn-primary" href="Questionnaire/@questionnair.Id/Answer/@questionnair.UserQuestionnaireId">Update</a>
+                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 btn btn-primary" href="@questionnair.Id/Answer/@questionnair.UserQuestionnaireId">Update</a>
                                         }
                                     </div>
                                 </div>

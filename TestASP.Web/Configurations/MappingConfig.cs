@@ -81,7 +81,7 @@ namespace TestASP.Web.Configurations
                 .IgnoreMember(dest => dest.SubAnswers)
                 .AfterMap( (src, dest, context) =>
                 {
-                    dest.SubAnswers = src.SubQuestionAnswers?.SelectMapList<SubQuestionAnswerRequestDto>(context.Mapper);
+                    dest.SubAnswers = src.AnsweredSubQuestions?.SelectMapList<SubQuestionAnswerRequestDto>(context.Mapper);
                 });
 
             CreateMap<SubQuestionAnswerViewModel, SubQuestionAnswerRequestDto>();                

@@ -47,11 +47,16 @@ namespace TestASP.Common.Extensions
             else if (timelapse.TotalHours > HourInADay)
             {
                 timelapseNum = (int)(timelapse.TotalHours / HourInADay);
-                return $"{timelapseNum} hour{(timelapseNum > 1 ? "s" : "")} ago";
+                return $"{timelapseNum} day{(timelapseNum > 1 ? "s" : "")} ago";
             }
             else if (timelapse.TotalMinutes > MinuteInAnHour)
             {
                 timelapseNum = (int)(timelapse.TotalMinutes / MinuteInAnHour);
+                return $"{timelapseNum} hour{(timelapseNum > 1 ? "s" : "")} ago";
+            }
+            else if(timelapse.TotalSeconds > SecondInAMinute)
+            {
+                timelapseNum = (int)(timelapse.TotalSeconds / SecondInAMinute);
                 return $"{timelapseNum} min{(timelapseNum > 1 ? "s" : "")} ago";
             }
 

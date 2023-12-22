@@ -78,7 +78,7 @@ public class QuestionnaireController : BaseController
             if(userQuestionnaireId != null)
             {
                 return await ApiResult(
-                    new QuestionnaireViewModel(),
+                    saveRequest,
                     await _questionnaireService.UpdateAsync(0,id,userQuestionnaireId ?? 0,mapper.Map<List<QuestionnaireAnswerSubAnswerRequestDto>>(saveRequest)),
                     async data => 
                     {
@@ -88,7 +88,7 @@ public class QuestionnaireController : BaseController
             }
             //save
             return await ApiResult(
-                new QuestionnaireViewModel(),
+                saveRequest,
                 await _questionnaireService.SaveAsync(0,id,mapper.Map<List<QuestionnaireAnswerSubAnswerRequestDto>>(saveRequest)),
                 async data => 
                 {

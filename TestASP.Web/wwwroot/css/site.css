@@ -20,3 +20,14 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+
+.animate {
+  transition: 0.3s;
+}
+
+.transparent{
+background-color:transparent; 
+border-color: transparent;
+}

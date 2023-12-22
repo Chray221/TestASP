@@ -7,16 +7,24 @@ namespace TestASP.Web.Configurations
     {
 		public static IServiceCollection RegisterAuthConfig(this IServiceCollection services)
         {
-            services.AddDistributedMemoryCache();
+            services.AddMemoryCache();
+            // services.AddDistributedMemoryCache();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                          .AddCookie(options =>
-                          {
-                              options.Cookie.HttpOnly = true;
-                              options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-                              options.LoginPath = "/Authentication/Login";
-                              options.AccessDeniedPath = "/Authentication/AccessDenied";
-                              options.SlidingExpiration = true;
-                          });
+                    .AddCookie(options =>
+                    {
+                    
+                        //options.Cookie.Domain = // do I need to set this?
+                        // options.Cookie.SecurePolicy = _environment.IsDevelopment() ? CookieSecurePolicy.None : CookieSecurePolicy.Always;
+                        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                        options.Cookie.SameSite = SameSiteMode.Strict;
+                        options.Cookie.Name = "TestASP.Web.Cookie";
+                        options.Cookie.HttpOnly = true;
+                        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                        options.LoginPath = "/Authentication/Login";
+                        options.AccessDeniedPath = "/Authentication/Login";
+                        options.LogoutPath = "/Authentication/Logout";
+                        options.SlidingExpiration = true;
+                    });
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(100);
@@ -29,6 +37,7 @@ namespace TestASP.Web.Configurations
 
         public static void UseAuthConfig(this WebApplication? app)
         {
+            app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();

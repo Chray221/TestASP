@@ -20,7 +20,7 @@ public static class ValidationResultExtension
         {
             return new ValidationResult(errorMessage ?? $"{getProp.GetProperty()} is required", new []{ getProp.GetProperty()});
         }
-        return null;
+        return ValidationResult.Success;
     }
 
     public static bool TryRequiredFor<T,TProp>(this T data, Expression<Func<T,TProp>> getProp, out ValidationResult result, string? errorMessage = null)
@@ -29,7 +29,7 @@ public static class ValidationResultExtension
         {
             result =new ValidationResult(errorMessage ?? $"{getProp.GetProperty()} is required", new []{ getProp.GetProperty()});
         }
-        result = null;
+        result = ValidationResult.Success;
         return false;
     }
 }

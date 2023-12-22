@@ -63,14 +63,6 @@
                 }
                 else
                 {
-                    @*<InputRadioGroup class="form-check form-check-inline" Name="Answer" @bind-Value="Question.Answer">
-                        <FormCheck IsInline="true" Name="Yes">
-                            <InputRadio class="form-check-input" Value="@("True")" />
-                        </FormCheck>
-                        <FormCheck IsInline="true" Name="No">
-                            <InputRadio class="form-check-input" Value="@("False")" />
-                        </FormCheck>
-                    </InputRadioGroup>*@
                     <InputRadioGroup @bind-Value="Question.Answer">
                         @foreach (var choice in Question.GetChoices())
                         {

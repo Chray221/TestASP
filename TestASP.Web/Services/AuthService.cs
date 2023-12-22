@@ -7,7 +7,11 @@ namespace TestASP.Web.Services
 {
     public class AuthService : BaseApiService, IAuthService
 	{
-        public AuthService(IHttpClientFactory httpClient, ILogger<AuthService> logger, ConfigurationManager configuration) : base(httpClient, logger, configuration)
+        public AuthService(
+            IHttpClientFactory httpClient, 
+            ILogger<AuthService> logger, 
+            ConfigurationManager configuration) 
+            : base(httpClient, logger, configuration)
         {
         }
 

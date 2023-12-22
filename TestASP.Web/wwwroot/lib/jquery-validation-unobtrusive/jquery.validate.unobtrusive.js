@@ -173,7 +173,9 @@
 
     $jQval.unobtrusive = {
         adapters: [],
-
+        options: {
+            errorClass: "is-invalid input-validation-error"
+        },
         parseElement: function (element, skipAttach) {
             /// <summary>
             /// Parses a single HTML element for unobtrusive validation attributes.

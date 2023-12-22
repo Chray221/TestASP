@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestASP.Model\TestASP.Model.csproj" />
+    <ProjectReference Include="..\TestASP.Common\TestASP.Common.csproj" />
+    <ProjectReference Include="..\TestASP.Core\TestASP.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -16,6 +18,9 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views/Maintenance/" />
   </ItemGroup>
 
 </Project>

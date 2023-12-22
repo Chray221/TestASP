@@ -9,12 +9,20 @@ namespace TestASP.Web.Services
     public class UserService : BaseApiService, IUserService
 	{
 
+        // public UserService(
+        //     IHttpClientFactory httpClient,
+        //     ILogger<UserService> logger,
+        //     ConfigurationManager configuration,
+        //     ProtectedLocalStorage localStorage)
+        //     : base(httpClient, logger, configuration, localStorage)
+        // {
+        // }
         public UserService(
             IHttpClientFactory httpClient,
             ILogger<UserService> logger,
             ConfigurationManager configuration,
-            ProtectedLocalStorage localStorage)
-            : base(httpClient, logger, configuration, localStorage)
+            IHttpContextAccessor httpContext)
+             : base(httpClient, logger, configuration, httpContext)
         {
         }
 

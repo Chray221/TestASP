@@ -13,10 +13,19 @@ namespace TestASP.Web.Services
             IHttpClientFactory httpClient,
             ILogger<QuestionnaireService> logger,
             ConfigurationManager configuration,
-            ProtectedLocalStorage localStorage)
-            : base(httpClient, logger, configuration, localStorage)
+            IHttpContextAccessor httpContext)
+             : base(httpClient, logger, configuration, httpContext)
         {
         }
+
+        // public QuestionnaireService(
+        //     IHttpClientFactory httpClient,
+        //     ILogger<QuestionnaireService> logger,
+        //     ConfigurationManager configuration,
+        //     ProtectedLocalStorage localStorage)
+        //     : base(httpClient, logger, configuration, localStorage)
+        // {
+        // }
 
         public Task<ApiResult<List<QuestionnaireResponseDto>>> GetAdminAsync()
         {

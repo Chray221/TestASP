@@ -17,11 +17,12 @@ namespace TestASP.Web.Services
         public readonly ILogger _logger;
         public readonly ConfigurationManager _configuration;
         public readonly string ApiRootUrl;
-        public readonly ProtectedLocalStorage _localStorage;
+        // public readonly ProtectedLocalStorage _localStorage;
+        public readonly IHttpContextAccessor _httpContext;
 
         public BaseApiService(
             IHttpClientFactory httpClient,
-            ILogger logger,
+            ILogger<BaseApiService> logger,
             ConfigurationManager configuration)
         {
             _httpClient = httpClient;
@@ -30,17 +31,30 @@ namespace TestASP.Web.Services
             ApiRootUrl = configuration["Urls:ApiRootUrl"]!;
         }
 
+        // public BaseApiService(
+        //     IHttpClientFactory httpClient,
+        //     ILogger logger,
+        //     ConfigurationManager configuration,
+        //     ProtectedLocalStorage localStorage)
+        // {
+        //     _httpClient = httpClient;
+        //     _logger = logger;
+        //     _configuration = configuration;
+        //     ApiRootUrl = configuration["Urls:ApiRootUrl"]!;
+        //     _localStorage = localStorage;
+        // }
+
         public BaseApiService(
             IHttpClientFactory httpClient,
-            ILogger logger,
+            ILogger<BaseApiService> logger,
             ConfigurationManager configuration,
-            ProtectedLocalStorage localStorage)
+            IHttpContextAccessor httpContext)
         {
             _httpClient = httpClient;
             _logger = logger;
             _configuration = configuration;
             ApiRootUrl = configuration["Urls:ApiRootUrl"]!;
-            _localStorage = localStorage;
+            _httpContext = httpContext;
         }
 
         public Task<ApiResult<TResponse>> SendAsync<TResponse>(ApiRequest<object> apiRequest)
@@ -58,12 +72,21 @@ namespace TestASP.Web.Services
             HttpRequestMessage request = new HttpRequestMessage();
             request.Headers.Add("Accept", "application/json");
 
-            if (_localStorage != null)
+            // if (_localStorage != null)
+            // {
+            //     var token = await _localStorage.GetAsync<string>("JWTToken");
+            //     if (token.Success)
+            //     {
+            //         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+            //     }
+            // }
+            if (_httpContext?.HttpContext != null)
             {
-                var token = await _localStorage.GetAsync<string>("JWTToken");
-                if (token.Success)
+                await _httpContext.HttpContext.Session.LoadAsync();
+                var token = _httpContext.HttpContext.Session.GetString("JWTToken");
+                if (!string.IsNullOrEmpty(token))
                 {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
             }
 

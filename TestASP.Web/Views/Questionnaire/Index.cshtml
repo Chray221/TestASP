@@ -1,0 +1,56 @@
+﻿@using TestASP.Common.Extensions;
+@model TestASP.Web.Models.ViewModels.Questionnaires.QuestionnaireViewModel
+@{
+    ViewBag.Title = "My Questionnaires";
+}
+
+@if(!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <h2 class="alert-danger">@ViewBag.ErrorMessage</h2>
+}
+@if (Model != null)
+{
+    <div class="card">
+        <div class="card-header">            
+            <h5>Questionnaires</h5>
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="row g-2">
+                    @foreach (var questionnair in Model)
+                    {
+                        <div class="col-4">
+                            <div class="card px-0">
+                                <div class="card-header">
+                                    @if (questionnair.IsAnswered)
+                                    {
+                                        @("Answered")
+                                        <label>Answered :</label>
+                                        <label class="ms-auto text-muted "> (@(questionnair.DateAnswered?.GetTimelapse()))</label>
+                                    }
+                                    else
+                                    {
+                                        <label>Not Answered</label>                                
+                                    }
+                                </div>
+                                <div class="card-body">
+                                    <h5>@questionnair.Name</h5>
+                                    <p class="card-text">@questionnair.Description</p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row gap-2">
+                                        <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-primary" href="Questionnaire/@questionnair.Id/Answer">Answer</a>
+                                        @if (questionnair.IsAnswered)
+                                        {
+                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 btn btn-primary" href="Questionnaire/@questionnair.Id/Answer/@questionnair.UserQuestionnaireId">Update</a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

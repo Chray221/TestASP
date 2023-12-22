@@ -48,31 +48,6 @@
                     </FooterTemplate>
                 </Card>
             </EditForm>
-            @*<ValidateForm hidden @ref="validateForm"
-                          Model="@Questionnaire" OnValidSubmit="SubmitQuestionnaireAnswer" ShowRequiredMark="true" ValidateAllProperties="true">
-                <ObjectGraphDataAnnotationsValidator />
-                <BootstrapBlazorDataAnnotationsValidator />
-                <Card>
-                    <BodyTemplate>
-                        <h4>@Questionnaire.Name</h4>
-                        <p class="card-text">@Questionnaire.Description</p>
-                        <Stack class="gap-3" AlignItems="StackAlignItems.Stretch" Justify="StackJustifyContent.Start" IsRow="false">
-                            @foreach (var question in Questionnaire.QuestionAnswers)
-                            {
-                                <StackItem>
-                                    @foreach (var questionAnswer in Questionnaire.QuestionAnswers)
-                                    {
-                                        <StackItem>
-                                            <QuestionAnswer Question="@questionAnswer" />
-                                        </StackItem>
-                                    }
-                                </StackItem>
-                            }
-                            <Button ButtonStyle="ButtonStyle.Round" ButtonType="ButtonType.Submit">@(UserQuestionnaireId == null ? "Submit" : "Update" ) </Button>
-                        </Stack>
-                    </BodyTemplate>
-                </Card>
-            </ValidateForm>*@
         }
         else if (IsLoading)
         {

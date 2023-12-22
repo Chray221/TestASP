@@ -6,6 +6,9 @@ using TestASP.Web.Models;
 using TestASP.Model.Questionnaires;
 using TestASP.Model.Request.Questionnaires;
 using TestASP.Web.Extensions;
+using TestASP.Web.Models.ViewModels;
+using TestASP.Model;
+using TestASP.Web.Models.ViewModels.Questionnaires;
 
 namespace TestASP.Web.Configurations
 {
@@ -13,13 +16,77 @@ namespace TestASP.Web.Configurations
 	{
 		public MappingConfig()
 		{
+            MapForAuthentication();
             MapForQuestionnaireAnswer();
             MapForAdminQuestionnaire();
+        }
+
+        public void MapForAuthentication()
+        {
+            CreateMap<LoginViewModel,SignInUserRequestDto>()
+                .ReverseMap();
         }
 
         public void MapForQuestionnaireAnswer()
         {
             // //Questionnaire response
+            #region Questionnaire Response
+            // questionnaires
+            CreateMap<List<UserQuestionnaireResponseDto>, QuestionnaireViewModel>()
+                .ConvertUsing( (src, dest, context) =>
+                {
+                    dest = dest ?? new QuestionnaireViewModel(src);
+                    return dest;
+                });
+            
+            // questionnaire
+            CreateMap<QuestionnaireQuestionsResponseDto,QuestionnaireQuestionAnswerViewModel>()
+                .IgnoreMember( dest => dest.QuestionAnswers)
+                .AfterMap( (src, dest, context) =>
+                {
+                    dest.QuestionAnswers = src.QuestionAnswers.SelectMapList<QuestionAnswerViewModel>(context.Mapper);
+                });
+            
+            // question
+            CreateMap<QuestionAnswerSubQuestionAnswerResponseDto,QuestionAnswerViewModel>()
+                .IgnoreMember( dest => dest.SubQuestionAnswers)
+                .IgnoreMember( dest => dest.Choices)
+                .AfterMap( (src, dest, context) =>
+                {
+                    dest.Choices = src.Choices?.SelectMapList<QuestionChoiceViewModel>(context.Mapper);
+                    dest.SubQuestionAnswers = src.SubQuestionAnswers?.SelectMapList<SubQuestionAnswerViewModel>(context.Mapper);
+                });
+            
+            // sub question
+            CreateMap<SubQuestionAnswerResponseDto,SubQuestionAnswerViewModel>()
+                .IgnoreMember( dest => dest.Choices)
+                .AfterMap( (src, dest, context) =>
+                {
+                    dest.Choices = src.Choices?.SelectMapList<QuestionChoiceViewModel>(context.Mapper);
+                });
+                
+            CreateMap<QuestionChoiceDto, QuestionChoiceViewModel>();
+                
+            #endregion
+
+            #region Questionnaire Request
+            CreateMap<QuestionnaireQuestionAnswerViewModel, List<QuestionnaireAnswerSubAnswerRequestDto>>()
+                .ConvertUsing((src, dest, context) =>
+                {
+                    dest = src.QuestionAnswers.SelectMapList<QuestionnaireAnswerSubAnswerRequestDto>(context.Mapper);
+                    return dest;
+                });
+            
+            CreateMap<QuestionAnswerViewModel, QuestionnaireAnswerSubAnswerRequestDto>()
+                .IgnoreMember(dest => dest.SubAnswers)
+                .AfterMap( (src, dest, context) =>
+                {
+                    dest.SubAnswers = src.SubQuestionAnswers?.SelectMapList<SubQuestionAnswerRequestDto>(context.Mapper);
+                });
+
+            CreateMap<SubQuestionAnswerViewModel, SubQuestionAnswerRequestDto>();                
+            #endregion
+
             // var questionMapping = CreateMap<QuestionnaireQuestionsResponseDto, BootStrapQuestionnaireQuestionsResponseDto>();
             // questionMapping
             //     .ForMember(dest => dest.QuestionAnswers, opts => opts.Ignore())

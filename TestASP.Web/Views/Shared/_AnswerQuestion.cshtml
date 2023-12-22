@@ -1,0 +1,142 @@
+﻿@using TestASP.Data.Enums;
+@using TestASP.Web.Models.ViewModels.Questionnaires;
+
+@model TestASP.Web.Models.ViewModels.Questionnaires.BaseQuestionAnswerViewModel
+@{            
+    
+    string AnswerName = $"{ViewData["Parent"]}.{nameof(Model.Answer)}";
+    string choiceName = $"{ViewData["Parent"]}.{nameof(Model.Answer)}";;
+    string choiceTrue = choiceName+"-True";
+    string choiceFalse = choiceName+"-False";
+    string subQuestionId = Model.Number+"-SubQuestion";
+}
+
+<div class="card">    
+     @if(Model is QuestionAnswerViewModel question)
+    {
+        <input hidden name="@(ViewData["Parent"]).QuestionId" value="@question.QuestionId"/>
+    }
+    else if(Model is SubQuestionAnswerViewModel subQuestion)
+    {
+        <input hidden name="@(ViewData["Parent"]).SubQuestionId" value="@subQuestion.SubQuestionId"/>
+    }
+    <input hidden name="@(ViewData["Parent"]).Number" value="@Model.Number"/>
+    <input hidden name="@(ViewData["Parent"]).Question" value="@Model.Question"/>
+    <input hidden name="@(ViewData["Parent"]).AnswerTypeId" value="@Model.AnswerTypeId"/>
+    <input hidden name="@(ViewData["Parent"]).QuestionTypeId" value="@Model.QuestionTypeId"/>
+
+    <div class="card-header">
+        <h5 class="card-title">Question @(Model.Number.ToUpper()). @Model.Question</h5>
+    </div>
+    <div class="card-body">
+       
+        @switch (Model.AnswerTypeId)
+        {
+            case AnswerTypeEnum.Text:
+                @* <label asp-for="Answer" class="form-label" ></label> *@
+                <input name="@AnswerName" asp-for="Answer" placeholder="Answer here" class="form-control"/>
+                @* <span asp-validation-for="Answer"  class="text-danger"></span> *@
+                <span class="text-danger field-validation-valid" 
+                    data-val="true" 
+                    data-val-required="Value is required"
+                    data-valmsg-for="@AnswerName" 
+                    data-valmsg-replace="true"></span>
+                break;
+            case AnswerTypeEnum.Number:
+                @* <label asp-for="Answer" class="form-label" ></label> *@
+                <input name="@AnswerName" type="number" asp-for="Answer" placeholder="Answer here" class="form-control"/>
+                @* <span asp-validation-for="Answer" class="text-danger"></span> *@
+                <span class="text-danger field-validation-valid" data-val="true" data-val-required data-valmsg-for="@AnswerName" data-valmsg-replace="true"></span>
+                break;
+            case AnswerTypeEnum.Date:
+                @* <label asp-for="Answer" class="form-label" ></label> *@
+                <input name="@AnswerName" type="date" asp-for="Answer" placeholder="Answer here" class="form-control"/>
+                @* <span asp-validation-for="Answer" class="text-danger"></span> *@
+                <span class="text-danger field-validation-valid" 
+                    data-val="true" 
+                    data-val-required="Value is required"
+                    data-valmsg-for="@AnswerName" 
+                    data-valmsg-replace="true"></span>
+                break;
+            case AnswerTypeEnum.Boolean:
+            case AnswerTypeEnum.BooleanWithSubQuestion:   
+                <div class="form-check form-check-inline">
+                    <input name="@AnswerName" asp-for="Answer" class="form-check-input" type="radio" id="@choiceTrue" value="True"
+                           onchange="boolean_choice_click(this,@($"'{subQuestionId}-Yes'"),@($"'{subQuestionId}-No'"))">
+                           @* onchange="boolean_choice_click(this)"> *@
+                    <label class="form-check-label" for="@choiceTrue">
+                        True
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input name="@AnswerName" asp-for="Answer" class="form-check-input" type="radio" id="@choiceFalse" value="False"
+                           onchange="boolean_choice_click(this,@($"'{subQuestionId}-Yes'"),@($"'{subQuestionId}-No'"))">
+                           @* onchange="boolean_choice_click(this)"> *@
+                    <label class="form-check-label" for="@choiceFalse">
+                        False
+                    </label>
+                </div>
+                @* <span asp-validation-for="Answer" class="text-danger"></span> *@
+                <span class="text-danger field-validation-valid" 
+                    data-val="true" 
+                    data-val-required="Value is required"
+                    data-valmsg-for="@AnswerName" 
+                    data-valmsg-replace="true"></span>
+                break;
+            case AnswerTypeEnum.MultipleChoice:
+                @* <label asp-for="Answer" class="form-label" ></label> *@
+                int choiceCount = 0;
+                @foreach(var choice in Model.Choices)
+                {
+                    <input hidden name="@(ViewData["Parent"]).Choices[@(choiceCount)].Id" value="@choice.Id"/>
+                    <input hidden name="@(ViewData["Parent"]).Choices[@(choiceCount)].Name" value="@choice.Name"/>
+                    <input hidden name="@(ViewData["Parent"]).Choices[@(choiceCount++)].Value" value="@choice.Value"/>
+
+                    string choiceId = choiceName+"-"+choice.Id;
+                    <div class="form-check form-check-inline">
+                        <input id="@(ViewData["Parent"]).AnswerId" asp-for="AnswerId" class="form-check-input" type="radio" name="@choiceName" id="@choiceId" value="@choice.Id">
+                        <label class="form-check-label" for="@choiceId">
+                            @choice.Name - @choice.Value 
+                        </label>
+                    </div>
+                }
+                @* <span asp-validation-for="AnswerId" class="text-danger"></span> *@
+                <span class="text-danger field-validation-valid" 
+                    data-val="true" 
+                    data-val-required="Value is required"
+                    data-valmsg-for="@(ViewData["Parent"]).AnswerId" 
+                    data-valmsg-replace="true"></span>
+                break;
+        }
+        @if (Model is QuestionAnswerViewModel questionAnswer && questionAnswer.SubQuestionAnswers?.Count > 0)
+        {
+            <div class="vstack ms-4 mt-2 gap-3" id="@subQuestionId">
+                @{int count=0;}
+                @foreach (var subQuestion in questionAnswer.SubQuestionAnswers)
+                {
+                    var newViewData = new ViewDataDictionary(this.ViewData) ;
+                    newViewData["Parent"] = $"{ViewData["Parent"]}.SubQuestionAnswers[{count++}]";
+                    
+                    if(( subQuestion.QuestionTypeId == QuestionTypeEnum.BooleanYesSubQuestion &&
+                          ( Model.Answer == "True" || string.IsNullOrEmpty(Model.Answer) )) || 
+                        ( subQuestion.QuestionTypeId == QuestionTypeEnum.BooleanNoSubQuestion &&
+                          ( Model.Answer == "False"|| string.IsNullOrEmpty(Model.Answer) )) )
+                    {
+                        <div class="@subQuestionId-@subQuestion.GetBooleanClass" hidden>
+                            <partial name="_AnswerQuestion" model="@subQuestion" 
+                                view-data="newViewData" />
+                        </div>
+                    }
+                    else 
+                    {
+                        <div class="@subQuestionId-@subQuestion.GetBooleanClass">
+                            <partial name="_AnswerQuestion" model="@subQuestion" 
+                                view-data="newViewData" />
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</div>
+

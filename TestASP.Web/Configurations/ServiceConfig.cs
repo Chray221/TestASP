@@ -3,12 +3,12 @@ using TestASP.Web.Extensions;
 using TestASP.Web.IServices;
 using TestASP.Web.Services;
 
-namespace TestASP.Web.Configurations
+namespace TestASP.Web.Configurations;
+
+public static class ServiceConfig
 {
-	public static class ServiceConfig
-	{
-		public static IServiceCollection RegisterServices(this IServiceCollection services)
-		{
+      public static IServiceCollection RegisterServices(this IServiceCollection services)
+      {
             //services.AddHttpClient<IVillaService, VillaService>();
             //services.AddScoped<IVillaService, VillaService>();
             //services.AddHttpClient<IVillaNumberService, VillaNumberService>();
@@ -23,7 +23,7 @@ namespace TestASP.Web.Configurations
             //services.AddTransient<IAuthService, AuthService>();
 
             return services;
-		}
-	}
+      }
 }
+
 

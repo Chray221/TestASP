@@ -1,0 +1,11 @@
+﻿@* @page
+@model TestASP.Web.Views.Components.InputTextModel<TModel,TResult>
+
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label">Email address</label>
+  @Html.LabelFor(@Model.Expression, htmlAttributes: new { @class = "form-label" })
+  <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+</div>
+
+@{
+} *@

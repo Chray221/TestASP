@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using TestASP.Model;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -25,7 +26,52 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                    </ul>
+                        @if (Context.User.Identity?.IsAuthenticated == true && Context.User.IsInRole("admin"))
+                        {
+                            <li class="nav-item text-dark dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Maintenance
+                                </a>
+                                <ul class="dropdown-menu animate">
+                                    <a class="dropdown-item" asp-controller="Maintenance" asp-action="Questionnaire">Questionnaire</a>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Add More Here</a></li>
+                                </ul>
+                            </li>
+                        }                               
+                        @if (Context.User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item dropdown ms-auto">
+                                <a class="nav-link dropdown-toggle py-0 me-5 pe-5" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @if(ViewBag.User is UserDto userDto)
+                                    {
+                                        <img class="rounded-circle" height="40" width="40" src="@userDto.Image" />
+                                    }
+                                    else
+                                    {
+                                        <img class="rounded-circle" height="40" width="40" src="https://hs.sbcounty.gov/cn/Photo%20Gallery/_w/Sample%20Picture%20-%20Koala_jpg.jpg" />
+                                    }
+                                </a>
+                                <ul class="dropdown-menu animate">
+                                    <li><a class="dropdown-item" asp-controller="User" asp-action="Me">My Profile</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Questionnaire" asp-action="Index">My Questionnaires</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Authentication" asp-action="Logout">Logout</a></li>
+                                    @* <a class="dropdown-item" asp-controller="Authentication" asp-action="Logout">Logout else here</a> *@
+                                </ul>
+                            </li>
+                        }
+                        else
+                        { 
+                            <li class="nav-item ms-auto">
+                                 <a class="nav-link text-dark" asp-area="" asp-controller="Authentication" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                 <a class="nav-link text-dark" asp-area="" asp-controller="Authentication" asp-action="Register">Register</a>
+                            </li>
+                        }
+                    </ul>   
                 </div>
             </div>
         </nav>

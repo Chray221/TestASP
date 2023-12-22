@@ -4,7 +4,7 @@
 
 @model TestASP.Web.Models.ViewModels.Questionnaires.QuestionnaireQuestionAnswerViewModel
 @{
-    ViewBag.Title = "My Questionnaires";
+    ViewBag.Title = "Questionnaire - Answer";
 }
 
 @if(!string.IsNullOrEmpty(ViewBag.ErrorMessage))
@@ -12,7 +12,8 @@
     <h2 class="alert-danger">@ViewBag.ErrorMessage</h2>
 }
 @if (Model != null)
-{    
+{       
+    ViewBag.Title = $"Questionnaire - Answer - {Model.Name}";
     <form asp-route="@(Model.Id)/Answer" method="post">
         <input hidden asp-for="Id"/>
         <input hidden asp-for="Name"/>

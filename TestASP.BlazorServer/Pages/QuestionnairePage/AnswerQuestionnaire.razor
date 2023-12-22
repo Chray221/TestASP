@@ -20,13 +20,17 @@
 @inject NavigationManager _navigationManager
 @inject IMapper _mapper
 
+
 <AuthorizeView>
     <NotAuthorized>
+        <PageTitle>Unathorized Access</PageTitle>
         <h1>You  have to login to answer this questionnaire</h1>
     </NotAuthorized>
     <Authorized>
         @if (Questionnaire != null)
         {
+            <PageTitle>My Questionnaire - Answer - @Questionnaire.Name</PageTitle>
+
             <EditForm Model="@Questionnaire" Context="Context" OnValidSubmit="SubmitQuestionnaireAnswer">
                 <ObjectGraphDataAnnotationsValidator />
                 <Card>

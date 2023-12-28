@@ -37,19 +37,42 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthConfig();
 
+// default
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+// questionnaire
 app.MapControllerRoute(
-    name: "default",
+    // name: "default",
+    name: "existing answered questionnaire",
     pattern: "{controller=Questionnaire}/{id?}/{action=Answer}/{userQuestionnaireId?}");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Questionnaire}/{action=SubQuestions}/{answer?}");
+
+// area
+app.MapAreaControllerRoute(
+    name: "Admin area",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Home}/{action=Index}/{id?}"
+);
+app.MapAreaControllerRoute(
+    name: "Admin Questionnaire",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Questionnaire}/{action=Index}/{id?}"
+);
+
+app.MapControllerRoute(
+    name: "area default",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+//admin
 // app.MapControllerRoute(
-//     name: "AnsweredQuestionnaire",
-//     pattern: "Questionnaire/{id}/Answer/{anotherId?}");
+//     name: "Admin",
+//     pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
+
+    
 // app.MapControllerRoute(
-//     name: "NewAnsweredQuestionnaire",
-//     pattern: "Questionnaire/{id}/Answer");
+//     name: "Admin Update Questionnaire",
+//     pattern: "Admin/{controller=Questionnaire}/{action=Index}/{id?}");
+
 app.Run();

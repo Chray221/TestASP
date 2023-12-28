@@ -26,7 +26,7 @@
             <div class="card-body">
                 <h3 class="card-text">@Model.Description</h3>
                 <article class="card-text">@Model.Content</article>
-                @* <div asp-validation-summary="All" class="text-danger invalid-feedback"></div> *@
+                @* <div asp-validation-summary="All" class="text-danger"></div> *@
                 <div class="vstack gap-3">
                     @if(Model.QuestionAnswers != null)
                     {
@@ -49,15 +49,15 @@
                                     {
                                         case AnswerTypeEnum.Text:
                                             <input asp-for="QuestionAnswers[questionIndex].Answer" placeholder="Answer here" class="form-control"/>                                            
-                                            <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
+                                            <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
                                             break;
                                         case AnswerTypeEnum.Number:
                                             <input asp-for="QuestionAnswers[questionIndex].Answer" type="number" placeholder="Answer here" class="form-control"/>
-                                            <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
+                                            <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
                                             break;
                                         case AnswerTypeEnum.Date:
                                             <input asp-for="QuestionAnswers[questionIndex].Answer" type="date" placeholder="Answer here" class="form-control"/>
-                                            <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
+                                            <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
                                             break;
                                         case AnswerTypeEnum.Boolean:
                                         case AnswerTypeEnum.BooleanWithSubQuestion:                                                             
@@ -90,7 +90,7 @@
                                                     </label>
                                                 </div>
                                                 <input hidden asp-for="QuestionAnswers[questionIndex].Answer" type="radio" class="form-check-input" value="default"/>
-                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
+                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].Answer"></span>
                                             </div>
                                             break;
                                         case AnswerTypeEnum.MultipleChoice:
@@ -117,7 +117,7 @@
                                                     </div>
                                                 }
                                                 <input hidden asp-for="QuestionAnswers[questionIndex].AnswerId" type="radio" class="form-check-input" value="default"/>
-                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].AnswerId"></span>
+                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].AnswerId"></span>
                                             </div>
                                             break;
                                     }
@@ -148,15 +148,15 @@
                                                         {
                                                             case AnswerTypeEnum.Text:
                                                                 <input asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" placeholder="Answer here" class="form-control"/>
-                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
+                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
                                                                 break;
                                                             case AnswerTypeEnum.Number:
                                                                 <input asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" type="number" placeholder="Answer here" class="form-control"/>
-                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
+                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
                                                                 break;
                                                             case AnswerTypeEnum.Date:
                                                                 <input asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" type="date" placeholder="Answer here" class="form-control"/>
-                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
+                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
                                                                 break;
                                                             case AnswerTypeEnum.Boolean:
                                                             case AnswerTypeEnum.BooleanWithSubQuestion:   
@@ -187,7 +187,7 @@
                                                                     </label>
                                                                 </div>
                                                                 <input hidden asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer" type="radio" class="form-check-input" value="default"/>
-                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
+                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].Answer"></span>
                                                                 break;
                                                             case AnswerTypeEnum.MultipleChoice:
                                                                 @* <label asp-for="Answer" class="form-label" ></label> *@
@@ -210,7 +210,7 @@
                                                                     </div>
                                                                 }
                                                                 <input hidden asp-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].AnswerId" type="radio" class="form-check-input" value="default"/>
-                                                                <span class="text-danger invalid-feedback" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].AnswerId"></span>
+                                                                <span class="text-danger" asp-validation-for="QuestionAnswers[questionIndex].SubQuestionAnswers![subQuestionIndex].AnswerId"></span>
                                                                 break;
                                                         }
                                                     </div>
@@ -224,7 +224,7 @@
                     }
                     else
                     {
-                        <h1 class="text-danger invalid-feedback" > No Questions !!!</h1>
+                        <h1 class="text-danger" > No Questions !!!</h1>
                     }
                 </div>
             </div>
@@ -237,4 +237,8 @@
 else
 {
     <h1>Questionnaire Not Found</h1>
+}
+
+@section scripts{
+   <partial name="_ValidationScriptsPartial" />
 }

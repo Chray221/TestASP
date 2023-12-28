@@ -25,7 +25,7 @@ public class BaseController : Controller
         return view;
     }
 
-    public virtual async Task<IActionResult> TryCatch(Func<Task<IActionResult>> func)
+    internal virtual async Task<IActionResult> TryCatch(Func<Task<IActionResult>> func)
     {
         try
         {
@@ -37,7 +37,7 @@ public class BaseController : Controller
         }
     }
 
-    public virtual IActionResult TryCatch(Func<IActionResult> func)
+    internal virtual IActionResult TryCatch(Func<IActionResult> func)
     {
         try
         {
@@ -54,7 +54,7 @@ public class BaseController : Controller
         return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
     }
 
-    public async Task<IActionResult> ApiResult<TRequest,T>(TRequest request, ApiResult<T> apiResult, Func<T,Task<IActionResult>> successResult)
+    internal async Task<IActionResult> ApiResult<TRequest,T>(TRequest request, ApiResult<T> apiResult, Func<T,Task<IActionResult>> successResult)
     {
         if(!apiResult.IsSuccess)
         {

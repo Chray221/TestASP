@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using TestASP.Web.Extensions;
 using TestASP.Web.IServices;
@@ -24,7 +26,7 @@ public static class ServiceConfig
 
             //services
             //services.AddTransient<IAuthService, AuthService>();
-
+            services.AddSingleton<ITagHelperInitializer<ScriptTagHelper>, AppendVersionTagHelperInitializer>();
             return services;
       }
 }

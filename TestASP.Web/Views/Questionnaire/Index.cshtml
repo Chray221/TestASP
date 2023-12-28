@@ -13,6 +13,7 @@
     <div class="card">
         <div class="card-header">            
             <h5>Questionnaires</h5>
+            <a class="btn btn-primary ms-auto" href="Admin/Questionnaire/Add">Add</a>
         </div>
         <div class="card-body">
             <div class="container">
@@ -29,7 +30,7 @@
                                     }
                                     else
                                     {
-                                        <label>Not Answered</label>                                
+                                        <label>Not Answered</label>                         
                                     }
                                 </div>
                                 <div class="card-body">
@@ -44,6 +45,13 @@
                                             <a class="col-15 col-sm-12 col-md-7 col-lg-5 btn btn-primary" href="Questionnaire/@questionnair.Id/Answer/@questionnair.UserQuestionnaireId">Update</a>
                                         }
                                     </div>
+                                    @if(User.IsInRole("admin"))
+                                    {                                        
+                                        <div class="row gap-2 mt-1">
+                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-success" href="Admin/Questionnaire/View/@questionnair.Id">View Questionnaire</a>
+                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-success" href="Admin/Questionnaire/View/@questionnair.Id">Update Questionnaire</a>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>

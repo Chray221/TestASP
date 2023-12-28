@@ -3,24 +3,10 @@
 
 // Write your JavaScript code.
 function boolean_choice_click(e,trueClass,falseClass){  
-    console.log(`e:${e} trueClass:${trueClass} falseClass:${falseClass}`);
     for(let falseItem of document.getElementsByClassName(falseClass)){
-        // if(e.value == "False"){
-        //     falseItem.removeAttribute("hidden");
-        // }
-        // else {
-        //     falseItem.setAttribute("hidden","");
-        // }        
         falseItem.toggle(e.value == "False");
     }
     for(let trueItem of document.getElementsByClassName(trueClass)){
-        // if(e.value == "True"){
-        //     // trueItem.removeAttribute("hidden");
-        // }
-        // else {
-        //     // trueItem.setAttribute("hidden","");
-        //     // trueItem.show()
-        // }
         trueItem.toggle(e.value == "True");
     }
 }
@@ -62,4 +48,19 @@ function hideElement(e)
 function showElement(e)
 {
     e.removeAttribute("hidden");
+}
+const SHOW_PASSWORD_ICON = "fa-regular fa-eye";
+const HIDE_PASSWORD_ICON = "fa-regular fa-eye-slash";
+function togglePassword(button,inputId)
+{
+    var input = document.getElementById(inputId);
+    var isPassword = input.getAttribute("type") === "password";
+    var icon = isPassword ? SHOW_PASSWORD_ICON : HIDE_PASSWORD_ICON;
+    button.innerHTML = `<i class="${icon}"/>`;
+    input.setAttribute("type", isPassword ? "text" : "password");
+}
+
+function toogle(checkbox,viewToHide)
+{
+    $(`#${viewToHide}`).toggle(checkbox.value);
 }

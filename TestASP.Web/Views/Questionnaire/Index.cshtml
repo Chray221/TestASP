@@ -27,6 +27,10 @@
                                     {
                                         @("Answered :")
                                         <label class="ms-auto text-muted "> (@(questionnair.DateAnswered?.GetTimelapse()))</label>
+                                        if(User.IsInRole("admin"))
+                                        {                                            
+                                            <label class="text-muted "> @(questionnair.Id > 0 ? "Published" : "Not Published")</label>
+                                        }
                                     }
                                     else
                                     {
@@ -46,10 +50,11 @@
                                         }
                                     </div>
                                     @if(User.IsInRole("admin"))
-                                    {                                        
+                                    {                                 
+                                        string id = questionnair.Id > 0 ? (questionnair.Id ?? 0).ToString() : questionnair.TempId;
                                         <div class="row gap-2 mt-1">
-                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-success" href="Admin/Questionnaire/View/@questionnair.Id">View Questionnaire</a>
-                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-success" href="Admin/Questionnaire/View/@questionnair.Id">Update Questionnaire</a>
+                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-success" href="Admin/Questionnaire/View/@id">View Questionnaire</a>
+                                            <a class="col-15 col-sm-12 col-md-7 col-lg-5 text-center btn btn-success" href="Admin/Questionnaire/Update/@id">Update Questionnaire</a>
                                         </div>
                                     }
                                 </div>

@@ -10,6 +10,7 @@ namespace TestASP.Model.Questionnaires
 
     public class UserQuestionnaireResponseDto : QuestionnaireResponseDto
     {
+        public string TempId {get;set;} = "";
         public int? UserQuestionnaireId { get; set; }
         public bool IsAnswered { get { return UserQuestionnaireId != null; } }
         public DateTime? DateAnswered { get; set; }

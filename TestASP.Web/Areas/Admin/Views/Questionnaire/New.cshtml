@@ -1,0 +1,430 @@
+﻿@using TestASP.Web.Areas.Admin.Models.Questionnaire
+@using TestASP.Data.Enums
+
+@model AdminQuestionnaireQuestionsViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = $"Admin - {(Model?.Id > 0 ? "Update" : "Add")} Questionnaire";
+}
+@if(Model != null)
+{    
+    <form asp-route="Admin/Questionnaire/@( Model.Id <= 0 ? "New" : $"Update/{Model.Id}")" asp-area="admin" asp-controller="Questionnaire" asp-action=""  method="post">
+        <div class="card">
+            <div class="card-header">
+                <h2>Add Questionnaire</h2>
+            </div>
+            <div class="card-body">
+                <BootstrapInput asp-for="Name"/>
+                <BootstrapInput asp-for="Description" type="textarea"/>
+                <label>
+                    Has Content?
+                    <input type="checkbox" data-bs-toggle="toggle" data-bs-target="#Content"/>
+                </label>
+                <BootstrapInput hidden asp-for="Content" type="textarea"/>
+
+                @* Questions *@
+                <div id="Questions" container-id="Questions" class="vstack gap-3 ms-3">
+                    @for(int questionIndex = 0; questionIndex < Model.Questions?.Count ; questionIndex++ )
+                    {
+                        @* question object *@
+                        var question = Model.Questions[questionIndex];
+
+                        <div class="card mt-3">
+                            <div class="card-header hstack">
+                                <h2>Question</h2>
+                                <button id="deleteQuestionTemplateId" type="button" class="btn btn-outline-danger ms-auto" onclick="deleteQuestion()">Delete</button>
+                            </div>
+                            <div class="card-body">
+                                <BootstrapInput asp-for="Questions[questionIndex].Number"/>
+                                <BootstrapInput asp-for="Questions[questionIndex].Question" type="textarea" rows="3"/>
+                                <BootstrapInput type="select" asp-for="Questions[questionIndex].AnswerTypeId" onchange="answerTypeChanged()"
+                                                data-choice-id="Questions[0].Choices" />
+                                @* choices conatainer *@
+                                <div id="choiceContainer" class="ms-3">
+                                    @if(question.AnswerTypeId == AnswerTypeEnum.MultipleChoice)
+                                    {
+                                        <div class="card mt-3">
+                                            <div class="card-header">
+                                                <h2>Choices</h2>
+                                            </div>
+                                            <div id="Questions_0__Choices" class="card-body gap-3">
+                                                @for(int qChoicesIndex = 0; qChoicesIndex < (question.Choices?.Count ?? 0); qChoicesIndex++ )
+                                                {
+                                                    <div class="row mt-2">
+                                                        <div class="col-2">
+                                                            <BootstrapInput asp-for="Questions[questionIndex].Choices[qChoicesIndex].Name"/>
+                                                        </div>
+                                                        <div class="col">
+                                                            <BootstrapInput asp-for="Questions[questionIndex].Choices[qChoicesIndex].Value"/>
+                                                        </div>
+                                                        <div class="col pt-4">            
+                                                            <button id="deleteChoiceButton" type="button" class="btn btn-outline-danger ms-auto" onclick="deleteChoice()">Delete</button>
+                                                        </div>
+                                                    </div>
+                                                }                                                
+                                            </div>
+                                            <div class="card-footer hstack">
+                                                <button id="addChoicesTemplateId" onclick="addChoices()" type="button" 
+                                                        data-parent="Questions[@(questionIndex)].Choices" class="btn btn-outline-primary">Add Choices</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                @* SubQuesitons *@
+                                <div id="Questions_@(questionIndex)__SubQuestions" class="vstack gap-3">
+                                    @for(int subQuestionIndex = 0; subQuestionIndex < (question.SubQuestions?.Count ?? 0); subQuestionIndex++ )
+                                    {
+                                        @* SubQuestion object *@
+                                        var subQuestion = question.SubQuestions![subQuestionIndex];
+
+                                        <div class="card mt-3">
+                                            <div class="card-header hstack">
+                                                <h2>Sub Question</h2>
+                                                <button id="deleteQuestionTemplateId" type="button" class="btn btn-outline-danger ms-auto" onclick="deleteSubQuestion()">Delete</button>
+                                            </div>
+                                            <div class="card-body">
+                                                <BootstrapInput asp-for="Questions[questionIndex].SubQuestions[subQuestionIndex].Number"/>
+                                                <BootstrapInput asp-for="Questions[questionIndex].SubQuestions[subQuestionIndex].Question" type="textarea" rows="3"/>
+                                                <BootstrapInput type="select" asp-for="Questions[questionIndex].AnswerTypeId" onchange="answerTypeChanged()"
+                                                                data-choice-id="Questions[0].SubQuestions[0].Choices" />
+                                                @* choices conatainer *@
+                                                <div id="choiceContainer" class="ms-3">
+                                                    @if(subQuestion.AnswerTypeId == AnswerTypeEnum.MultipleChoice)
+                                                    {
+                                                        <div class="card mt-3">
+                                                            <div class="card-header">
+                                                                <h2>Choices</h2>
+                                                            </div>
+                                                            <div id="Questions_0__Choices" class="card-body gap-3">
+                                                                @for(int sqChoicesIndex = 0; sqChoicesIndex < (subQuestion.Choices?.Count ?? 0); sqChoicesIndex++ )
+                                                                {
+                                                                    <div class="row mt-2">
+                                                                        <div class="col-2">
+                                                                            <BootstrapInput asp-for="Questions[questionIndex].SubQuestions![subQuestionIndex].Choices![sqChoicesIndex].Name"/>
+                                                                        </div>
+                                                                        <div class="col">
+                                                                            <BootstrapInput asp-for="Questions[questionIndex].SubQuestions![subQuestionIndex].Choices![sqChoicesIndex].Value"/>
+                                                                        </div>
+                                                                        <div class="col pt-4">            
+                                                                            <button id="deleteChoiceButton" type="button" class="btn btn-outline-danger ms-auto" onclick="deleteChoice()">Delete</button>
+                                                                        </div>
+                                                                    </div>
+                                                                }                                                
+                                                            </div>
+                                                            <div class="card-footer hstack">
+                                                                <button id="addChoicesTemplateId" onclick="addChoices()" type="button" 
+                                                                        data-parent="Questions[@(questionIndex)].SubQuestions[@(subQuestionIndex)].Choices" class="btn btn-outline-primary">Add Choices</button>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer hstack">
+                                <button id="addSubQuestionTemplateId" onclick="addSubQuestion()" type="button" data-parent="Questions[@(questionIndex)].SubQuestions" class="btn btn-outline-primary">Add SubQuestion</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="card-footer hstack">
+                <BootstrapButton type="button" data-parent="Questions" color="Primary" button-type="Outline" onclick="addQuestion()">Add Question</BootstrapButton>
+                <BootstrapButton class="ms-auto" type="submit" color="Success" button-type="Outline">Save</BootstrapButton>
+            </div>
+        </div>
+        <span >@ViewBag.ErrorMessage</span>
+    </form>
+}
+
+<template id="ChoiceTemplate">
+   <div class="row mt-2">
+        <div class="col-2">
+            <label class="control-label" for="NameTemplate" type="text">Name</label>
+            <input class="form-control" 
+                   data-val="true"
+                   data-val-required="The Name field is required." 
+                   id="NameTemplate" name="NameTemplate" required type="text" value="">
+            <span class="text-danger valid-feedback text-danger" data-valmsg-for="NameTemplate" data-valmsg-replace="true"></span>
+        </div>
+        <div class="col">
+            <label class="control-label" for="ValueTemplate" type="text">Value</label>
+            <input class="form-control" 
+                   data-val="true" 
+                   data-val-required="The Value field is required." 
+                   id="ValueTemplate" name="Name" required type="text" value="">
+            <span class="text-danger valid-feedback text-danger" data-valmsg-for="ValueTemplate" data-valmsg-replace="true"></span>
+        </div>
+        <div class="col pt-4">            
+            <button id="deleteChoiceButton" type="button" class="btn btn-outline-danger ms-auto" onclick="deleteChoice()">Delete</button>
+        </div>
+    </div>
+</template>
+
+<template id="QuestionTemplate">
+  <div class="card mt-3">
+        <div class="card-header hstack">
+            <h2>Question</h2>
+            <button id="deleteQuestionTemplateId" type="button" class="btn btn-outline-danger ms-auto" onclick="deleteQuestion()">Delete</button>
+        </div>
+        <div class="card-body">
+            <BootstrapInput asp-for="Questions[100].Number"/>
+            <BootstrapInput asp-for="Questions[100].Question" type="textarea" rows="3"/>
+            <BootstrapInput type="select" asp-for="Questions[100].AnswerTypeId" onchange="answerTypeChanged()"/>
+            @* choices conatainer *@
+            <div id="choiceContainer" class="ms-3">
+                
+            </div>
+            <div id="subQuestionTemplateId" class="vstack gap-3">
+            </div>
+        </div>
+        <div class="card-footer hstack">
+            <button id="addSubQuestionTemplateId" onclick="addSubQuestion()" type="button" data-parent="subQuestionTemplateId" class="btn btn-outline-primary">Add SubQuestion</button>
+        </div>
+    </div>
+</template>
+
+<template id="ChoiceContainerTemplate">
+    <div class="card mt-3">
+        <div class="card-header">
+            <h2>Choices</h2>
+        </div>
+        <div id="choicesTemplateId" class="card-body gap-3">
+        </div>
+        <div class="card-footer hstack">
+            <button id="addChoicesTemplateId" onclick="addChoices()" type="button" data-parent="choicesTemplateId" class="btn btn-outline-primary">Add Choices</button>
+        </div>
+    </div>
+</template>
+
+
+@section Scripts
+{
+    @* @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} *@
+
+    <script>
+        var choiceTemplate;
+        var questionTemplate;
+        var choiceContainerTemplate;
+
+        window.onload = function(){
+            console.log("loaded");
+            choiceTemplate = getTemplate("ChoiceTemplate");
+            questionTemplate = getTemplate("QuestionTemplate");
+            choiceContainerTemplate = getTemplate("ChoiceContainerTemplate");
+        }
+
+        function getTemplate(templateId) {        
+            var templateObj = $(`#${templateId}`).clone();
+            $(`#${templateId}`).remove();
+            return templateObj;
+        }
+
+        function addBaseQuestion(containerId,count,parent)
+        {
+            console.log(`data-parent: ${containerId} length: ${count}`);
+            var temp = cloneTemplate(formatId(containerId), questionTemplate);
+            setBaseQuestion(temp, parent);
+
+            return temp;
+        }
+
+        function addQuestion() {
+            var containerId = (event.target || event.srcElement).getAttribute("data-parent") ?? "Questions";
+            var count = $(`#${containerId}`).children().length;
+            var parent = `${containerId}[${count}]`;
+
+            var temp = addBaseQuestion(containerId,count,parent);
+
+            setQuestion(temp, parent);
+        }
+
+        function addSubQuestion() {
+            var containerId = (event.target || event.srcElement).getAttribute("data-parent") ?? "Questions";
+            var count = $(`#${formatId(containerId)}`).children().length;
+            var parent = `${containerId}[${count}]`;
+            
+            var temp = addBaseQuestion(containerId,count,parent);
+
+            setSubQuestion(temp, parent);
+        }
+        
+        function addChoices() {    
+            var containerId = (event.target || event.srcElement).getAttribute("data-parent") ?? "Questions.Choices";
+            var count = $(`#${formatId(containerId)}`).children().length;
+            var parent = `${containerId}[${count}]`;
+
+            console.log(`data-parent: ${containerId} length: ${count}`);
+
+            var temp = cloneTemplate(formatId(containerId), choiceTemplate);
+            temp.attr("id",formatId(containerId));
+            setChoice(temp,parent);
+            /* setInputGroup(temp, 0, `${parent}.Name`);
+            setInputGroup(temp, 1, `${parent}.Value`); */
+        }
+
+        function deleteQuestion() {
+            var target = (event.target || event.srcElement);
+            var container = event.target.parentNode.parentNode.parentNode;
+            var containerId = container.getAttribute("id");
+
+            target.parentNode.parentNode.remove();
+            console.log(`deleteQuestion: containerId: ${containerId}`);
+            setQuestions(container,containerId);
+        }
+
+        function deleteSubQuestion() {
+            console.log("deleteSubQuestion");
+            var target = (event.target || event.srcElement);
+            var container = event.target.parentNode.parentNode.parentNode;
+            var containerId = container.getAttribute("container-id");
+            
+            target.parentNode.parentNode.remove();
+
+            setSubQuestions(container.children,containerId);
+        }
+
+        function deleteChoice() {
+            var choiceContainer = event.target.parentNode.parentNode.parentNode;
+            var containerId = choiceContainer.getAttribute("id");
+            event.target.parentNode.parentNode.remove();
+            
+            setChoices(choiceContainer.children, containerId);
+        }
+
+        function setBaseQuestion(question, questionId) {
+            question.attr("id",formatId(questionId));
+            question.attr("container-id",questionId);
+
+            @* inputs *@        
+            setInputGroup(question, 0, `${questionId}.Number`);
+            setInputGroup(question, 1, `${questionId}.Question`);
+            setInputGroup(question, 2, `${questionId}.AnswerTypeId`);
+
+            @* add data-choice-id for answertypeid select *@
+            var inputTag = "input, textarea, select";
+            var containerId = `${questionId}.Choices`;
+            question.find(inputTag).eq(2).attr("data-choice-id",containerId);
+
+            return question;
+        }    
+
+        function setQuestion(question, questionId) {
+            console.log(`setQuestion questionContainerId: ${questionId}`);
+            @* base question *@
+            setBaseQuestion(question, questionId);
+
+            @* Sub Questions container *@
+            var containerId = `${questionId}.SubQuestions`;
+            setListContainer(question, "subQuestionTemplateId",containerId);
+            setDeleteButton(question, "deleteQuestionTemplateId", containerId);
+        } 
+
+        function setSubQuestion(subQuestion, subQuestionId) {
+            console.log(`setSubQuestion subQuestionContainerId: ${subQuestionId}`);
+            @* base question *@
+            setBaseQuestion(subQuestion, subQuestionId);
+
+            @* change sub question header *@
+            subQuestion.children().eq(0).children().eq(0).html("Sub Question");
+            subQuestion.children().eq(0).children().eq(1).attr("onclick","deleteSubQuestion()");
+            @* subQuestion.children('[id="deleteQuestionTemplateId"]').eq(0).attr("onclick","deleteSubQuestion()"); *@
+            @* remove Sub Questions container *@
+            deleteListContainer(subQuestion, "subQuestionTemplateId","addSubQuestionTemplateId");
+        }
+        
+        function setQuestions(questionsContainer, questionId) {
+            var questions = questionsContainer.children;
+            console.log(`questionId: ${questionId} questions-length: ${questions.length}`);
+            for(let index = 0; index < questions.length; index++) {
+                var parent = `${questionId}[${index}]`;      
+                var temp = $(questions[index]);
+                @* subQuestionId *@
+                var subQuestionsContainerId = `#${temp.attr("id")}_SubQuestions`;
+                console.log(`setQuestion: looking for subQuestionContainerId: ${subQuestionsContainerId}`);
+                var subQuestion = temp.find(subQuestionsContainerId).eq(0);
+                var newSubQuestionContainerId = `${parent}.SubQuestions`;
+                subQuestion.attr("id",formatId(newSubQuestionContainerId))
+                setSubQuestions(subQuestion.children(),newSubQuestionContainerId);
+                @* Questions *@
+                setQuestion(temp,parent);
+            }
+        }
+        
+        function setSubQuestions(subQuestions, subQuestionId){
+            console.log(`subQuestionId: ${subQuestionId} subQuestions-length: ${subQuestions.length}`);
+            for(let index = 0; index < subQuestions.length; index++){
+                var parent = `${subQuestionId}[${index}]`;  
+                var temp = $(subQuestions[index]);
+                setSubQuestion(temp,parent);
+            }
+        }
+
+        function setChoice(choice, choiceId) {
+            setInputGroup(choice, 0, `${choiceId}.Name`);
+            setInputGroup(choice, 1, `${choiceId}.Value`);        
+            @* setDeleteButton(choice, "deleteChoiceButton", choiceId); *@
+        }
+        
+        function setChoices(choices, choicesId) {
+            console.log(`data-parent: ${choicesId} length: ${choices.length}`);
+            for(let choiceIndex = 0; choiceIndex < choices.length; choiceIndex++){
+                var parent = `${choicesId}[${choiceIndex}]`;      
+                var temp = $(choices[choiceIndex]);
+                setChoice(temp,parent);
+            }
+        }
+
+        function answerTypeChanged() {
+            var target = (event.target || event.srcElement);
+            if(target.value == '@AnswerTypeEnum.MultipleChoice.ToString()' || 
+            target.value == '@((int)AnswerTypeEnum.MultipleChoice)')
+            {
+                var containerId = target.getAttribute("data-choice-id") ?? "Questions.Choices";
+                var choiceContainerParent = target.parentNode.querySelectorAll("#choiceContainer")[0];
+                choiceContainerParent.innerHTML = choiceContainerTemplate.html();                
+                @* choiceContainerParent.children[0].setAttribute("id",formatId(containerId)); *@
+                
+                var choiceContainer = $(choiceContainerParent.children[0]);
+                choiceContainer.find('[id="addChoicesTemplateId"]').eq(0).attr("data-parent",containerId);
+                choiceContainer.find('[id="choicesTemplateId"]').eq(0).attr("id",formatId(containerId));
+            }
+            else 
+            {
+                target.parentNode.querySelectorAll("#choiceContainer")[0].innerHTML = "";
+            }
+        }
+
+        function setListContainer(temp, containerTemplateId, newContainerId) {    
+            var containerTempId = containerTemplateId.charAt(0).toUpperCase() + containerTemplateId.slice(1);
+            var container = temp.find(`[id="${containerTemplateId}"]`).eq(0);
+            var addButton = temp.find(`[id="add${containerTempId}"]`).eq(0);
+            var deleteButton = temp.find(`[id="delete${containerTempId}"]`).eq(0);
+
+            var formattedContainerId = formatId(newContainerId);
+            container.attr("id",formattedContainerId);
+            @* container.attr("container-id",newContainerId); *@
+            addButton.attr("data-parent",newContainerId);
+            addButton.attr("id",formattedContainerId+"_addButton");
+            @* addButton.attr("container-id",newContainerId); *@
+            deleteButton.attr("data-parent",formattedContainerId);
+            deleteButton.attr("id",formattedContainerId+"_deleteButton");
+        }
+
+        function setDeleteButton(temp, buttonId, containerId)
+        {
+            var deleteButton = temp.find(`[id="${buttonId}"]`).eq(0);
+            deleteButton.attr("data-parent",formatId(containerId));
+            @* console.log("choice deleted"); *@
+            @* deleteButton.attr("id",newContainerId+"_deleteButton"); *@
+        }
+
+        function deleteListContainer(temp, containerTemplateId, buttonId) {        
+            temp.find(`[id="${containerTemplateId}"]`).remove();
+            temp.find(`[id="${buttonId}"]`).remove();    
+        }
+    </script>
+}
+

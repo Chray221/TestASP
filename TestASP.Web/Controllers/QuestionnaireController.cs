@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestASP.Data.Enums;
 using TestASP.Model.Questionnaires;
+using TestASP.Web.Areas.Admin.Models.Questionnaire;
 using TestASP.Web.IServices;
 using TestASP.Web.Models;
 using TestASP.Web.Models.ViewModels.Questionnaires;
+using TestASP.Web.Services;
 
 namespace TestASP.Web;
 
@@ -24,8 +26,10 @@ public class QuestionnaireController : BaseController
     }
 
     public Task<IActionResult> Index(
-        [FromServices] IMapper mapper)
+        [FromServices] IMapper mapper,
+        [FromServices] QuestionnaireCacheService questionnaireCache)
     {
+        
         return TryCatch( async () =>
         {
             return await ApiResult(
@@ -33,6 +37,8 @@ public class QuestionnaireController : BaseController
                 await _questionnaireService.GetAsync(0),
                 async data => 
                 {
+                    var cachedData = questionnaireCache.GetQuestionnaires();
+                    data.AddRange(cachedData.Select( cd => mapper.Map<UserQuestionnaireResponseDto>(cd.Value)));
                     return View(mapper.Map<QuestionnaireViewModel>(data));
                 });
         });

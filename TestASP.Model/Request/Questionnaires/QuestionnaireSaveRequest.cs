@@ -11,6 +11,11 @@ namespace TestASP.Model.Request.Questionnaires
 		{
 		}
 
+        public string GetTempId()
+        {
+            return $"{Name}-{(Description??Content??"Des").Substring(0,3)}";
+        }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
 			int count = 0;

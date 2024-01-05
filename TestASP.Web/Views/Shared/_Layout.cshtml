@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="~/lib/fontawesome-6.5.1/css/solid.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TestASP.Web.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("HeadScripts", required: false)
 </head>
 <body>
     <header>

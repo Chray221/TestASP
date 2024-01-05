@@ -1,0 +1,89 @@
+﻿@using TestASP.Web.Areas.Admin.Models.Questionnaire
+
+@model BaseAdminQuestionViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = $"Admin - {(Model?.Id > 0 ? "Update" : "Add")} Questionnaire";
+}
+@if(Model != null)
+{    
+    <form method="post">
+        <div class="card">
+            <div class="card-header">
+                <h2>Add Questionnaire</h2>
+            </div>
+            <div class="card-body">
+                <BootstrapInput asp-for="Number"/>
+                <BootstrapInput asp-for="Question" type="textarea"/>
+                <BootstrapInput asp-for="AnswerTypeId"/>
+                @if(Model is AdminSubQuestionViewModel)
+                {
+                    <BootstrapInput asp-for="QuestionTypeId"/>
+                }
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Add Questionnaire</h2>
+                    </div>
+                    <div id="Choices" class="card-body">
+                        @for(int choiceIndex = 0; choiceIndex < (Model.Choices?.Count ?? 0); choiceIndex++)
+                        {                            
+                            <div class="row mt-2">
+                                <div class="col-2">
+                                    <BootstrapInput asp-for="Choices![choiceIndex].Name"/>
+                                </div>
+                                <div class="col">
+                                    <BootstrapInput asp-for="Choices![choiceIndex].Value"/>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <BootstrapButton id="addChoice" onclick="addChoices()" color="Primary" button-type="Outline">Add Choices</BootstrapButton>
+                <BootstrapButton color="Success" >Save</BootstrapButton>
+            </div>
+        </div>
+    </form>
+}
+
+<template id="ChoiceTemplate">
+   <div class="row mt-2">
+        <div class="col-2">
+            <label class="control-label" for="NameTemplate" type="text">Name</label>
+            <input class="form-control" 
+                   data-val="true" 
+                   data-val-required="The Name field is required." 
+                   id="NameTemplate" name="NameTemplate" required type="text" value="">
+            <span class="text-danger valid-feedback text-danger" data-valmsg-for="NameTemplate" data-valmsg-replace="true"></span>
+        </div>
+        <div class="col">
+            <label class="control-label" for="ValueTemplate" type="text">Value</label>
+            <input class="form-control" 
+                   data-val="true" 
+                   data-val-required="The Value field is required." 
+                   id="ValueTemplate" name="Name" required type="text" value="">
+            <span class="text-danger valid-feedback text-danger" data-valmsg-for="ValueTemplate" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+</template>
+<script>
+    var choicesCount = @(Model?.Choices?.Count ?? 0);
+
+    function addChoices() {    
+        var choicesParent = `Choices[${choicesCount}]`;
+        var temp = $("#Choices").append($("#ChoiceTemplate").clone().html()).children(':last');
+        setInputGroup(temp,0,`${choicesParent}.Name`);
+        setInputGroup(temp,1,`${choicesParent}.Value`);
+        choicesCount ++;
+    }
+
+    function setInputGroup(parent, index, id)
+    {
+        parent.find('label').eq(index).attr("for",id);
+        parent.find('input').eq(index).attr("id",id);
+        parent.find('input').eq(index).attr("name",id);
+        parent.find('span').eq(index).attr("data-valmsg-for",id);
+        @* parent.find('input').eq(index).val(id); *@
+    }
+</script>

@@ -71,17 +71,28 @@ public class CustomHtmlGenerator: DefaultHtmlGenerator
     public override TagBuilder GenerateForm(ViewContext viewContext, string actionName, string controllerName, object routeValues, string method, object htmlAttributes)
     {
         var tagBuilder = base.GenerateForm(viewContext, actionName, controllerName, routeValues, method, htmlAttributes);   
-        tagBuilder.FormWasValidated();
+        // if(viewContext.ModelState.ValidationState == ModelValidationState.Invalid)
+        // {
+        //     tagBuilder.FormWasValidated();
+        // }
+        // else 
+        // {
+        //     tagBuilder.FormNeedValidation();
+        // }
         return tagBuilder;
     }
 
     protected override TagBuilder GenerateFormCore(ViewContext viewContext, string action, string method, object htmlAttributes)
     {
         var tagBuilder = base.GenerateFormCore(viewContext, action, method, htmlAttributes);
-        tagBuilder.FormNeedValidation();
+        
         if(viewContext.ModelState.ValidationState == ModelValidationState.Invalid)
         {
             tagBuilder.FormWasValidated();
+        }
+        else 
+        {
+            tagBuilder.FormNeedValidation();
         }
         return tagBuilder;
     }
@@ -89,8 +100,14 @@ public class CustomHtmlGenerator: DefaultHtmlGenerator
     public override TagBuilder GeneratePageForm(ViewContext viewContext, string pageName, string pageHandler, object routeValues, string fragment, string method, object htmlAttributes)
     {
         var tagBuilder = base.GeneratePageForm(viewContext, pageName, pageHandler, routeValues, fragment, method, htmlAttributes);
-        // tagBuilder.FormWasValidated();
-        tagBuilder.FormNeedValidation();
+        if(viewContext.ModelState.ValidationState == ModelValidationState.Invalid)
+        {
+            tagBuilder.FormWasValidated();
+        }
+        else 
+        {
+            tagBuilder.FormNeedValidation();
+        }
         
         return tagBuilder;
     }
@@ -142,11 +159,13 @@ public static class TagBuilderHelpers
 
     public static void FormWasValidated(this TagBuilder tagBuilder)
     {
-        tagBuilder.AddCssClass(CustomHtmlGenerator.BootStrapFormWasValidated);
+        if(tagBuilder.Attributes.GetValueOrDefault("class")?.Contains(CustomHtmlGenerator.BootStrapFormWasValidated) == false)
+            tagBuilder.AddCssClass(CustomHtmlGenerator.BootStrapFormWasValidated);
     }
 
     public static void FormNeedValidation(this TagBuilder tagBuilder)
     {
-        tagBuilder.AddCssClass(CustomHtmlGenerator.BootStrapFormForValidation);  
+        if(tagBuilder.Attributes.GetValueOrDefault("class")?.Contains(CustomHtmlGenerator.BootStrapFormForValidation) == false)
+            tagBuilder.AddCssClass(CustomHtmlGenerator.BootStrapFormForValidation);  
     }
 }

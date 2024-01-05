@@ -16,8 +16,9 @@
 {       
     ViewBag.Title = $"Admin - View Questionnaire - {Model.Name}";
     <div class="card">
-        <div class="card-header">
+        <div class="card-header hstack">
             <h2>@Model.Name</h2>
+            <BootstrapButton class="ms-auto" type="button" button-type="Outline">Update</BootstrapButton>
         </div>
         <div class="card-body">
             <h3 class="card-text">@Model.Description</h3>
@@ -35,8 +36,8 @@
                             <div class="card-body">        
                                 AnswerType 
                                 <label>@question.AnswerTypeId</label>
-                                <BootstrapInput asp-for="Model.Questions[questionIndex].AnswerTypeId"/>
-                                <BootstrapInput asp-for="Model.Questions[questionIndex].QuestionTypeId"/>
+                                <BootstrapInput asp-for="Questions[questionIndex].AnswerTypeId" disabled/>
+                                <BootstrapInput asp-for="Questions[questionIndex].QuestionTypeId" disabled/>
                                 @* @switch (question.AnswerTypeId)
                                 {
                                     case AnswerTypeEnum.Text:
@@ -220,7 +221,23 @@
             </div>
         </div>
         <div class="card-footer">
-            <button class="btn btn-primary" type="submit">Save</button>
+            @* <BootstrapButton type="button" button-type="Outline" 
+                             asp-area="Admin" 
+                             asp-controller="Questionnaire" 
+                             asp-action="AddQuestion"
+                             asp-route-id="@ViewBag.TempId">Add Question</BootstrapButton> *@
+            <a class="btn btn-outline-primary" type="submit"
+                    asp-area="Admin"
+                    asp-controller="Questionnaire" 
+                    asp-action="AddQuestion"
+                    asp-route-id="@ViewBag.TempId">Save</a>
+            <form asp-area="Admin"
+                  asp-controller="Questionnaire" 
+                  asp-action="Upload" asp-route-id="@ViewBag.TempId"
+                  method="post">
+                <button class="btn btn-primary" type="submit" 
+                        >Upload</button>                  
+            </form>
         </div>
     </div>
 }

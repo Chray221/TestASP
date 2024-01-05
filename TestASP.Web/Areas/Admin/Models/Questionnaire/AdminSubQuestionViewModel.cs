@@ -2,7 +2,7 @@
 
 namespace TestASP.Web.Areas.Admin.Models.Questionnaire;
 
-public class AdminSubQuestionViewModel : BaseQuestionResponseDto
+public class AdminSubQuestionViewModel : BaseAdminQuestionViewModel
 {
     public int? SubQuestionId { get; set; }
 }

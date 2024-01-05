@@ -2,37 +2,75 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+//Shorthand for $( document ).ready()
+// $(function()
+// {
+//     console.log("document is ready");
+//     const elements = document.querySelector['[data-bs-toggle="toggle"]'];
+//     $('[data-bs-toggle="toggle"]').click()
+//     if(elements != null){
+//         console.log(elements);
+//         for(let element of elements){
+//         }
+//     }
+// });
+
+$('[data-bs-toggle="toggle"]').click(function (event) {
+	let target = event.target.getAttribute('data-bs-target');
+	let isToggled = event.target.getAttribute('aria-toggle') == 'true';
+
+    if(event.target.getAttribute("type") == 'checkbox')
+    {
+        isToggled = event.target.checked;
+    }
+    if(!target) return;
+    // if(isToggled)
+    // {
+    //     $(target).removeAttr('hidden');
+    // }
+    // else 
+    // {
+    //     $(target).attr('hidden','');
+    // }
+    for(let index = 0; index < $(target).length; index++){
+        $(target)[index].toggleElement(isToggled);
+    }
+    event.target.setAttribute('aria-toggle', isToggled == true ? 'false' : 'true');
+    
+});
+
+
 function boolean_choice_click(e,trueClass,falseClass){  
     for(let falseItem of document.getElementsByClassName(falseClass)){
-        falseItem.toggle(e.value == "False");
+        falseItem.toggleElement(e.value == "False");
     }
     for(let trueItem of document.getElementsByClassName(trueClass)){
-        trueItem.toggle(e.value == "True");
+        trueItem.toggleElement(e.value == "True");
     }
 }
 
-Element.prototype.toggle  = function toggle( isShow)
+Element.prototype.toggleElement  = function toggleElement( isShow)
 {
     console.log(`${this.className}: isShowing? ${isShow}`);
     isShow = isShow ?? !this.hasAttribute("hidden");
     if(!isShow){
-        this.hide();
+        hideElement(this);
     }
     else {
-        this.show();
+        showElement(this);
     }
-    
 }
 
-Element.prototype.hide  = function hide()
-{
-    hideElement(this);
-}
+// Element.prototype.hideElement  = function hideElement()
+// {
+//     hideElement(this);
+// }
 
-Element.prototype.show  = function show()
-{
-    showElement(this);
-}
+// Element.prototype.showElement  = function showElement()
+// {
+//     showElement(this);
+// }
 
 /**
  * @param {Element} e The date
@@ -60,7 +98,26 @@ function togglePassword(button,inputId)
     input.setAttribute("type", isPassword ? "text" : "password");
 }
 
-function toogle(checkbox,viewToHide)
+function toggle(checkbox,viewToHide)
 {
-    $(`#${viewToHide}`).toggle(checkbox.value);
+    $(`#${viewToHide}`).toggleElement(checkbox.value);
+}
+
+function cloneTemplate(containerId,templateObj) {
+    console.log(`container: #${containerId}`);        
+    return $(`#${containerId}`).append(templateObj.html()).children(':last');
+}
+
+function setInputGroup(parent, index, id) {
+    var regexId = formatId(id);
+    var inputTag = "input, textarea, select";
+    parent.find('label').eq(index).attr("for",regexId);
+    parent.find(inputTag).eq(index).attr("id",regexId);
+    parent.find(inputTag).eq(index).attr("name",id);
+    parent.find('span').eq(index).attr("data-valmsg-for",regexId);
+}
+
+function formatId(id) {
+    const regex = /(?:[\[\].])/gi;
+    return id.replaceAll(regex,"_") ;
 }

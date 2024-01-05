@@ -36,6 +36,73 @@
                 "${workspaceFolder}/TestASP.sln"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "kill_api",
+            "type": "process",
+            "command": "kill -9 $(lsof -i:7069 -t) 2> /dev/null",
+            // "command": "kill",
+            // "args": [
+            //     "-9",
+            //     "$(lsof -i:7069 -t)",
+            //     "2>",
+            //     "/dev/null"
+            // ],
+            // "problemMatcher": "$msCompile"
+        },
+        
+        {
+            "label": "kill_blazor",
+            "command": "kill",
+            "type": "shell",
+            "args": [
+                "-9",
+                "$(lsof -i:7070 -t)",
+                "2>",
+                "/dev/null"
+            ],
+            // "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "kill_mvc",
+            "type": "shell",
+            "command": "kill -9 $(lsof -i:7071 -t) 2> /dev/null",
+            // "command": "kill",
+            // "args": [
+            //     "-9",
+            //     "$(lsof -i:7071 -t)",
+            //     "2>",
+            //     "/dev/null"
+            // ],
+            // "problemMatcher": "$msCompile"
+        },
+        //run multiple task
+        {
+            "label": "api_build",
+            // run in sequence
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "kill_api",
+                "build"
+            ]
+        },
+        {
+            "label": "blazor_build",
+            // run in sequence
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "kill_blazor",
+                "build"
+            ]
+        },
+        {
+            "label": "mvc_build",
+            // run in sequence
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "kill_mvc",
+                "build"
+            ]
         }
     ]
 }

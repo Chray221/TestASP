@@ -9,6 +9,7 @@ using TestASP.Web.Extensions;
 using TestASP.Web.Models.ViewModels;
 using TestASP.Model;
 using TestASP.Web.Models.ViewModels.Questionnaires;
+using TestASP.Web.Areas.Admin.Models.Questionnaire;
 
 namespace TestASP.Web.Configurations
 {
@@ -87,6 +88,41 @@ namespace TestASP.Web.Configurations
             CreateMap<SubQuestionAnswerViewModel, SubQuestionAnswerRequestDto>();                
             #endregion
 
+            #region Admin Questionnaire Response
+            CreateMap<AdminQuestionnaireQuestionsViewModel,UserQuestionnaireResponseDto>()
+                .ReverseMap();
+
+            CreateMap<AdminQuestionnaireQuestionsViewModel,QuestionnaireSaveRequest>()
+                .IgnoreMember(dest => dest.Questions)
+                .AfterMap( (src, dest, context ) =>
+                    {
+                        dest.Questions = (src.Questions ?? new()).SelectMapList<QuestionSubQuestionSaveRequestDto>(context.Mapper);
+                    })
+                .ReverseMap()
+                .IgnoreMember(dest => dest.Questions)
+                .AfterMap( (src, dest, context ) =>
+                    {
+                        dest.Questions = (src.Questions ?? new()).SelectMapList<AdminQuestionSubQuestionViewModel>(context.Mapper);
+                    });
+            CreateMap<AdminQuestionSubQuestionViewModel,QuestionSubQuestionSaveRequestDto>()                
+                .IgnoreMember(dest => dest.SubQuestions)
+                .AfterMap( (src, dest, context ) =>
+                    {
+                        dest.SubQuestions = (src.SubQuestions?? new()).SelectMapList<BaseQuestionResponseDto>(context.Mapper);
+                    })
+                .ReverseMap()
+                .IgnoreMember(dest => dest.SubQuestions)
+                .AfterMap( (src, dest, context ) =>
+                    {
+                        dest.SubQuestions = (src.SubQuestions?? new()).SelectMapList<AdminSubQuestionViewModel>(context.Mapper);
+                    });
+            CreateMap<AdminSubQuestionViewModel,BaseQuestionResponseDto>()
+                .ReverseMap();
+
+            CreateMap<AdminQuestionnaireQuestionsViewModel,AdminQuestionnaireViewModel>()
+                .ReverseMap()
+                .IgnoreMember(dest => dest.Questions);
+            #endregion
             // var questionMapping = CreateMap<QuestionnaireQuestionsResponseDto, BootStrapQuestionnaireQuestionsResponseDto>();
             // questionMapping
             //     .ForMember(dest => dest.QuestionAnswers, opts => opts.Ignore())

@@ -15,7 +15,17 @@ public class BaseController : Controller
         _logger = logger;
     }
 
-    IActionResult NavigagteTo(IActionResult view)
+    internal IActionResult NavigagteTo(IActionResult view)
+    {
+        if (HttpContext.User.Identity?.IsAuthenticated != true)
+        {
+            // return RedirectToAction(actionName: "Index", controllerName: "Home");
+            return RedirectToAction(actionName: "Login", controllerName: "Authentication");
+        }
+        return view;
+    }
+
+    internal IActionResult NavigateTo(IActionResult view)
     {
         if (HttpContext.User.Identity?.IsAuthenticated != true)
         {

@@ -23,8 +23,8 @@ public class BootstrapButtonTagHelper : TagHelper
     {
         output.TagName = "button";
         output.AddClass("btn",HtmlEncoder.Default);
-        string buttonType = ButtonType == BoostrapButtonType.Outline ? "-default" : "";
-        output.AddClass($"btn{buttonType}-{ButtonColor}",HtmlEncoder.Default);
+        string buttonType = ButtonType == BoostrapButtonType.Outline ? "-outline" : "";
+        output.AddClass($"btn{buttonType}-{ButtonColor.ToString().ToLower()}",HtmlEncoder.Default);
 
         switch (ButtonSize)
         {
@@ -37,11 +37,14 @@ public class BootstrapButtonTagHelper : TagHelper
                 output.AddClass($"btn-lg",HtmlEncoder.Default);
                 break;
         }
-
-        output.CopyHtmlAttribute("type",context);
-        output.CopyHtmlAttribute("context",context);
-        // output.CopyHtmlAttribute("type",context);
-        // output.CopyHtmlAttribute("type",context);
+        if(!context.AllAttributes.ContainsName("type"))
+        {
+            output.Attributes.SetAttribute("type", "button");
+        }
+        // output.CopyExistingHtmlAttribute("type",context);
+        // output.CopyExistingHtmlAttribute("context",context);
+        // output.CopyExistingHtmlAttribute("onclick",context);    
+        output.CopyAllAttributeFrom(context);
         base.Process(context, output);
     }
 }

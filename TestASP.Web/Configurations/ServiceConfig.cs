@@ -24,6 +24,9 @@ public static class ServiceConfig
             services.AddApiService<IUserService, UserService>();
             services.AddApiService<IQuestionnaireService, QuestionnaireService>();
 
+            services.AddSingleton<MyMemoryCache>();
+            services.AddScoped<QuestionnaireCacheService>();
+
             //services
             //services.AddTransient<IAuthService, AuthService>();
             services.AddSingleton<ITagHelperInitializer<ScriptTagHelper>, AppendVersionTagHelperInitializer>();
